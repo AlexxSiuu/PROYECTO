@@ -1,0 +1,143 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.producto-container {
+  display: flex;
+  gap: 40px;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: auto;
+}
+
+.imagen-producto img {
+  width: 450px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.info-producto {
+  flex: 1;
+}
+
+.ruta {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.info-producto h1 {
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.precio {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.selector-talla label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.tallas button {
+  margin: 5px 8px 5px 0;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.tallas button:hover {
+  background-color: #eee;
+}
+
+.stock {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #444;
+}
+
+.opciones-entrega {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.envio, .tienda {
+  flex: 1 1 45%;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.no-disponible {
+  color: red;
+  font-weight: bold;
+}
+
+.regalo {
+  display: block;
+  margin: 20px 0;
+  font-size: 15px;
+}
+
+.btn-añadir {
+  background-color: #000;
+  color: #fff;
+  border: none;
+  padding: 15px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  width: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-añadir:hover {
+  background-color: #333;
+}
+
+.descripcion {
+  margin-top: 30px;
+}
+
+.descripcion h3 {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #333;
+}
+
+.descripcion p,
+.descripcion ul {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.descripcion ul {
+  margin-top: 10px;
+  list-style-type: disc;
+  padding-left: 20px;
+}

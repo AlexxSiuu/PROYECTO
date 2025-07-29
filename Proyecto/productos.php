@@ -2,11 +2,7 @@
 session_start();
 
 // Conexión
-$host = "127.0.0.1";
-$usuario = "root";
-$contrasena = "Ragnarok2025";
-$base_datos = "Proyecto";
-$puerto = 3308;
+include ('conexion.php'); 
 
 $conexion = new mysqli($host, $usuario, $contrasena, $base_datos, $puerto);
 $conexion->set_charset("utf8mb4");

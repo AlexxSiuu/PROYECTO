@@ -1,10 +1,6 @@
 <?php session_start(); 
 // Tus datos de conexión
-$host = "127.0.0.1";
-$usuario = "root";
-$contrasena = "Ragnarok2025";
-$base_datos = "Proyecto"; // Cambié a Proyecto que es la base que hicimos para la tienda
-$puerto = 3308;
+include ('conexion.php');
 
 function ejecutarSQL($tipoSentencia, $sentenciaSQL) {
     global $host, $usuario, $contrasena, $base_datos, $puerto;

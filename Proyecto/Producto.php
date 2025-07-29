@@ -1,10 +1,5 @@
 <?php
-// Conexión
-$host = "127.0.0.1";
-$usuario = "root";
-$contrasena = "Ragnarok2025";
-$base_datos = "Proyecto";
-$puerto = 3308;
+include ('conexion.php');
 
 function ejecutarSQL($tipo, $sql) {
     global $host, $usuario, $contrasena, $base_datos, $puerto;

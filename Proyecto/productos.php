@@ -11,37 +11,40 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// Validamos parámetros
-$genero = isset($_GET['genero']) ? intval($_GET['genero']) : 0;
-$uso = isset($_GET['uso']) ? intval($_GET['uso']) : 0;
+// Obtener filtros desde URL
+$genero  = isset($_GET['genero'])  ? intval($_GET['genero'])  : 0;
+$uso     = isset($_GET['uso'])     ? intval($_GET['uso'])     : 0;
 $deporte = isset($_GET['deporte']) ? intval($_GET['deporte']) : 0;
 
-// Armamos WHERE dinámico
-$filtros = [];
-if ($genero > 0) $filtros[] = "p.id_genero = $genero";
-if ($uso > 0) $filtros[] = "p.id_uso = $uso";
-if ($deporte > 0) $filtros[] = "p.id_deporte = $deporte";
+// Construir condición dinámica
+$where = [];
+if ($genero > 0)  $where[] = "p.id_genero = $genero";
+if ($uso > 0)     $where[] = "p.id_uso = $uso";
+if ($deporte > 0) $where[] = "p.id_deporte = $deporte";
 
-$where = count($filtros) > 0 ? "WHERE " . implode(" AND ", $filtros) : "";
+// Siempre mostrar solo productos con stock
+$where[] = "pt.stock > 0";
 
-// Consulta con JOIN para asegurarse que haya stock
-$sql = "
-    SELECT DISTINCT p.id_producto, p.nombre, p.precio, p.imagen_url
-    FROM productos p
-    JOIN producto_tallas pt ON p.id_producto = pt.id_producto
-    $where AND pt.stock > 0
-    ORDER BY p.nombre
-";
+// Unir condiciones
+$condicion = implode(" AND ", $where);
+
+// Consulta final
+$sql = "SELECT DISTINCT p.id_producto, p.nombre, p.precio, p.imagen_url
+        FROM productos p
+        JOIN producto_tallas pt ON p.id_producto = pt.id_producto
+        WHERE $condicion
+        ORDER BY p.nombre";
 
 $resultado = $conexion->query($sql);
 
-// Guardamos los resultados
+// Guardar resultados
 $productos = [];
 if ($resultado && $resultado->num_rows > 0) {
     while ($fila = $resultado->fetch_object()) {
         $productos[] = $fila;
     }
 }
+
 $conexion->close();
 ?>
 
@@ -53,7 +56,6 @@ $conexion->close();
   <link rel="stylesheet" href="prueba.css">
 </head>
 <body>
-
 
 <section class="productos-lista">
   <h2>Productos</h2>

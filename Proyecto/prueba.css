@@ -21,11 +21,28 @@ body {
   z-index: 90;
 }
 
+
+
 .navbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between; /* logo izquierda, nav-icons derecha */
 }
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+  justify-content: center;
+  flex-grow: 1; /* ocupa espacio entre logo y nav-icons */
+  margin: 0 20px; /* separación opcional */
+  position: relative; /* importante quitar position: absolute */
+}
+
+
+
+
+
+
 
 .logo {
   font-size: 24px;
@@ -33,12 +50,6 @@ body {
   font-weight: bold;
 }
 
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 25px;
-  position: relative;
-}
 
 .nav-links li {
   position: relative;
@@ -99,11 +110,12 @@ body {
   display: none;
   background-color: #fff;
   flex-wrap: nowrap;
-  justify-content: flex-start;
-  padding: 40px 80px;
+  justify-content: center; /* antes flex-start */
+  padding: 40px 0; /* antes 40px 80px */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 999;
 }
+
 
 .mega-left {
   width: 300px;

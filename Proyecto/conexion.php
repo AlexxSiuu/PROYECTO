@@ -1,11 +1,10 @@
 <?php
 include_once 'config.local.php';
 
-// Crear conexión
-$con = new mysqli($host, $usuario, $contrasena, $base_datos, $puerto);
+$conexion = new mysqli($host, $usuario, $contrasena, $base_datos, $puerto);
+$conexion->set_charset("utf8mb4");
 
-// Verificar conexión
-if ($con->connect_error) {
-    die("Conexión fallida: " . $con->connect_error);
+if ($conexion->connect_error) {
+    die("Conexión fallida: " . $conexion->connect_error);
 }
 ?>

@@ -196,11 +196,6 @@ $productos = ejecutarSQL("select", $sqlProductos);
 
 <section class="hero">
   <div class="hero-content">
-    <h1>Bienvenido a JERSEYKING</h1>
-    <p>Descubre lo último en moda deportiva</p>
-    <div class="hero-buttons">
-      <a href="#">Comprar ahora</a>
-      <a href="#">Colecciones</a>
     </div>
   </div>
 </section>

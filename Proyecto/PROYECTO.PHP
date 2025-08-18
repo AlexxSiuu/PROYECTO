@@ -196,6 +196,7 @@ $productos = ejecutarSQL("select", $sqlProductos);
 
 <section class="hero">
   <div class="hero-content">
+
     </div>
   </div>
 </section>

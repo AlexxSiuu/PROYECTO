@@ -528,8 +528,7 @@ function agregarAlCarrito() {
         return;
     }
     
-    // Aquí puedes implementar la lógica para agregar al carrito
-    // Por ejemplo, enviar datos via AJAX a un script PHP
+    // Aquí la lógica para agregar al carrito
     
     const datosCarrito = {
         producto_id: <?= $id ?>,

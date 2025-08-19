@@ -2,7 +2,7 @@
 session_start();
 include('conexion.php');
 
-// Función mejorada con prepared statements (misma que en PROYECTO.php)
+
 function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     global $conexion;
     
@@ -48,7 +48,7 @@ $genero = isset($_GET['genero']) ? intval($_GET['genero']) : 0;
 $uso = isset($_GET['uso']) ? intval($_GET['uso']) : 0;
 $deporte = isset($_GET['deporte']) ? intval($_GET['deporte']) : 0;
 
-// Validar que los IDs existan en la BD (opcional pero recomendado)
+// revisa que los id existan en la Base dedatos
 $generos_validos = [1, 2, 3]; // Hombre, Mujer, Niños
 $usos_validos = [1, 2, 3];    // Ropa, Calzado, Accesorios  
 $deportes_validos = [1, 2, 3, 4]; // Fútbol, Running, General, Básquetbol
@@ -147,7 +147,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
     </nav>
 </header>
 
-<!-- Breadcrumb/Navegación -->
+
 <div class="breadcrumb">
     <a href="PROYECTO.php">Inicio</a>
     <?php foreach($titulo_partes as $parte): ?>
@@ -248,7 +248,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
     padding: 20px 0;
 }
 
-/* Estilo de las cards de productos - inspirado en Sportline */
+
 .producto-card {
     background: white;
     border-radius: 12px;

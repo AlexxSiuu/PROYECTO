@@ -203,14 +203,6 @@ $productos = ejecutarSQL("select", $sqlProductos);
 </header>
 
 <section class="hero">
-  <div class="hero-content">
-    <h1>Bienvenido a JERSEYKING</h1>
-    <p>Descubre lo último en moda deportiva</p>
-    <div class="hero-buttons">
-      <a href="#">Comprar ahora</a>
-      <a href="#">Colecciones</a>
-    </div>
-  </div>
 </section>
 
 <!-- Login Modal -->
@@ -226,6 +218,9 @@ $productos = ejecutarSQL("select", $sqlProductos);
       </div>
     <?php endif; ?>
     
+
+
+
     <form method="POST" action="procesar_login.php">
       <div style="margin-bottom:15px;">
         <input type="email" name="correo" placeholder="Correo electrónico" required 
@@ -311,6 +306,14 @@ document.addEventListener("DOMContentLoaded", function() {
     <?php endif; ?>
     
     <?php endif; ?>
+    
+ if (window.location.hash === '#login' && modal) {
+        modal.style.display = "flex";
+        // Limpiar el hash
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+
 });
 </script>
 

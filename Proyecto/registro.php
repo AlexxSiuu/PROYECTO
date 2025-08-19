@@ -230,7 +230,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <input type="submit" value="Registrarme">
     </form>
 
-    <p>¿Ya tienes cuenta? <a href="PROYECTO.php">Iniciar sesión</a></p>
+
+<p>¿Ya tienes cuenta? <a href="PROYECTO.php#login">Iniciar sesión</a></p>
   </div>
 </body>
 </html>

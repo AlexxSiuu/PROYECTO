@@ -16,7 +16,7 @@ if (ini_get("session.use_cookies")) {
 // Destruir sesión completamente
 session_destroy();
 
-// Redirigir al menú principal
-header("Location: Menu.php");
+// Redirigir al archivo correcto
+header("Location: PROYECTO.php");
 exit;
 ?>

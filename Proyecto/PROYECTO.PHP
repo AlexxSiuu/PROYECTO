@@ -203,6 +203,12 @@ $productos = ejecutarSQL("select", $sqlProductos);
 </header>
 
 <section class="hero">
+
+  <div class="hero-content">
+
+    </div>
+  </div>
+
 </section>
 
 <!-- Login Modal -->

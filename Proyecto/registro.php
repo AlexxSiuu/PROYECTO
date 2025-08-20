@@ -231,6 +231,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </form>
 
 
+
+
+
+
+
 <p>¿Ya tienes cuenta? <a href="PROYECTO.php#login">Iniciar sesión</a></p>
   </div>
 </body>

@@ -318,12 +318,6 @@ document.addEventListener("DOMContentLoaded", function() {
         // Limpiar el hash
         window.history.replaceState({}, document.title, window.location.pathname);
     }
-
-<<<<<<< Updated upstream
-
-
-=======
->>>>>>> Stashed changes
 });
 </script>
 

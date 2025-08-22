@@ -496,6 +496,8 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
 <?php endif; ?>
 
 <script>
+
+
 const tallaSelect = document.getElementById('talla');
 const cantidadInput = document.getElementById('cantidad');
 const btnCarrito = document.querySelector('.btn-carrito');
@@ -510,44 +512,253 @@ if (tallaSelect) {
             cantidadInput.max = stock;
             cantidadInput.value = Math.min(cantidadInput.value, stock);
             btnCarrito.disabled = false;
+            btnCarrito.innerHTML = '🛒 Agregar al carrito';
         } else {
             cantidadInput.max = 1;
             cantidadInput.value = 1;
             btnCarrito.disabled = true;
+            btnCarrito.innerHTML = 'Selecciona una talla';
         }
     });
 }
 
-// Función para agregar al carrito
+// Validar cantidad input
+if (cantidadInput) {
+    cantidadInput.addEventListener('change', function() {
+        const max = parseInt(this.max) || 1;
+        const min = parseInt(this.min) || 1;
+        let value = parseInt(this.value) || 1;
+        
+        if (value > max) value = max;
+        if (value < min) value = min;
+        
+        this.value = value;
+    });
+}
+
+// Función mejorada para agregar al carrito
 function agregarAlCarrito() {
     const talla = tallaSelect?.value;
-    const cantidad = cantidadInput?.value || 1;
+    const cantidad = parseInt(cantidadInput?.value) || 1;
     
     if (!talla) {
-        alert('Por favor selecciona una talla');
+        mostrarNotificacion('Por favor selecciona una talla', 'error');
         return;
     }
     
-    // Aquí la lógica para agregar al carrito
+    // Deshabilitar botón temporalmente
+    btnCarrito.disabled = true;
+    btnCarrito.innerHTML = '⏳ Agregando...';
     
-    const datosCarrito = {
-        producto_id: <?= $id ?>,
-        talla_id: talla,
-        cantidad: cantidad
-    };
+    const formData = new FormData();
+    formData.append('producto_id', <?= $id ?>);
+    formData.append('talla_id', talla);
+    formData.append('cantidad', cantidad);
     
-    console.log('Agregando al carrito:', datosCarrito);
-    alert(`Producto agregado al carrito!\nTalla: ${tallaSelect.options[tallaSelect.selectedIndex].text}\nCantidad: ${cantidad}`);
+    fetch('agregar_carrito.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            mostrarNotificacion(`${data.mensaje}`, 'success');
+            
+            // Actualizar contador del carrito en el header si existe
+            if (window.actualizarContadorCarrito) {
+                window.actualizarContadorCarrito(data.cart_count);
+            }
+            
+            // Mostrar detalles del producto agregado
+            mostrarProductoAgregado(data.producto);
+            
+        } else if (data.login_required) {
+            mostrarModalLogin();
+        } else {
+            mostrarNotificacion(data.message || 'Error al agregar al carrito', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarNotificacion('Error de conexión', 'error');
+    })
+    .finally(() => {
+        // Reactivar botón
+        btnCarrito.disabled = false;
+        btnCarrito.innerHTML = '🛒 Agregar al carrito';
+    });
 }
 
-// Función para agregar a wishlist
-function agregarAWishlist() {
-    const datosWishlist = {
-        producto_id: <?= $id ?>
-    };
+// Mostrar notificaciones
+function mostrarNotificacion(mensaje, tipo = 'success') {
+    // Crear elemento de notificación
+    const notificacion = document.createElement('div');
+    notificacion.className = `notificacion notificacion-${tipo}`;
+    notificacion.innerHTML = `
+        <div class="notificacion-content">
+            <span class="notificacion-icon">${tipo === 'success' ? '✅' : '❌'}</span>
+            <span class="notificacion-texto">${mensaje}</span>
+            <button class="notificacion-close" onclick="this.parentElement.parentElement.remove()">×</button>
+        </div>
+    `;
     
-    console.log('Agregando a wishlist:', datosWishlist);
-    alert('¡Producto agregado a tu lista de deseos!');
+    // Agregar estilos si no existen
+    if (!document.getElementById('notificacion-styles')) {
+        const styles = document.createElement('style');
+        styles.id = 'notificacion-styles';
+        styles.textContent = `
+            .notificacion {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                min-width: 300px;
+                max-width: 450px;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                animation: slideInRight 0.3s ease-out;
+                font-family: Arial, sans-serif;
+            }
+            
+            .notificacion-success {
+                border-left: 4px solid #28a745;
+            }
+            
+            .notificacion-error {
+                border-left: 4px solid #dc3545;
+            }
+            
+            .notificacion-content {
+                display: flex;
+                align-items: center;
+                padding: 15px 20px;
+                gap: 10px;
+            }
+            
+            .notificacion-icon {
+                font-size: 18px;
+            }
+            
+            .notificacion-texto {
+                flex: 1;
+                font-size: 14px;
+                font-weight: 500;
+                color: #333;
+            }
+            
+            .notificacion-close {
+                background: none;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                color: #999;
+                padding: 0;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+            }
+            
+            .notificacion-close:hover {
+                background-color: #f0f0f0;
+                color: #333;
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @media (max-width: 768px) {
+                .notificacion {
+                    left: 20px;
+                    right: 20px;
+                    min-width: auto;
+                }
+            }
+        `;
+        document.head.appendChild(styles);
+    }
+    
+    // Agregar al DOM
+    document.body.appendChild(notificacion);
+    
+    // Auto-eliminar después de 5 segundos
+    setTimeout(() => {
+        if (notificacion.parentElement) {
+            notificacion.style.animation = 'slideInRight 0.3s ease-in reverse';
+            setTimeout(() => notificacion.remove(), 300);
+        }
+    }, 5000);
+}
+
+// Mostrar detalles del producto agregado
+function mostrarProductoAgregado(producto) {
+    const detalles = `
+        <div style="margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 12px; color: #666;">
+            <strong>${producto.nombre}</strong><br>
+            Talla: ${producto.talla} • Cantidad: ${producto.cantidad}<br>
+            Precio: $${producto.precio}
+        </div>
+    `;
+    
+    // Si existe una notificación, agregar los detalles
+    setTimeout(() => {
+        const ultimaNotificacion = document.querySelector('.notificacion:last-child .notificacion-texto');
+        if (ultimaNotificacion) {
+            ultimaNotificacion.innerHTML += detalles;
+        }
+    }, 100);
+}
+
+// Mostrar modal de login si es necesario
+function mostrarModalLogin() {
+    mostrarNotificacion('Debes iniciar sesión para agregar productos al carrito', 'error');
+    
+    // Si existe el modal de login, mostrarlo
+    setTimeout(() => {
+        const loginIcon = document.getElementById('login-icon');
+        if (loginIcon) {
+            loginIcon.click();
+        } else {
+            // Redirigir a página de login
+            window.location.href = 'PROYECTO.php#login';
+        }
+    }, 1500);
+}
+
+// Función para agregar a wishlist (mejorada)
+function agregarAWishlist() {
+    const formData = new FormData();
+    formData.append('producto_id', <?= $id ?>);
+    
+    fetch('agregar_wishlist.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            mostrarNotificacion('Producto agregado a tu lista de deseos', 'success');
+        } else if (data.login_required) {
+            mostrarModalLogin();
+        } else {
+            mostrarNotificacion(data.message || 'Error al agregar a wishlist', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarNotificacion('Error de conexión', 'error');
+    });
 }
 </script>
 

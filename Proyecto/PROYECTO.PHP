@@ -66,7 +66,11 @@ $productos = ejecutarSQL("select", $sqlProductos);
 
 <header class="header">
   <nav class="navbar">
-    <div class="logo"><a href="PROYECTO.php">JERSEYKING</a></div>
+    <div class="logo">
+    <a href="PROYECTO.php">
+        <img src="img/logo_icono.jpg" alt="JERSEYKING" class="logo-img">
+    </a>
+</div>
 
     <ul class="nav-links">
   <li><a href="PROYECTO.php">Inicio</a></li>

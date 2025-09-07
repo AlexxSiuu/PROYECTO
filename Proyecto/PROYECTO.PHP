@@ -189,19 +189,6 @@ $productos = ejecutarSQL("select", $sqlProductos);
 
     </ul>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
    <div class="nav-icons">
   <input type="text" placeholder="Buscar...">
   <span>🔍</span>
@@ -248,17 +235,8 @@ $productos = ejecutarSQL("select", $sqlProductos);
 <?php endif; ?>
 
 </div>
-
-
-
-
-
-
-
   </nav>
 </header>
-
-
 
 <div id="notification-container"></div>
 
@@ -621,16 +599,6 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
 }
 <?php endif; ?>
 </style>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1241,14 +1209,6 @@ document.addEventListener('DOMContentLoaded', function() {
     <?php endif; ?>
 });
 </script>
-
-
-
-
-
-
-
-
 
 
     <section class="productos-lista">

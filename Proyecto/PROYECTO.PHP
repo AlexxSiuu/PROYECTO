@@ -68,14 +68,39 @@ $productos = ejecutarSQL("select", $sqlProductos);
   <nav class="navbar">
     <div class="logo">
     <a href="PROYECTO.php">
-        <img src="img/logo_icono.jpg" alt="JERSEYKING" class="logo-img">
+        <img src="img/logo_icono.ico.jpg" class="logo-img">
     </a>
 </div>
 
     <ul class="nav-links">
   <li><a href="PROYECTO.php">Inicio</a></li>
 
-  <!-- HOMBRE -->
+<!-- Equipos en desarrollo no funciona aun--> 
+<li class="dropdown">
+  <a href="productos.php?equipos">Niños</a>
+  <div class="mega-menu">
+    <div class="mega-left ninos-img"></div>
+    <div class="mega-right">
+      <div class="column">
+        <h4><a href="productos.php?genero=3&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
+        <a href="productos.php?genero=3&uso=2&deporte=1">Botines</a>
+        <a href="productos.php?genero=3&uso=2&deporte=3">Sandalias</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=3&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
+        <a href="productos.php?genero=3&uso=1&deporte=3">Camisetas</a>
+        <a href="productos.php?genero=3&uso=1&deporte=2">Conjuntos deportivos</a>
+        <a href="productos.php?genero=3&uso=1&deporte=2">Shorts</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=3&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
+        <a href="productos.php?genero=3&uso=3&deporte=3">Mochilas</a>
+        <a href="productos.php?genero=3&uso=3&deporte=3">Gorras</a>
+      </div>
+    </div>
+  </div>
+</li>
+<!-- HOMBRE -->
 <li class="dropdown">
   <a href="productos.php?genero=1">Hombre</a>
   <div class="mega-menu">

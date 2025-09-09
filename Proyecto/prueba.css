@@ -39,37 +39,21 @@ body {
 }
 
 
-.logo-img {
-    height: 10px; /* Ajusta la altura según necesites */
-    width: 10; /* Mantiene las proporciones */
-    max-width: 10px; /* Limita el ancho máximo */
-    object-fit: contain; /* Mantiene la imagen sin deformarla */
-    transition: transform 0.3s ease;
-}
-
-.logo-img:hover {
-    transform: scale(1.05); /* Pequeño zoom al pasar el mouse */
-}
-
-/* Si necesitas ajustar el contenedor del logo */
-.logo {
-    display: flex;
-    align-items: center;
-}
-
-.logo a {
-    display: flex;
-    align-items: center;
-}
-
-
-
-
 .logo {
   font-size: 24px;
   color: white;
   font-weight: bold;
 }
+
+
+
+.logo-img {
+  height: 35px; /* Ajusta este valor según necesites */
+  width: auto; /* Mantiene las proporciones */
+  max-width: 120px; /* Límite máximo de ancho */
+  object-fit: contain; /* Asegura que la imagen se mantenga dentro del contenedor */
+}
+
 
 
 .nav-links li {

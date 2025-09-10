@@ -671,6 +671,8 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
         <h1>🛒 Mi Carrito</h1>
     </div>
 
+
+
     <?php if (!$productos_carrito || count($productos_carrito) === 0): ?>
         <div class="carrito-vacio">
             <h2>Tu carrito está vacío</h2>
@@ -679,35 +681,40 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
         </div>
     <?php else: ?>
         
-        <?php foreach ($productos_carrito as $item): ?>
-        <div class="carrito-item" data-cart-id="<?= $item->id_carrito ?>">
-            <img src="<?= htmlspecialchars($item->imagen_url) ?>" alt="<?= htmlspecialchars($item->nombre) ?>" class="item-imagen">
-            
-            <div class="item-detalles">
-                <div class="item-nombre"><?= htmlspecialchars($item->nombre) ?></div>
-                <div class="item-info">
-                    <strong>Marca:</strong> <?= htmlspecialchars($item->marca) ?> | 
-                    <strong>Talla:</strong> <?= htmlspecialchars($item->talla) ?> | 
-                    <strong>Stock disponible:</strong> <?= $item->stock ?>
-                </div>
-                <div class="item-precio">$<?= number_format($item->precio, 2) ?> c/u</div>
-            </div>
 
-            <div class="item-controles">
-                <div class="cantidad-controles">
-                    <button class="btn-cantidad" onclick="actualizarCantidad(<?= $item->id_carrito ?>, 'disminuir')" 
-                            <?= $item->cantidad <= 1 ? 'title="Eliminar producto"' : '' ?>>
-                        <?= $item->cantidad <= 1 ? '🗑️' : '−' ?>
-                    </button>
-                    <input type="text" class="input-cantidad" value="<?= $item->cantidad ?>" readonly>
-                    <button class="btn-cantidad" onclick="actualizarCantidad(<?= $item->id_carrito ?>, 'aumentar')"
-                            <?= $item->cantidad >= $item->stock ? 'disabled' : '' ?>>+</button>
-                </div>
-                <button class="btn-eliminar" onclick="eliminarDelCarrito(<?= $item->id_carrito ?>)">
-                    Eliminar
-                </button>
+
+
+
+        <?php foreach ($productos_carrito as $item): ?>
+    <div class="carrito-item" data-cart-id="<?= $item->id_carrito ?>">
+        <img src="<?= htmlspecialchars($item->imagen_url) ?>" alt="<?= htmlspecialchars($item->nombre) ?>" class="item-imagen">
+        
+        <div class="item-detalles">
+            <div class="item-nombre"><?= htmlspecialchars($item->nombre) ?></div>
+            <div class="item-info">
+                <strong>Marca:</strong> <?= htmlspecialchars($item->marca) ?> | 
+                <strong>Talla:</strong> <?= htmlspecialchars($item->talla) ?>
             </div>
+            <div class="item-precio">$<?= number_format($item->precio, 2) ?> c/u</div>
         </div>
+        <div class="item-controles">
+            <div class="cantidad-controles">
+                <button class="btn-cantidad" onclick="actualizarCantidad(<?= $item->id_carrito ?>, 'disminuir')" 
+                        <?= $item->cantidad <= 1 ? 'title="Eliminar producto"' : '' ?>>
+                    <?= $item->cantidad <= 1 ? '🗑️' : '−' ?>
+                </button>
+                <input type="text" class="input-cantidad" value="<?= $item->cantidad ?>" readonly>
+                <button class="btn-cantidad" onclick="actualizarCantidad(<?= $item->id_carrito ?>, 'aumentar')"
+                        <?= $item->cantidad >= $item->stock ? 'disabled' : '' ?>>+</button>
+            </div>
+            <button class="btn-eliminar" onclick="eliminarDelCarrito(<?= $item->id_carrito ?>)">
+                Eliminar
+            </button>
+        </div>
+    </div>
+
+
+
         <?php endforeach; ?>
 
         <div class="carrito-resumen">

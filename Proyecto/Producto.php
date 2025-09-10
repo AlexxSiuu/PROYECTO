@@ -434,43 +434,72 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
         <div class="descripcion"><?= htmlspecialchars($producto->descripcion) ?></div>
         <div class="precio">$<?= number_format($producto->precio, 2) ?></div>
 
-        <!-- Formulario de compra -->
-        <div class="form-producto">
-            <?php if ($tallas && count($tallas) > 0): ?>
-                <label for="talla">Seleccionar talla:</label>
-                <select id="talla" name="talla" required>
-                    <option value="">Elige una talla</option>
-                    <?php foreach ($tallas as $t): ?>
-                        <option value="<?= $t->id_talla ?>" data-stock="<?= $t->stock ?>">
-                            <?= htmlspecialchars($t->talla) ?> (<?= $t->stock ?> disponibles)
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                
-                <div class="cantidad-container">
-                    <label for="cantidad">Cantidad:</label>
-                    <input type="number" id="cantidad" name="cantidad" value="1" min="1" max="1" class="cantidad-input">
-                </div>
-                
-                <button type="button" class="btn-carrito" onclick="agregarAlCarrito()" disabled>
-                    🛒 Agregar al carrito
-                </button>
-            <?php else: ?>
-                <div class="no-tallas">
-                    ❌ Este producto no tiene tallas disponibles actualmente
-                </div>
-                <button type="button" disabled>
-                    Producto no disponible
-                </button>
-            <?php endif; ?>
+
+
+
+
+
+<!-- Formulario de compra -->
+<div class="form-producto">
+    <?php if ($tallas && count($tallas) > 0): ?>
+        <label for="talla">Seleccionar talla:</label>
+        <select id="talla" name="talla" required>
+            <option value="">Elige una talla</option>
+            <?php foreach ($tallas as $t): ?>
+                <?php if ($t->stock > 0): ?>
+                    <option value="<?= $t->id_talla ?>" data-stock="<?= $t->stock ?>">
+                        <?= htmlspecialchars($t->talla) ?>
+                    </option>
+                <?php else: ?>
+                    <option disabled>
+                        <?= htmlspecialchars($t->talla) ?> - No disponible
+                    </option>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </select>
+        
+        <div class="cantidad-container">
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" id="cantidad" name="cantidad" value="1" min="1" max="1" class="cantidad-input">
         </div>
         
-        <!-- Botón para añadir a wishlist -->
-        <button type="button" style="background: #28a745; margin-top: 10px;" onclick="agregarAWishlist()">
-            ❤️ Añadir a lista de deseos
+        <button type="button" class="btn-carrito" onclick="agregarAlCarrito()" disabled>
+            Selecciona una talla
         </button>
+    <?php else: ?>
+        <div class="no-tallas">
+            ❌ Este producto no tiene tallas disponibles actualmente
+        </div>
+        <button type="button" disabled>
+            Producto no disponible
+        </button>
+    <?php endif; ?>
+</div>
+
+<!-- Botón para añadir a wishlist -->
+<button type="button" style="background: #28a745; margin-top: 10px;" onclick="agregarAWishlist()">
+    ❤️ Añadir a lista de deseos
+</button>
     </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- Productos relacionados -->
 <?php if ($relacionados && count($relacionados) > 0): ?>
@@ -501,6 +530,69 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
 const tallaSelect = document.getElementById('talla');
 const cantidadInput = document.getElementById('cantidad');
 const btnCarrito = document.querySelector('.btn-carrito');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Actualizar cantidad máxima cuando se selecciona talla
+if (tallaSelect) {
+    tallaSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const stock = parseInt(selectedOption.dataset.stock) || 0;
+        
+        // AQUÍ VA EL CÓDIGO QUE MENCIONÉ
+        if (this.value && stock > 0) {
+            cantidadInput.max = stock;
+            cantidadInput.value = Math.min(cantidadInput.value, stock);
+            btnCarrito.disabled = false;
+            btnCarrito.innerHTML = '🛒 Agregar al carrito';
+        } else {
+            cantidadInput.max = 1;
+            cantidadInput.value = 1;
+            btnCarrito.disabled = true;
+            btnCarrito.innerHTML = 'Sin stock disponible';
+        }
+    });
+}
+
+
 
 // Actualizar cantidad máxima cuando se selecciona talla
 if (tallaSelect) {
@@ -561,21 +653,25 @@ function agregarAlCarrito() {
     })
     .then(response => response.json())
     .then(data => {
+        console.log('Respuesta del servidor:', data); // Para debug
+        
         if (data.success) {
-            mostrarNotificacion(`${data.mensaje}`, 'success');
+            mostrarNotificacion(`${data.mensaje || 'Producto agregado al carrito'}`, 'success');
             
             // Actualizar contador del carrito en el header si existe
-            if (window.actualizarContadorCarrito) {
+            if (window.actualizarContadorCarrito && data.cart_count) {
                 window.actualizarContadorCarrito(data.cart_count);
             }
             
-            // Mostrar detalles del producto agregado
-            mostrarProductoAgregado(data.producto);
+            // Mostrar detalles del producto agregado SOLO si los datos existen
+            if (data.producto) {
+                mostrarProductoAgregado(data.producto);
+            }
             
         } else if (data.login_required) {
             mostrarModalLogin();
         } else {
-            mostrarNotificacion(data.message || 'Error al agregar al carrito', 'error');
+            mostrarNotificacion(data.message || data.mensaje || 'Error al agregar al carrito', 'error');
         }
     })
     .catch(error => {
@@ -591,6 +687,11 @@ function agregarAlCarrito() {
 
 // Mostrar notificaciones
 function mostrarNotificacion(mensaje, tipo = 'success') {
+    // Verificar que el mensaje no sea undefined
+    if (!mensaje || mensaje === 'undefined') {
+        mensaje = tipo === 'success' ? 'Operación exitosa' : 'Ha ocurrido un error';
+    }
+    
     // Crear elemento de notificación
     const notificacion = document.createElement('div');
     notificacion.className = `notificacion notificacion-${tipo}`;
@@ -701,13 +802,22 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
     }, 5000);
 }
 
-// Mostrar detalles del producto agregado
+// Mostrar detalles del producto agregado (VERSIÓN CORREGIDA)
 function mostrarProductoAgregado(producto) {
+    // Verificar que el objeto producto y sus propiedades existan
+    if (!producto) return;
+    
+    // Validar cada propiedad antes de usarla
+    const nombre = producto.nombre || 'Producto';
+    const talla = producto.talla || producto.talla_nombre || 'N/A';
+    const cantidad = producto.cantidad || 1;
+    const precio = producto.precio || '0.00';
+    
     const detalles = `
         <div style="margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 12px; color: #666;">
-            <strong>${producto.nombre}</strong><br>
-            Talla: ${producto.talla} • Cantidad: ${producto.cantidad}<br>
-            Precio: $${producto.precio}
+            <strong>${nombre}</strong><br>
+            Talla: ${talla} • Cantidad: ${cantidad}<br>
+            Precio: $${precio}
         </div>
     `;
     
@@ -719,6 +829,7 @@ function mostrarProductoAgregado(producto) {
         }
     }, 100);
 }
+
 
 // Mostrar modal de login si es necesario
 function mostrarModalLogin() {

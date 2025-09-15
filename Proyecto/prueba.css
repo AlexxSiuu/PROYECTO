@@ -689,3 +689,33 @@ body {
         opacity: 0.5;
     }
 }
+
+/* ICONOS SVG - TAMAÑO EMOJI */
+svg[data-slot="icon"] {
+    width: 1em !important;
+    height: 1em !important;
+    color: white !important;
+    vertical-align: middle !important;
+    display: inline !important;
+}
+
+.search-icon svg {
+    width: 1em !important;
+    height: 1em !important;
+}
+
+.cart-icon svg {
+    width: 1em !important;
+    height: 1em !important;
+}
+
+
+
+
+
+
+
+
+
+
+

@@ -43,7 +43,89 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     }
 }
 
-// Consulta para traer productos con stock
+// ===== SECCIÓN DE FILTROS DE CAMISETAS POR EQUIPOS =====
+
+// 1. REAL MADRID
+$sqlRealMadrid = "
+    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+    FROM productos p
+    INNER JOIN generos g ON p.id_genero = g.id_genero
+    INNER JOIN usos u ON p.id_uso = u.id_uso
+    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+    WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%REAL MADRID%'
+    ORDER BY p.nombre
+";
+
+// 2. FC BARCELONA
+$sqlBarcelona = "
+    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+    FROM productos p
+    INNER JOIN generos g ON p.id_genero = g.id_genero
+    INNER JOIN usos u ON p.id_uso = u.id_uso
+    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+    WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%FC BARCELONA%'
+    ORDER BY p.nombre
+";
+
+// 3. ATLÉTICO DE MADRID
+$sqlAtletico = "
+    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+    FROM productos p
+    INNER JOIN generos g ON p.id_genero = g.id_genero
+    INNER JOIN usos u ON p.id_uso = u.id_uso
+    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+    WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%ATLÉTICO DE MADRID%'
+    ORDER BY p.nombre
+";
+
+// 4. MANCHESTER CITY
+$sqlCity = "
+    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+    FROM productos p
+    INNER JOIN generos g ON p.id_genero = g.id_genero
+    INNER JOIN usos u ON p.id_uso = u.id_uso
+    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+    WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%MANCHESTER CITY%'
+    ORDER BY p.nombre
+";
+
+// 5. MANCHESTER UNITED
+$sqlUnited = "
+    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+    FROM productos p
+    INNER JOIN generos g ON p.id_genero = g.id_genero
+    INNER JOIN usos u ON p.id_uso = u.id_uso
+    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+    WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%MANCHESTER UNITED%'
+    ORDER BY p.nombre
+";
+
+// 6. CHELSEA
+$sqlChelsea = "
+    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+    FROM productos p
+    INNER JOIN generos g ON p.id_genero = g.id_genero
+    INNER JOIN usos u ON p.id_uso = u.id_uso
+    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+    WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%CHELSEA%'
+    ORDER BY p.nombre
+";
+
+// Ejecutar las consultas
+$camisetasRealMadrid = ejecutarSQL("select", $sqlRealMadrid);
+$camisetasBarcelona = ejecutarSQL("select", $sqlBarcelona);
+$camisetasAtletico = ejecutarSQL("select", $sqlAtletico);
+$camisetasCity = ejecutarSQL("select", $sqlCity);
+$camisetasUnited = ejecutarSQL("select", $sqlUnited);
+$camisetasChelsea = ejecutarSQL("select", $sqlChelsea);
+
+// Consulta para traer productos con stock (productos generales)
 $sqlProductos = "
     SELECT DISTINCT p.id_producto, p.nombre, p.precio, p.imagen_url
     FROM productos p
@@ -61,6 +143,210 @@ $productos = ejecutarSQL("select", $sqlProductos);
   <meta charset="UTF-8">
   <title>Tienda JERSEYKING</title>
   <link rel="stylesheet" href="prueba.css">
+  <style>
+    /* Estilos para las secciones de camisetas por equipos */
+    .equipos-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    
+    .equipo-section {
+      margin-bottom: 50px;
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    
+    .equipo-title {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #333;
+      position: relative;
+    }
+    
+    .equipo-title h2 {
+      font-size: 2.5em;
+      margin: 0;
+      color: #111;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .equipo-title::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(45deg, #ff6b35, #f7931e);
+      border-radius: 2px;
+    }
+    
+    /* Estilos específicos por equipo */
+    .real-madrid .equipo-title h2 { color: #00529F; }
+    .real-madrid .equipo-title { border-bottom-color: #00529F; }
+    .real-madrid .equipo-title::after { background: linear-gradient(45deg, #00529F, #FEBE10); }
+    
+    .barcelona .equipo-title h2 { color: #A50044; }
+    .barcelona .equipo-title { border-bottom-color: #A50044; }
+    .barcelona .equipo-title::after { background: linear-gradient(45deg, #A50044, #004D98); }
+    
+    .atletico .equipo-title h2 { color: #CE3524; }
+    .atletico .equipo-title { border-bottom-color: #CE3524; }
+    .atletico .equipo-title::after { background: linear-gradient(45deg, #CE3524, #1F4B8B); }
+    
+    .city .equipo-title h2 { color: #6CABDD; }
+    .city .equipo-title { border-bottom-color: #6CABDD; }
+    .city .equipo-title::after { background: linear-gradient(45deg, #6CABDD, #1C2C5B); }
+    
+    .united .equipo-title h2 { color: #DA020E; }
+    .united .equipo-title { border-bottom-color: #DA020E; }
+    .united .equipo-title::after { background: linear-gradient(45deg, #DA020E, #FFF200); }
+    
+    .chelsea .equipo-title h2 { color: #034694; }
+    .chelsea .equipo-title { border-bottom-color: #034694; }
+    .chelsea .equipo-title::after { background: linear-gradient(45deg, #034694, #FFFFFF); }
+    
+    .camisetas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 25px;
+    }
+    
+    .camiseta-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      border: 1px solid #f0f0f0;
+      position: relative;
+    }
+    
+    .camiseta-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+    
+    .camiseta-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .camiseta-info {
+      padding: 20px;
+    }
+    
+    .camiseta-name {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      height: 2.6em;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    
+    .camiseta-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 0.9em;
+      color: #666;
+    }
+    
+    .camiseta-marca {
+      background: #f8f9fa;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    
+    .camiseta-precio {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #111;
+      text-align: right;
+    }
+    
+    .camiseta-descripcion {
+      font-size: 0.85em;
+      color: #777;
+      line-height: 1.4;
+      height: 2.8em;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      margin-bottom: 15px;
+    }
+    
+    .ver-camiseta-btn {
+      width: 100%;
+      padding: 12px 15px;
+      background: linear-gradient(135deg, #111 0%, #333 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+    
+    .ver-camiseta-btn:hover {
+      background: linear-gradient(135deg, #333 0%, #555 100%);
+      transform: translateY(-1px);
+    }
+    
+    .no-productos {
+      text-align: center;
+      color: #999;
+      font-style: italic;
+      padding: 40px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .equipos-container {
+        padding: 0 15px;
+        margin: 20px auto;
+      }
+      
+      .equipo-section {
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+      
+      .equipo-title h2 {
+        font-size: 1.8em;
+      }
+      
+      .camisetas-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -643,6 +929,190 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
   </div>
 </div>
 
+<!-- ===== SECCIONES DE CAMISETAS POR EQUIPOS ===== -->
+<div class="equipos-container">
+
+  <!-- 1. REAL MADRID -->
+  <div class="equipo-section real-madrid">
+    <div class="equipo-title">
+      <h2>Real Madrid</h2>
+    </div>
+    <div class="camisetas-grid">
+      <?php if ($camisetasRealMadrid && count($camisetasRealMadrid) > 0): ?>
+        <?php foreach ($camisetasRealMadrid as $camiseta): ?>
+          <div class="camiseta-card">
+            <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
+            <div class="camiseta-info">
+              <h3 class="camiseta-name"><?= htmlspecialchars($camiseta->nombre) ?></h3>
+              <div class="camiseta-details">
+                <span class="camiseta-marca"><?= htmlspecialchars($camiseta->marca) ?></span>
+                <span><?= htmlspecialchars($camiseta->genero) ?></span>
+              </div>
+              <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
+              <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
+              <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="ver-camiseta-btn">Ver Producto</a>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div class="no-productos">
+          <p>No hay camisetas del Real Madrid disponibles en este momento.</p>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+
+  <!-- 2. FC BARCELONA -->
+  <div class="equipo-section barcelona">
+    <div class="equipo-title">
+      <h2>FC Barcelona</h2>
+    </div>
+    <div class="camisetas-grid">
+      <?php if ($camisetasBarcelona && count($camisetasBarcelona) > 0): ?>
+        <?php foreach ($camisetasBarcelona as $camiseta): ?>
+          <div class="camiseta-card">
+            <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
+            <div class="camiseta-info">
+              <h3 class="camiseta-name"><?= htmlspecialchars($camiseta->nombre) ?></h3>
+              <div class="camiseta-details">
+                <span class="camiseta-marca"><?= htmlspecialchars($camiseta->marca) ?></span>
+                <span><?= htmlspecialchars($camiseta->genero) ?></span>
+              </div>
+              <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
+              <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
+              <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="ver-camiseta-btn">Ver Producto</a>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div class="no-productos">
+          <p>No hay camisetas del FC Barcelona disponibles en este momento.</p>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+
+  <!-- 3. ATLÉTICO DE MADRID -->
+  <div class="equipo-section atletico">
+    <div class="equipo-title">
+      <h2>Atlético de Madrid</h2>
+    </div>
+    <div class="camisetas-grid">
+      <?php if ($camisetasAtletico && count($camisetasAtletico) > 0): ?>
+        <?php foreach ($camisetasAtletico as $camiseta): ?>
+          <div class="camiseta-card">
+            <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
+            <div class="camiseta-info">
+              <h3 class="camiseta-name"><?= htmlspecialchars($camiseta->nombre) ?></h3>
+              <div class="camiseta-details">
+                <span class="camiseta-marca"><?= htmlspecialchars($camiseta->marca) ?></span>
+                <span><?= htmlspecialchars($camiseta->genero) ?></span>
+              </div>
+              <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
+              <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
+              <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="ver-camiseta-btn">Ver Producto</a>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div class="no-productos">
+          <p>No hay camisetas del Atlético de Madrid disponibles en este momento.</p>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+
+  <!-- 4. MANCHESTER CITY -->
+  <div class="equipo-section city">
+    <div class="equipo-title">
+      <h2>Manchester City</h2>
+    </div>
+    <div class="camisetas-grid">
+      <?php if ($camisetasCity && count($camisetasCity) > 0): ?>
+        <?php foreach ($camisetasCity as $camiseta): ?>
+          <div class="camiseta-card">
+            <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
+            <div class="camiseta-info">
+              <h3 class="camiseta-name"><?= htmlspecialchars($camiseta->nombre) ?></h3>
+              <div class="camiseta-details">
+                <span class="camiseta-marca"><?= htmlspecialchars($camiseta->marca) ?></span>
+                <span><?= htmlspecialchars($camiseta->genero) ?></span>
+              </div>
+              <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
+              <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
+              <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="ver-camiseta-btn">Ver Producto</a>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div class="no-productos">
+          <p>No hay camisetas del Manchester City disponibles en este momento.</p>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+
+  <!-- 5. MANCHESTER UNITED -->
+  <div class="equipo-section united">
+    <div class="equipo-title">
+      <h2>Manchester United</h2>
+    </div>
+    <div class="camisetas-grid">
+      <?php if ($camisetasUnited && count($camisetasUnited) > 0): ?>
+        <?php foreach ($camisetasUnited as $camiseta): ?>
+          <div class="camiseta-card">
+            <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
+            <div class="camiseta-info">
+              <h3 class="camiseta-name"><?= htmlspecialchars($camiseta->nombre) ?></h3>
+              <div class="camiseta-details">
+                <span class="camiseta-marca"><?= htmlspecialchars($camiseta->marca) ?></span>
+                <span><?= htmlspecialchars($camiseta->genero) ?></span>
+              </div>
+              <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
+              <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
+              <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="ver-camiseta-btn">Ver Producto</a>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div class="no-productos">
+          <p>No hay camisetas del Manchester United disponibles en este momento.</p>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+
+  <!-- 6. CHELSEA -->
+  <div class="equipo-section chelsea">
+    <div class="equipo-title">
+      <h2>Chelsea FC</h2>
+    </div>
+    <div class="camisetas-grid">
+      <?php if ($camisetasChelsea && count($camisetasChelsea) > 0): ?>
+        <?php foreach ($camisetasChelsea as $camiseta): ?>
+          <div class="camiseta-card">
+            <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
+            <div class="camiseta-info">
+              <h3 class="camiseta-name"><?= htmlspecialchars($camiseta->nombre) ?></h3>
+              <div class="camiseta-details">
+                <span class="camiseta-marca"><?= htmlspecialchars($camiseta->marca) ?></span>
+                <span><?= htmlspecialchars($camiseta->genero) ?></span>
+              </div>
+              <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
+              <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
+              <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="ver-camiseta-btn">Ver Producto</a>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div class="no-productos">
+          <p>No hay camisetas del Chelsea disponibles en este momento.</p>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+
+</div>
 <style>
 .modal {
   position: fixed;
@@ -1007,16 +1477,6 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
 </style>
 
 
-
-
-
-
-
-
-
-
-
-
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const userIcon = document.getElementById("login-icon");
@@ -1276,24 +1736,20 @@ document.addEventListener('DOMContentLoaded', function() {
     <?php endif; ?>
 });
 </script>
-
-
     <section class="productos-lista">
-      <?php if ($productos && count($productos) > 0): ?>
-        <?php foreach ($productos as $producto): ?>
-          <div class="producto-item">
+        <?php if ($productos && count($productos) > 0): ?>
+          <?php foreach ($productos as $producto): ?>
             <a href="Producto.php?id=<?= $producto->id_producto ?>" style="text-decoration:none; color:inherit;">
-              <img src="<?= htmlspecialchars($producto->imagen_url) ?>" alt="<?= htmlspecialchars($producto->nombre) ?>">
-              <h3><?= htmlspecialchars($producto->nombre) ?></h3>
-              <p>$<?= number_format($producto->precio, 2) ?></p>
+              <div class="producto-item">
+                <img src="<?= htmlspecialchars($producto->imagen_url) ?>" alt="<?= htmlspecialchars($producto->nombre) ?>">
+                <h3><?= htmlspecialchars($producto->nombre) ?></h3>
+                <p>$<?= number_format($producto->precio, 2) ?></p>
+              </div>
             </a>
-          </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <p>No hay productos disponibles.</p>
-      <?php endif; ?>
-    </section>
-
-
+          <?php endforeach; ?>
+        <?php else: ?>
+          <p>No hay productos disponibles.</p>
+        <?php endif; ?>
+  </section>
 </body>
 </html>

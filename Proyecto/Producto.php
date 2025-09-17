@@ -435,10 +435,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
         <div class="precio">$<?= number_format($producto->precio, 2) ?></div>
 
 
-
-
-
-
 <!-- Formulario de compra -->
 <div class="form-producto">
     <?php if ($tallas && count($tallas) > 0): ?>
@@ -484,23 +480,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- Productos relacionados -->
 <?php if ($relacionados && count($relacionados) > 0): ?>
 <div class="relacionados">
@@ -530,44 +509,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
 const tallaSelect = document.getElementById('talla');
 const cantidadInput = document.getElementById('cantidad');
 const btnCarrito = document.querySelector('.btn-carrito');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -657,7 +598,7 @@ function agregarAlCarrito() {
         
         if (data.success) {
             mostrarNotificacion(`${data.mensaje || 'Producto agregado al carrito'}`, 'success');
-            
+
             // Actualizar contador del carrito en el header si existe
             if (window.actualizarContadorCarrito && data.cart_count) {
                 window.actualizarContadorCarrito(data.cart_count);
@@ -696,11 +637,12 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
     const notificacion = document.createElement('div');
     notificacion.className = `notificacion notificacion-${tipo}`;
     notificacion.innerHTML = `
-        <div class="notificacion-content">
+        <a href="carrito.php" style="text-decoration:none; color:inherit;><div class="notificacion-content">
             <span class="notificacion-icon">${tipo === 'success' ? '✅' : '❌'}</span>
             <span class="notificacion-texto">${mensaje}</span>
             <button class="notificacion-close" onclick="this.parentElement.parentElement.remove()">×</button>
         </div>
+        </a>
     `;
     
     // Agregar estilos si no existen

@@ -365,7 +365,7 @@ body {
 
 .producto-item {
   width: 160px; /* ancho fijo */
-  height: 260px; /* alto fijo o mínimo */
+  height: 280px; /* alto fijo o mínimo */
   display: flex;
   flex-direction: column;
   justify-content: space-between;

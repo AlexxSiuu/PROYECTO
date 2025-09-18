@@ -329,3 +329,70 @@ INSERT INTO producto_tallas (id_producto, id_talla, stock) VALUES
 
 -- Jersey Lakers (ID=35) - Tallas S,M,L,XL,XXL
 (35, 19, 20), (35, 20, 28), (35, 21, 25), (35, 22, 18), (35, 23, 12);
+
+-- ===== CAMISETAS DE CLUBES (2025) =====
+
+INSERT INTO productos (nombre, marca, descripcion, precio, imagen_url, id_genero, id_uso, id_deporte) VALUES
+-- === REAL MADRID ===
+('CAMISETA REAL MADRID PRIMERA EQUIPACION 2025', 'Adidas', 'Primera equipación oficial del Real Madrid 2025', 95.00, 'img/camiseta_real_1.jpg', 1, 1, 1),
+('CAMISETA REAL MADRID SEGUNDA EQUIPACION 2025', 'Adidas', 'Segunda equipación oficial del Real Madrid 2025', 95.00, 'img/camiseta_real_2.jpg', 1, 1, 1),
+('CAMISETA REAL MADRID TERCERA EQUIPACION 2025', 'Adidas', 'Tercera equipación oficial del Real Madrid 2025', 95.00, 'img/camiseta_real_3.jpg', 1, 1, 1),
+
+-- === FC BARCELONA ===
+('CAMISETA FC BARCELONA PRIMERA EQUIPACION 2025', 'Nike', 'Primera equipación oficial del FC Barcelona 2025', 95.00, 'img/camiseta_barca_1.jpg', 1, 1, 1),
+('CAMISETA FC BARCELONA SEGUNDA EQUIPACION 2025', 'Nike', 'Segunda equipación oficial del FC Barcelona 2025', 95.00, 'img/camiseta_barca_2.jpg', 1, 1, 1),
+('CAMISETA FC BARCELONA TERCERA EQUIPACION 2025', 'Nike', 'Tercera equipación oficial del FC Barcelona 2025', 95.00, 'img/camiseta_barca_3.jpg', 1, 1, 1),
+
+-- === ATLÉTICO DE MADRID ===
+('CAMISETA ATLÉTICO DE MADRID PRIMERA EQUIPACION 2025', 'Nike', 'Primera equipación oficial del Atlético de Madrid 2025', 95.00, 'img/camiseta_atleti_1.jpg', 1, 1, 1),
+('CAMISETA ATLÉTICO DE MADRID SEGUNDA EQUIPACION 2025', 'Nike', 'Segunda equipación oficial del Atlético de Madrid 2025', 95.00, 'img/camiseta_atleti_2.jpg', 1, 1, 1),
+('CAMISETA ATLÉTICO DE MADRID TERCERA EQUIPACION 2025', 'Nike', 'Tercera equipación oficial del Atlético de Madrid 2025', 95.00, 'img/camiseta_atleti_3.jpg', 1, 1, 1),
+
+-- === MANCHESTER CITY ===
+('CAMISETA MANCHESTER CITY PRIMERA EQUIPACION 2025', 'Puma', 'Primera equipación oficial del Manchester City 2025', 95.00, 'img/camiseta_city_1.jpg', 1, 1, 1),
+('CAMISETA MANCHESTER CITY SEGUNDA EQUIPACION 2025', 'Puma', 'Segunda equipación oficial del Manchester City 2025', 95.00, 'img/camiseta_city_2.jpg', 1, 1, 1),
+('CAMISETA MANCHESTER CITY TERCERA EQUIPACION 2025', 'Puma', 'Tercera equipación oficial del Manchester City 2025', 95.00, 'img/camiseta_city_3.jpg', 1, 1, 1),
+
+-- === MANCHESTER UNITED ===
+('CAMISETA MANCHESTER UNITED PRIMERA EQUIPACION 2025', 'Adidas', 'Primera equipación oficial del Manchester United 2025', 95.00, 'img/camiseta_united_1.jpg', 1, 1, 1),
+('CAMISETA MANCHESTER UNITED SEGUNDA EQUIPACION 2025', 'Adidas', 'Segunda equipación oficial del Manchester United 2025', 95.00, 'img/camiseta_united_2.jpg', 1, 1, 1),
+('CAMISETA MANCHESTER UNITED TERCERA EQUIPACION 2025', 'Adidas', 'Tercera equipación oficial del Manchester United 2025', 95.00, 'img/camiseta_united_3.jpg', 1, 1, 1),
+
+-- === CHELSEA ===
+('CAMISETA CHELSEA PRIMERA EQUIPACION 2025', 'Nike', 'Primera equipación oficial del Chelsea 2025', 95.00, 'img/camiseta_chelsea_1.jpg', 1, 1, 1),
+('CAMISETA CHELSEA SEGUNDA EQUIPACION 2025', 'Nike', 'Segunda equipación oficial del Chelsea 2025', 95.00, 'img/camiseta_chelsea_2.jpg', 1, 1, 1),
+('CAMISETA CHELSEA TERCERA EQUIPACION 2025', 'Nike', 'Tercera equipación oficial del Chelsea 2025', 95.00, 'img/camiseta_chelsea_3.jpg', 1, 1, 1);
+
+-- ===== STOCK PARA CAMISETAS =====
+-- Asumiendo que los IDs insertados son consecutivos a partir del último producto (por ejemplo si el último era ID=35, estas serían 36-53)
+INSERT INTO producto_tallas (id_producto, id_talla, stock) VALUES
+-- REAL MADRID (IDs 36-38)
+(36, 19, 30), (36, 20, 40), (36, 21, 35), (36, 22, 20), (36, 23, 10),
+(37, 19, 28), (37, 20, 38), (37, 21, 33), (37, 22, 18), (37, 23, 8),
+(38, 19, 25), (38, 20, 35), (38, 21, 30), (38, 22, 15), (38, 23, 7),
+
+-- BARCELONA (IDs 39-41)
+(39, 19, 32), (39, 20, 42), (39, 21, 37), (39, 22, 22), (39, 23, 12),
+(40, 19, 28), (40, 20, 36), (40, 21, 31), (40, 22, 18), (40, 23, 8),
+(41, 19, 25), (41, 20, 34), (41, 21, 28), (41, 22, 16), (41, 23, 6),
+
+-- ATLÉTICO DE MADRID (IDs 42-44)
+(42, 19, 30), (42, 20, 40), (42, 21, 34), (42, 22, 20), (42, 23, 10),
+(43, 19, 26), (43, 20, 35), (43, 21, 30), (43, 22, 16), (43, 23, 6),
+(44, 19, 24), (44, 20, 32), (44, 21, 28), (44, 22, 15), (44, 23, 5),
+
+-- MANCHESTER CITY (IDs 45-47)
+(45, 19, 28), (45, 20, 36), (45, 21, 32), (45, 22, 18), (45, 23, 8),
+(46, 19, 26), (46, 20, 34), (46, 21, 30), (46, 22, 16), (46, 23, 6),
+(47, 19, 24), (47, 20, 30), (47, 21, 28), (47, 22, 14), (47, 23, 5),
+
+-- MANCHESTER UNITED (IDs 48-50)
+(48, 19, 30), (48, 20, 40), (48, 21, 36), (48, 22, 20), (48, 23, 10),
+(49, 19, 28), (49, 20, 36), (49, 21, 32), (49, 22, 18), (49, 23, 8),
+(49, 19, 28), (49, 20, 36), (49, 21, 32), (49, 22, 18), (49, 23, 8),
+(50, 19, 26), (50, 20, 34), (50, 21, 30), (50, 22, 16), (50, 23, 6),
+
+-- CHELSEA (IDs 51-53)
+(51, 19, 28), (51, 20, 36), (51, 21, 32), (51, 22, 18), (51, 23, 8),
+(52, 19, 26), (52, 20, 34), (52, 21, 30), (52, 22, 16), (52, 23, 6),
+(53, 19, 24), (53, 20, 32), (53, 21, 28), (53, 22, 15), (53, 23, 5);

@@ -1,140 +1,140 @@
 <?php 
-session_start(); 
-include ('conexion.php');
+  session_start(); 
+  include ('conexion.php');
 
-// Función mejorada con prepared statements
-function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
-    global $conexion;
-    
-    if ($conexion->connect_error) {
-        error_log("Error de conexión: " . $conexion->connect_error);
-        return false;
-    }
-    
-    $conexion->set_charset("utf8mb4");
-    
-    // Preparar statement
-    $stmt = $conexion->prepare($sentenciaSQL);
-    if (!$stmt) {
-        error_log("Error preparando consulta: " . $conexion->error);
-        return false;
-    }
-    
-    // Bind parameters si existen
-    if (!empty($params)) {
-        $types = str_repeat('s', count($params)); // Asume que todos son strings
-        $stmt->bind_param($types, ...$params);
-    }
-    
-    $stmt->execute();
-    
-    if (strtolower($tipoSentencia) == "select") {
-        $result = $stmt->get_result();
-        $datos = [];
-        while ($fila = $result->fetch_object()) {
-            $datos[] = $fila;
-        }
-        $stmt->close();
-        return $datos;
-    } else {
-        $success = $stmt->affected_rows > 0;
-        $stmt->close();
-        return $success;
-    }
-}
+  // Función mejorada con prepared statements
+  function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
+      global $conexion;
+      
+      if ($conexion->connect_error) {
+          error_log("Error de conexión: " . $conexion->connect_error);
+          return false;
+      }
+      
+      $conexion->set_charset("utf8mb4");
+      
+      // Preparar statement
+      $stmt = $conexion->prepare($sentenciaSQL);
+      if (!$stmt) {
+          error_log("Error preparando consulta: " . $conexion->error);
+          return false;
+      }
+      
+      // Bind parameters si existen
+      if (!empty($params)) {
+          $types = str_repeat('s', count($params)); // Asume que todos son strings
+          $stmt->bind_param($types, ...$params);
+      }
+      
+      $stmt->execute();
+      
+      if (strtolower($tipoSentencia) == "select") {
+          $result = $stmt->get_result();
+          $datos = [];
+          while ($fila = $result->fetch_object()) {
+              $datos[] = $fila;
+          }
+          $stmt->close();
+          return $datos;
+      } else {
+          $success = $stmt->affected_rows > 0;
+          $stmt->close();
+          return $success;
+      }
+  }
 
-// ===== SECCIÓN DE FILTROS DE CAMISETAS POR EQUIPOS =====
+  // ===== SECCIÓN DE FILTROS DE CAMISETAS POR EQUIPOS =====
 
-// 1. REAL MADRID
-$sqlRealMadrid = "
-    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
-           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
-    FROM productos p
-    INNER JOIN generos g ON p.id_genero = g.id_genero
-    INNER JOIN usos u ON p.id_uso = u.id_uso
-    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
-    WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%REAL MADRID%'
-    ORDER BY p.nombre
-";
+  // 1. REAL MADRID
+  $sqlRealMadrid = "
+      SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+            g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+      FROM productos p
+      INNER JOIN generos g ON p.id_genero = g.id_genero
+      INNER JOIN usos u ON p.id_uso = u.id_uso
+      INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+      WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%REAL MADRID%'
+      ORDER BY p.nombre
+  ";
 
-// 2. FC BARCELONA
-$sqlBarcelona = "
-    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
-           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
-    FROM productos p
-    INNER JOIN generos g ON p.id_genero = g.id_genero
-    INNER JOIN usos u ON p.id_uso = u.id_uso
-    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
-    WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%FC BARCELONA%'
-    ORDER BY p.nombre
-";
+  // 2. FC BARCELONA
+  $sqlBarcelona = "
+      SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+            g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+      FROM productos p
+      INNER JOIN generos g ON p.id_genero = g.id_genero
+      INNER JOIN usos u ON p.id_uso = u.id_uso
+      INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+      WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%FC BARCELONA%'
+      ORDER BY p.nombre
+  ";
 
-// 3. ATLÉTICO DE MADRID
-$sqlAtletico = "
-    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
-           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
-    FROM productos p
-    INNER JOIN generos g ON p.id_genero = g.id_genero
-    INNER JOIN usos u ON p.id_uso = u.id_uso
-    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
-    WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%ATLÉTICO DE MADRID%'
-    ORDER BY p.nombre
-";
+  // 3. ATLÉTICO DE MADRID
+  $sqlAtletico = "
+      SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+            g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+      FROM productos p
+      INNER JOIN generos g ON p.id_genero = g.id_genero
+      INNER JOIN usos u ON p.id_uso = u.id_uso
+      INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+      WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%ATLÉTICO DE MADRID%'
+      ORDER BY p.nombre
+  ";
 
-// 4. MANCHESTER CITY
-$sqlCity = "
-    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
-           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
-    FROM productos p
-    INNER JOIN generos g ON p.id_genero = g.id_genero
-    INNER JOIN usos u ON p.id_uso = u.id_uso
-    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
-    WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%MANCHESTER CITY%'
-    ORDER BY p.nombre
-";
+  // 4. MANCHESTER CITY
+  $sqlCity = "
+      SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+            g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+      FROM productos p
+      INNER JOIN generos g ON p.id_genero = g.id_genero
+      INNER JOIN usos u ON p.id_uso = u.id_uso
+      INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+      WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%MANCHESTER CITY%'
+      ORDER BY p.nombre
+  ";
 
-// 5. MANCHESTER UNITED
-$sqlUnited = "
-    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
-           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
-    FROM productos p
-    INNER JOIN generos g ON p.id_genero = g.id_genero
-    INNER JOIN usos u ON p.id_uso = u.id_uso
-    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
-    WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%MANCHESTER UNITED%'
-    ORDER BY p.nombre
-";
+  // 5. MANCHESTER UNITED
+  $sqlUnited = "
+      SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+            g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+      FROM productos p
+      INNER JOIN generos g ON p.id_genero = g.id_genero
+      INNER JOIN usos u ON p.id_uso = u.id_uso
+      INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+      WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%MANCHESTER UNITED%'
+      ORDER BY p.nombre
+  ";
 
-// 6. CHELSEA
-$sqlChelsea = "
-    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
-           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
-    FROM productos p
-    INNER JOIN generos g ON p.id_genero = g.id_genero
-    INNER JOIN usos u ON p.id_uso = u.id_uso
-    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
-    WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%CHELSEA%'
-    ORDER BY p.nombre
-";
+  // 6. CHELSEA
+  $sqlChelsea = "
+      SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+            g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+      FROM productos p
+      INNER JOIN generos g ON p.id_genero = g.id_genero
+      INNER JOIN usos u ON p.id_uso = u.id_uso
+      INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+      WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%CHELSEA%'
+      ORDER BY p.nombre
+  ";
 
-// Ejecutar las consultas
-$camisetasRealMadrid = ejecutarSQL("select", $sqlRealMadrid);
-$camisetasBarcelona = ejecutarSQL("select", $sqlBarcelona);
-$camisetasAtletico = ejecutarSQL("select", $sqlAtletico);
-$camisetasCity = ejecutarSQL("select", $sqlCity);
-$camisetasUnited = ejecutarSQL("select", $sqlUnited);
-$camisetasChelsea = ejecutarSQL("select", $sqlChelsea);
+  // Ejecutar las consultas
+  $camisetasRealMadrid = ejecutarSQL("select", $sqlRealMadrid);
+  $camisetasBarcelona = ejecutarSQL("select", $sqlBarcelona);
+  $camisetasAtletico = ejecutarSQL("select", $sqlAtletico);
+  $camisetasCity = ejecutarSQL("select", $sqlCity);
+  $camisetasUnited = ejecutarSQL("select", $sqlUnited);
+  $camisetasChelsea = ejecutarSQL("select", $sqlChelsea);
 
-// Consulta para traer productos con stock (productos generales)
-$sqlProductos = "
-    SELECT DISTINCT p.id_producto, p.nombre, p.precio, p.imagen_url
-    FROM productos p
-    JOIN producto_tallas pt ON p.id_producto = pt.id_producto
-    WHERE pt.stock > 0
-    ORDER BY p.nombre
-";
+  // Consulta para traer productos con stock (productos generales)
+  $sqlProductos = "
+      SELECT DISTINCT p.id_producto, p.nombre, p.precio, p.imagen_url
+      FROM productos p
+      JOIN producto_tallas pt ON p.id_producto = pt.id_producto
+      WHERE pt.stock > 0
+      ORDER BY p.nombre
+  ";
 
-$productos = ejecutarSQL("select", $sqlProductos);
+  $productos = ejecutarSQL("select", $sqlProductos);
 
 ?>
 <!DOCTYPE html>
@@ -501,24 +501,6 @@ $productos = ejecutarSQL("select", $sqlProductos);
     </ul>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <div class="nav-icons">
   <input type="text" placeholder="Buscar...">
   
@@ -574,18 +556,6 @@ $productos = ejecutarSQL("select", $sqlProductos);
 </svg> Iniciar sesión</span>
 <?php endif; ?>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   </nav>
@@ -1528,19 +1498,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <!-- JAVASCRIPT PARA EL CARRITO -->

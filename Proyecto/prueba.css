@@ -707,7 +707,7 @@ svg[data-slot="icon"] {
     height: 1em !important;
     color: white !important;
     vertical-align: middle !important;
-    display: inline !important;
+    
 }
 
 .search-icon svg {
@@ -730,3 +730,123 @@ svg[data-slot="icon"] {
 
 
 
+
+
+
+/* Dropdown simple sin iconos */
+.user-dropdown-simple {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  
+  /* COMPLETAMENTE OCULTO */
+  display: none !important;
+}
+
+/* Estado visible SOLO con la clase show */
+.user-dropdown-simple.show {
+  display: block !important;
+}
+
+.user-menu-simple {
+  background: white;
+  border: 2px solid #ddd;
+  width: 280px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+/* Flecha apuntando hacia arriba */
+.user-menu-simple::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 30px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border: 2px solid #ddd;
+  border-bottom: none;
+  border-right: none;
+  transform: rotate(45deg);
+}
+
+/* Header */
+.dropdown-header-simple {
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-align: center;
+}
+
+.dropdown-header-simple h4 {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.dropdown-header-simple span {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Contenido */
+.dropdown-content-simple {
+  padding: 20px;
+  background: #f9f9f9;
+}
+
+.info-item-simple {
+  margin-bottom: 15px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.info-item-simple:last-child {
+  margin-bottom: 0;
+}
+
+.label-simple {
+  display: inline;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  margin-right: 8px;
+}
+
+.value-simple {
+  display: inline;
+  font-size: 14px;
+  color: #666;
+  word-break: break-all;
+}
+
+/* Footer */
+.dropdown-footer-simple {
+  padding: 15px 20px;
+  background-color: white;
+  border-top: 1px solid #eee;
+}
+
+.logout-btn-simple {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: #dc3545;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.logout-btn-simple:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+}

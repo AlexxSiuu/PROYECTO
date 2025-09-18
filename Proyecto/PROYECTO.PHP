@@ -545,16 +545,59 @@
       </div>
     </div>
   </div>
-<?php if (isset($_SESSION['nombre']) && isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
-  <span><svg data-slot="icon" fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:1em; height:1em; color:white; vertical-align:middle;">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"></path>
-</svg> <?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
-  <a href="logout.php" style="color:white;">Cerrar sesión</a>
+
+
+
+<!-- ICONO DE USUARIO SIMPLIFICADO -->
+<?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
+  <span id="user-icon" style="cursor:pointer; color:white;">
+    <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24"
+         xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+         style="width:1em; height:1em; color:white; vertical-align:middle;">
+      <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0A18 18 0 0 1 12 21.8c-2.7 0-5.2-.6-7.5-1.7Z" />
+    </svg>
+  </span>
 <?php else: ?>
-  <span id="login-icon" style="cursor:pointer; color:white;"><svg data-slot="icon" fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:1em; height:1em; color:white; vertical-align:middle;">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"></path>
-</svg> Iniciar sesión</span>
+  <span id="login-icon" style="cursor:pointer; color:white;">
+    <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24"
+         xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+         style="width:1em; height:1em; vertical-align:middle;">
+      <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0A18 18 0 0 1 12 21.8c-2.7 0-5.2-.6-7.5-1.7Z" />
+    </svg> Iniciar sesión
+  </span>
 <?php endif; ?>
+
+<!-- DROPDOWN SIMPLE SIN ICONOS -->
+<?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
+<div id="user-dropdown-simple" class="user-dropdown-simple">
+  <div class="user-menu-simple">
+    <div class="dropdown-header-simple">
+      <h4><?php echo isset($_SESSION['nombre']) ? htmlspecialchars($_SESSION['nombre']) : 'Usuario'; ?></h4>
+      <span>Mi Cuenta</span>
+    </div>
+    
+    <div class="dropdown-content-simple">
+      <div class="info-item-simple">
+        <span class="label-simple">Correo:</span>
+        <span class="value-simple"><?php echo isset($_SESSION['correo']) ? htmlspecialchars($_SESSION['correo']) : 'No definido'; ?></span>
+      </div>
+      
+      <div class="info-item-simple">
+        <span class="label-simple">Teléfono:</span>
+        <span class="value-simple"><?php echo isset($_SESSION['telefono']) ? htmlspecialchars($_SESSION['telefono']) : 'No definido'; ?></span>
+      </div>
+    </div>
+    
+    <div class="dropdown-footer-simple">
+      <a href="logout.php" class="logout-btn-simple">Cerrar Sesión</a>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
+
+
 </div>
 
 
@@ -1708,5 +1751,52 @@ document.addEventListener('DOMContentLoaded', function() {
           <p>No hay productos disponibles.</p>
         <?php endif; ?>
   </section>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const userIcon = document.getElementById('user-icon');
+  const dropdown = document.getElementById('user-dropdown-simple');
+  
+  if (userIcon && dropdown) {
+    // ASEGURAR que esté oculto al iniciar
+    dropdown.classList.remove('show');
+    
+    // Mostrar dropdown SOLO al hacer click en el icono
+    userIcon.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Obtener posición del icono
+      const rect = userIcon.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+      
+      // Posicionar el dropdown DEBAJO del icono
+      dropdown.style.position = 'absolute';
+      dropdown.style.top = (rect.bottom + scrollTop + 12) + 'px';
+      dropdown.style.right = '20px'; // Fijo desde la derecha
+      dropdown.style.left = 'auto';
+      dropdown.style.zIndex = '99999';
+      
+      // Toggle mostrar/ocultar
+      dropdown.classList.toggle('show');
+    });
+    
+    // Cerrar al hacer click en cualquier otro lugar
+    document.addEventListener('click', function(e) {
+      if (e.target !== userIcon && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+    
+    // NO cerrar si hago click dentro del dropdown
+    dropdown.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  }
+});
+</script>
+
+
+
 </body>
 </html>

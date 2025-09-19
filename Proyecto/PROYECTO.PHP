@@ -43,6 +43,16 @@
       }
   }
 
+  if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true && isset($_SESSION['id_usuario'])) {
+    $sqlUsuario = "
+        SELECT nombre, correo, telefono, direccion 
+        FROM usuarios 
+        WHERE id_usuario = ?
+    ";
+    $datosUsuario = ejecutarSQL("select", $sqlUsuario, [$_SESSION['id_usuario']]);
+    $usuario = $datosUsuario ? $datosUsuario[0] : null;
+}
+
   // ===== SECCIÓN DE FILTROS DE CAMISETAS POR EQUIPOS =====
 
   // 1. REAL MADRID
@@ -550,53 +560,436 @@
 
 <!-- ICONO DE USUARIO SIMPLIFICADO -->
 <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
-  <span id="user-icon" style="cursor:pointer; color:white;">
-    <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24"
-         xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
-         style="width:1em; height:1em; color:white; vertical-align:middle;">
-      <path stroke-linecap="round" stroke-linejoin="round"
-            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0A18 18 0 0 1 12 21.8c-2.7 0-5.2-.6-7.5-1.7Z" />
-    </svg>
-  </span>
-<?php else: ?>
-  <span id="login-icon" style="cursor:pointer; color:white;">
-    <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24"
-         xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
-         style="width:1em; height:1em; vertical-align:middle;">
-      <path stroke-linecap="round" stroke-linejoin="round"
-            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0A18 18 0 0 1 12 21.8c-2.7 0-5.2-.6-7.5-1.7Z" />
-    </svg> Iniciar sesión
-  </span>
-<?php endif; ?>
+<div class="user-container">
+    <div class="user-icon" id="user-icon">
+        <div class="user-avatar">
+            <?php 
+            $iniciales = '';
+            if (isset($usuario->nombre)) {
+                $nombres = explode(' ', trim($usuario->nombre));
+                $iniciales = strtoupper(substr($nombres[0], 0, 1));
+                if (count($nombres) > 1) {
+                    $iniciales .= strtoupper(substr($nombres[1], 0, 1));
+                }
+            }
+            echo $iniciales;
+            ?>
+        </div>
+        <svg class="dropdown-arrow" fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
+        </svg>
+    </div>
 
-<!-- DROPDOWN SIMPLE SIN ICONOS -->
-<?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
-<div id="user-dropdown-simple" class="user-dropdown-simple">
-  <div class="user-menu-simple">
-    <div class="dropdown-header-simple">
-      <h4><?php echo isset($_SESSION['nombre']) ? htmlspecialchars($_SESSION['nombre']) : 'Usuario'; ?></h4>
-      <span>Mi Cuenta</span>
+    <!-- DROPDOWN ESTILO APPLE -->
+    <div id="user-dropdown-apple" class="user-dropdown-apple">
+        <div class="dropdown-content-apple">
+            <!-- Header con avatar y saludo -->
+            <div class="dropdown-header-apple">
+                <div class="user-avatar-large">
+                    <?php echo $iniciales; ?>
+                </div>
+                <div class="user-greeting">
+                    <h3>Hola, <?php echo isset($usuario->nombre) ? explode(' ', $usuario->nombre)[0] : 'Usuario'; ?></h3>
+                    <p>Miembro de JERSEYKING</p>
+                </div>
+            </div>
+
+            <!-- Información del usuario -->
+            <div class="user-info-section">
+                <div class="info-group">
+                    <div class="info-label">Información Personal</div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0A17.357 17.357 0 0 1 12 21.75c-2.993 0-5.7-.694-8.25-1.89Z" />
+                            </svg>
+                        </div>
+                        <div class="info-text">
+                            <span class="info-title">Nombre completo</span>
+                            <span class="info-value"><?php echo isset($usuario->nombre) ? htmlspecialchars($usuario->nombre) : 'No definido'; ?></span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 21.75 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                            </svg>
+                        </div>
+                        <div class="info-text">
+                            <span class="info-title">Correo electrónico</span>
+                            <span class="info-value"><?php echo isset($usuario->correo) ? htmlspecialchars($usuario->correo) : 'No definido'; ?></span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                            </svg>
+                        </div>
+                        <div class="info-text">
+                            <span class="info-title">Teléfono</span>
+                            <span class="info-value"><?php echo isset($usuario->telefono) ? htmlspecialchars($usuario->telefono) : 'No definido'; ?></span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                            </svg>
+                        </div>
+                        <div class="info-text">
+                            <span class="info-title">Dirección</span>
+                            <span class="info-value"><?php echo isset($usuario->direccion) ? htmlspecialchars($usuario->direccion) : 'No definida'; ?></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón cerrar sesión -->
+            <div class="logout-section">
+                <a href="logout.php" class="logout-btn-apple">
+                    <div class="logout-icon">
+                        <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                        </svg>
+                    </div>
+                    <span>Cerrar sesión</span>
+                </a>
+            </div>
+        </div>
     </div>
-    
-    <div class="dropdown-content-simple">
-      <div class="info-item-simple">
-        <span class="label-simple">Correo:</span>
-        <span class="value-simple"><?php echo isset($_SESSION['correo']) ? htmlspecialchars($_SESSION['correo']) : 'No definido'; ?></span>
-      </div>
-      
-      <div class="info-item-simple">
-        <span class="label-simple">Teléfono:</span>
-        <span class="value-simple"><?php echo isset($_SESSION['telefono']) ? htmlspecialchars($_SESSION['telefono']) : 'No definido'; ?></span>
-      </div>
-    </div>
-    
-    <div class="dropdown-footer-simple">
-      <a href="logout.php" class="logout-btn-simple">Cerrar Sesión</a>
-    </div>
-  </div>
 </div>
+<?php else: ?>
+<!-- Mantén tu icono de login actual aquí -->
+<span id="login-icon" style="cursor:pointer; color:white;">
+    <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:1em; height:1em; vertical-align:middle;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0A18 18 0 0 1 12 21.8c-2.7 0-5.2-.6-7.5-1.7Z" />
+    </svg>
+    Iniciar sesión
+</span>
 <?php endif; ?>
 
+<!-- CSS ESTILO APPLE -->
+<style>
+/* ===== DROPDOWN USUARIO ESTILO APPLE ===== */
+.user-container {
+    position: relative;
+}
+
+.user-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-icon:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.dropdown-arrow {
+    width: 16px;
+    height: 16px;
+    color: white;
+    transition: transform 0.2s ease;
+}
+
+.user-icon.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.user-dropdown-apple {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 420px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.08);
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    overflow: hidden;
+}
+
+.user-dropdown-apple.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.dropdown-content-apple {
+    padding: 0;
+}
+
+.dropdown-header-apple {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.user-avatar-large {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.user-greeting h3 {
+    margin: 0 0 4px 0;
+    color: #1d1d1f;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.user-greeting p {
+    margin: 0;
+    color: #86868b;
+    font-size: 14px;
+}
+
+.user-info-section {
+    padding: 24px;
+}
+
+.info-group .info-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #86868b;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 16px;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-icon {
+    width: 20px;
+    height: 20px;
+    color: #86868b;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.info-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.info-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.info-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: #86868b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 15px;
+    font-weight: 400;
+    color: #1d1d1f;
+    line-height: 1.3;
+}
+
+.quick-actions {
+    padding: 16px 24px;
+    background: rgba(248, 249, 250, 0.5);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.action-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    color: #1d1d1f;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 400;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+}
+
+.action-item:hover {
+    color: #0071e3;
+    background: rgba(0, 113, 227, 0.05);
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.action-icon {
+    width: 18px;
+    height: 18px;
+    color: #86868b;
+}
+
+.action-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.logout-section {
+    padding: 20px 24px;
+}
+
+.logout-btn-apple {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #ff3b30 0%, #ff2d92 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-align: center;
+    justify-content: center;
+}
+
+.logout-btn-apple:hover {
+    background: linear-gradient(135deg, #ff2d20 0%, #ff1d82 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(255, 59, 48, 0.3);
+    color: white;
+}
+
+.logout-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.logout-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .user-dropdown-apple {
+        width: 360px;
+        right: -20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .user-dropdown-apple {
+        width: calc(100vw - 40px);
+        right: -10px;
+    }
+    
+    .dropdown-header-apple {
+        padding: 20px;
+    }
+    
+    .user-info-section {
+        padding: 20px;
+    }
+}
+</style>
+
+<!-- JavaScript mejorado -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const userIcon = document.getElementById('user-icon');
+    const dropdown = document.getElementById('user-dropdown-apple');
+    
+    if (userIcon && dropdown) {
+        // Toggle dropdown
+        userIcon.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Toggle clases
+            userIcon.classList.toggle('active');
+            dropdown.classList.toggle('show');
+        });
+        
+        // Cerrar al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (!userIcon.contains(e.target) && !dropdown.contains(e.target)) {
+                userIcon.classList.remove('active');
+                dropdown.classList.remove('show');
+            }
+        });
+        
+        // Prevenir cierre al hacer click dentro del dropdown
+        dropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Cerrar con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && dropdown.classList.contains('show')) {
+                userIcon.classList.remove('active');
+                dropdown.classList.remove('show');
+            }
+        });
+    }
+});
+</script>
 
 </div>
 
@@ -1795,8 +2188,5 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
-
-
-
 </body>
 </html>

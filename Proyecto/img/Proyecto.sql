@@ -330,7 +330,6 @@ INSERT INTO producto_tallas (id_producto, id_talla, stock) VALUES
 -- Jersey Lakers (ID=35) - Tallas S,M,L,XL,XXL
 (35, 19, 20), (35, 20, 28), (35, 21, 25), (35, 22, 18), (35, 23, 12);
 
--- ===== CAMISETAS DE CLUBES (2025) =====
 
 INSERT INTO productos (nombre, marca, descripcion, precio, imagen_url, id_genero, id_uso, id_deporte) VALUES
 -- === REAL MADRID ===
@@ -389,10 +388,10 @@ INSERT INTO producto_tallas (id_producto, id_talla, stock) VALUES
 -- MANCHESTER UNITED (IDs 48-50)
 (48, 19, 30), (48, 20, 40), (48, 21, 36), (48, 22, 20), (48, 23, 10),
 (49, 19, 28), (49, 20, 36), (49, 21, 32), (49, 22, 18), (49, 23, 8),
-(49, 19, 28), (49, 20, 36), (49, 21, 32), (49, 22, 18), (49, 23, 8),
 (50, 19, 26), (50, 20, 34), (50, 21, 30), (50, 22, 16), (50, 23, 6),
 
 -- CHELSEA (IDs 51-53)
 (51, 19, 28), (51, 20, 36), (51, 21, 32), (51, 22, 18), (51, 23, 8),
 (52, 19, 26), (52, 20, 34), (52, 21, 30), (52, 22, 16), (52, 23, 6),
 (53, 19, 24), (53, 20, 32), (53, 21, 28), (53, 22, 15), (53, 23, 5);
+

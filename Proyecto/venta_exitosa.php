@@ -408,7 +408,6 @@ $detalles = ejecutarSQL("select", $sqlDetalles, [$id_venta]);
     <div class="mensaje-adicional">
         <h4>📧 Información Importante:</h4>
         <p>
-            • Recibirás un correo de confirmación con los detalles de tu pedido<br>
             • El tiempo estimado de entrega es de 3-5 días hábiles<br>
             • Puedes contactarnos si tienes alguna pregunta sobre tu pedido<br>
             • Conserva este número de pedido para futuras referencias: <strong>#<?= str_pad($venta->id_venta, 6, '0', STR_PAD_LEFT) ?></strong>

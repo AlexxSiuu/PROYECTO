@@ -1346,36 +1346,38 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
     <div class="camisetas-grid">
       <?php if ($camisetasRealMadrid && count($camisetasRealMadrid) > 0): ?>
         <?php foreach ($camisetasRealMadrid as $camiseta): ?>
-          <div class="camiseta-card">
-            <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
-            <div class="camiseta-info">
-              <h3 class="camiseta-name"><?= htmlspecialchars($camiseta->nombre) ?></h3>
-              <div class="camiseta-details">
-                <span class="camiseta-marca"><?= htmlspecialchars($camiseta->marca) ?></span>
-                <span><?= htmlspecialchars($camiseta->genero) ?></span>
+          <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
+            <div class="camiseta-card">
+              <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
+              <div class="camiseta-info">
+                <h3 class="camiseta-name"><?= htmlspecialchars($camiseta->nombre) ?></h3>
+                <div class="camiseta-details">
+                  <span class="camiseta-marca"><?= htmlspecialchars($camiseta->marca) ?></span>
+                  <span><?= htmlspecialchars($camiseta->genero) ?></span>
+                </div>
+                <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
+                <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
               </div>
-              <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
-              <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
-              <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="ver-camiseta-btn">Ver Producto</a>
             </div>
-          </div>
+          </a>
         <?php endforeach; ?>
       <?php else: ?>
         <div class="no-productos">
           <p>No hay camisetas del Real Madrid disponibles en este momento.</p>
-        </div>
-      <?php endif; ?>
-    </div>
+          </div>
+        <?php endif; ?>
+      </div>
   </div>
 
   <!-- 2. FC BARCELONA -->
-  <div class="equipo-section barcelona">
-    <div class="equipo-title">
-      <h2>FC Barcelona</h2>
-    </div>
-    <div class="camisetas-grid">
-      <?php if ($camisetasBarcelona && count($camisetasBarcelona) > 0): ?>
-        <?php foreach ($camisetasBarcelona as $camiseta): ?>
+<div class="equipo-section barcelona">
+  <div class="equipo-title">
+    <h2>FC Barcelona</h2>
+  </div>
+  <div class="camisetas-grid">
+    <?php if ($camisetasBarcelona && count($camisetasBarcelona) > 0): ?>
+      <?php foreach ($camisetasBarcelona as $camiseta): ?>
+        <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
           <div class="camiseta-card">
             <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
             <div class="camiseta-info">
@@ -1386,26 +1388,27 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
               </div>
               <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
               <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
-              <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="ver-camiseta-btn">Ver Producto</a>
             </div>
           </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <div class="no-productos">
-          <p>No hay camisetas del FC Barcelona disponibles en este momento.</p>
-        </div>
-      <?php endif; ?>
-    </div>
+        </a>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <div class="no-productos">
+        <p>No hay camisetas del FC Barcelona disponibles en este momento.</p>
+      </div>
+    <?php endif; ?>
   </div>
+</div>
 
-  <!-- 3. ATLÉTICO DE MADRID -->
-  <div class="equipo-section atletico">
-    <div class="equipo-title">
-      <h2>Atlético de Madrid</h2>
-    </div>
-    <div class="camisetas-grid">
-      <?php if ($camisetasAtletico && count($camisetasAtletico) > 0): ?>
-        <?php foreach ($camisetasAtletico as $camiseta): ?>
+<!-- 3. ATLÉTICO DE MADRID -->
+<div class="equipo-section atletico">
+  <div class="equipo-title">
+    <h2>Atlético de Madrid</h2>
+  </div>
+  <div class="camisetas-grid">
+    <?php if ($camisetasAtletico && count($camisetasAtletico) > 0): ?>
+      <?php foreach ($camisetasAtletico as $camiseta): ?>
+        <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
           <div class="camiseta-card">
             <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
             <div class="camiseta-info">
@@ -1416,26 +1419,27 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
               </div>
               <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
               <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
-              <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="ver-camiseta-btn">Ver Producto</a>
             </div>
           </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <div class="no-productos">
-          <p>No hay camisetas del Atlético de Madrid disponibles en este momento.</p>
-        </div>
-      <?php endif; ?>
-    </div>
+        </a>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <div class="no-productos">
+        <p>No hay camisetas del Atlético de Madrid disponibles en este momento.</p>
+      </div>
+    <?php endif; ?>
   </div>
+</div>
 
-  <!-- 4. MANCHESTER CITY -->
-  <div class="equipo-section city">
-    <div class="equipo-title">
-      <h2>Manchester City</h2>
-    </div>
-    <div class="camisetas-grid">
-      <?php if ($camisetasCity && count($camisetasCity) > 0): ?>
-        <?php foreach ($camisetasCity as $camiseta): ?>
+<!-- 4. MANCHESTER CITY -->
+<div class="equipo-section city">
+  <div class="equipo-title">
+    <h2>Manchester City</h2>
+  </div>
+  <div class="camisetas-grid">
+    <?php if ($camisetasCity && count($camisetasCity) > 0): ?>
+      <?php foreach ($camisetasCity as $camiseta): ?>
+        <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
           <div class="camiseta-card">
             <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
             <div class="camiseta-info">
@@ -1446,26 +1450,27 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
               </div>
               <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
               <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
-              <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="ver-camiseta-btn">Ver Producto</a>
             </div>
           </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <div class="no-productos">
-          <p>No hay camisetas del Manchester City disponibles en este momento.</p>
-        </div>
-      <?php endif; ?>
-    </div>
+        </a>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <div class="no-productos">
+        <p>No hay camisetas del Manchester City disponibles en este momento.</p>
+      </div>
+    <?php endif; ?>
   </div>
+</div>
 
-  <!-- 5. MANCHESTER UNITED -->
-  <div class="equipo-section united">
-    <div class="equipo-title">
-      <h2>Manchester United</h2>
-    </div>
-    <div class="camisetas-grid">
-      <?php if ($camisetasUnited && count($camisetasUnited) > 0): ?>
-        <?php foreach ($camisetasUnited as $camiseta): ?>
+<!-- 5. MANCHESTER UNITED -->
+<div class="equipo-section united">
+  <div class="equipo-title">
+    <h2>Manchester United</h2>
+  </div>
+  <div class="camisetas-grid">
+    <?php if ($camisetasUnited && count($camisetasUnited) > 0): ?>
+      <?php foreach ($camisetasUnited as $camiseta): ?>
+        <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
           <div class="camiseta-card">
             <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
             <div class="camiseta-info">
@@ -1476,26 +1481,27 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
               </div>
               <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
               <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
-              <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="ver-camiseta-btn">Ver Producto</a>
             </div>
           </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <div class="no-productos">
-          <p>No hay camisetas del Manchester United disponibles en este momento.</p>
-        </div>
-      <?php endif; ?>
-    </div>
+        </a>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <div class="no-productos">
+        <p>No hay camisetas del Manchester United disponibles en este momento.</p>
+      </div>
+    <?php endif; ?>
   </div>
+</div>
 
-  <!-- 6. CHELSEA -->
-  <div class="equipo-section chelsea">
-    <div class="equipo-title">
-      <h2>Chelsea FC</h2>
-    </div>
-    <div class="camisetas-grid">
-      <?php if ($camisetasChelsea && count($camisetasChelsea) > 0): ?>
-        <?php foreach ($camisetasChelsea as $camiseta): ?>
+<!-- 6. CHELSEA -->
+<div class="equipo-section chelsea">
+  <div class="equipo-title">
+    <h2>Chelsea FC</h2>
+  </div>
+  <div class="camisetas-grid">
+    <?php if ($camisetasChelsea && count($camisetasChelsea) > 0): ?>
+      <?php foreach ($camisetasChelsea as $camiseta): ?>
+        <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
           <div class="camiseta-card">
             <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
             <div class="camiseta-info">
@@ -1506,20 +1512,33 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
               </div>
               <p class="camiseta-descripcion"><?= htmlspecialchars($camiseta->descripcion) ?></p>
               <div class="camiseta-precio">$<?= number_format($camiseta->precio, 2) ?></div>
-              <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="ver-camiseta-btn">Ver Producto</a>
             </div>
           </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <div class="no-productos">
-          <p>No hay camisetas del Chelsea disponibles en este momento.</p>
-        </div>
-      <?php endif; ?>
-    </div>
+        </a>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <div class="no-productos">
+        <p>No hay camisetas del Chelsea disponibles en este momento.</p>
+      </div>
+    <?php endif; ?>
   </div>
-
 </div>
 <style>
+  .camiseta-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.camiseta-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.camiseta-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+} 
 .modal {
   position: fixed;
   top: 0; left: 0;

@@ -54,9 +54,14 @@ try {
             $stmt->close();
             $conexion->close();
             
-            // Redirigir al inicio
-            header("Location: PROYECTO.php");
-            exit;
+           // Redirigir al inicio o al dashboard si es admin
+if ($usuario['correo'] === "admin@tienda.com") { 
+    header("Location: dashboard.php"); 
+} else {
+    header("Location: PROYECTO.php");
+}
+exit;
+
         } else {
             // Contraseña incorrecta
             $stmt->close();

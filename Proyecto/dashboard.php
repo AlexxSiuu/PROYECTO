@@ -865,15 +865,6 @@ $topClientes = ejecutarSQL("select", "
                                 </strong>
                             </div>
                         </div>
-                        
-                        <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: #666;">Stock Promedio</span>
-                                <strong style="color: #6f42c1;">
-                                    <?php echo $totalProductos > 0 ? number_format($stockTotal / $totalProductos, 1) : '0'; ?> un/producto
-                                </strong>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -891,28 +882,6 @@ $topClientes = ejecutarSQL("select", "
                             ⚠️ Revisar Stock Bajo
                         </a>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer con información adicional -->
-        <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 20px; border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); text-align: center; margin-top: 30px;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center;">
-                <div>
-                    <div style="color: #666; font-size: 12px; text-transform: uppercase; margin-bottom: 5px;">Última Actualización</div>
-                    <div style="font-weight: bold; color: #2c3e50;"><?php echo date('d/m/Y H:i:s'); ?></div>
-                </div>
-                <div>
-                    <div style="color: #666; font-size: 12px; text-transform: uppercase; margin-bottom: 5px;">Sistema</div>
-                    <div style="font-weight: bold; color: #2c3e50;">Tienda Deportiva v1.0</div>
-                </div>
-                <div>
-                    <div style="color: #666; font-size: 12px; text-transform: uppercase; margin-bottom: 5px;">Estado del Sistema</div>
-                    <div style="font-weight: bold; color: #28a745;">🟢 En línea</div>
-                </div>
-                <div>
-                    <div style="color: #666; font-size: 12px; text-transform: uppercase; margin-bottom: 5px;">Proyecto Final</div>
-                    <div style="font-weight: bold; color: #667eea;">Técnico en Sistemas</div>
                 </div>
             </div>
         </div>

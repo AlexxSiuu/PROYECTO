@@ -8,7 +8,52 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION
     exit();
 }
 
-// Función para ejecutar consultas
+// Función para detectar categoría (mejorada - igual que en productos)
+function detectarCategoria($nombre, $descripcion = '', $marca = '') {
+    $texto = strtolower($nombre . ' ' . $descripcion . ' ' . $marca);
+    
+    // Calzado - MEJORADO con más patrones específicos
+    if (preg_match('/\b(zapato|tennis|tenis|zapatilla|bota|sandalia|calzado|shoe|shoes)\b/i', $texto) ||
+        preg_match('/\b(air|max|force|jordan|slides|mercurial|vapor|cloudfoam|copa|mundial|stan|smith)\b/i', $texto) ||
+        preg_match('/\b(runner|running|deportivo|futbol|soccer|basketball|skate)\b/i', $texto) ||
+        preg_match('/\b(adidas.*pure|adidas.*copa|adidas.*stan|nike.*air|nike.*jordan|nike.*mercurial)\b/i', $texto) ||
+        preg_match('/\b(puma.*suede|puma.*rs|converse|vans|new.*balance|reebok)\b/i', $texto)) {
+        return 'calzado';
+    }
+    
+    if (preg_match('/\b(camiseta|camisa|polo|playera|blusa|top|jersey|shirt|tee|dri.?fit|pro)\b/i', $texto)) {
+        return 'camisetas';
+    }
+    
+    if (preg_match('/\b(pantalon|short|bermuda|leggin|jogger|pants|tiro|deportivo)\b/i', $texto)) {
+        return 'pantalones';
+    }
+    
+    if (preg_match('/\b(sudadera|hoodie|capucha|buzo|chaqueta|jacket|chamarra)\b/i', $texto)) {
+        return 'sudaderas';
+    }
+    
+    if (preg_match('/\b(gorra|cap|sombrero|balon|pelota|guante|reloj|banda|accesorio|mochila|bolsa|bag)\b/i', $texto)) {
+        return 'accesorios';
+    }
+    
+    return 'general';
+}
+
+// Función para obtener tallas específicas por categoría
+function obtenerTallasEspecificas($categoria) {
+    $tallas_por_categoria = [
+        'calzado' => ['23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33'],
+        'camisetas' => ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+        'pantalones' => ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+        'sudaderas' => ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+        'accesorios' => ['ÚNICA'],
+        'general' => ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+    ];
+    
+    return $tallas_por_categoria[$categoria] ?? $tallas_por_categoria['general'];
+}
+
 function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     global $conexion;
     
@@ -90,32 +135,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($cantidad_agregar > 0) {
             $actualizaciones_exitosas = 0;
             
-            // Obtener todas las tallas
-            $todas_las_tallas = ejecutarSQL("select", "SELECT id_talla FROM tallas ORDER BY talla");
-            
-            foreach ($todas_las_tallas as $talla) {
-                $id_talla = $talla['id_talla'];
+            // Detectar categoría del producto para obtener solo sus tallas específicas
+            $producto_info = ejecutarSQL("select", "SELECT nombre, descripcion, marca FROM productos WHERE id_producto = ?", [$id_producto]);
+            if (!empty($producto_info)) {
+                $producto_data = $producto_info[0];
+                $categoria = detectarCategoria($producto_data['nombre'], $producto_data['descripcion'], $producto_data['marca']);
+                $tallas_especificas = obtenerTallasEspecificas($categoria);
                 
-                // Verificar si ya existe el registro
-                $existe = ejecutarSQL("select", "SELECT stock FROM producto_tallas WHERE id_producto = ? AND id_talla = ?", [$id_producto, $id_talla]);
+                // Obtener IDs de las tallas específicas de esta categoría
+                $tallas_ids = [];
+                foreach ($tallas_especificas as $talla_nombre) {
+                    $talla_info = ejecutarSQL("select", "SELECT id_talla FROM tallas WHERE talla = ?", [$talla_nombre]);
+                    if (!empty($talla_info)) {
+                        $tallas_ids[] = $talla_info[0]['id_talla'];
+                    }
+                }
                 
-                if (!empty($existe)) {
-                    // Actualizar stock existente
-                    $resultado = ejecutarSQL("update", "UPDATE producto_tallas SET stock = stock + ? WHERE id_producto = ? AND id_talla = ?", [$cantidad_agregar, $id_producto, $id_talla]);
+                // Agregar stock solo a las tallas específicas de esta categoría
+                foreach ($tallas_ids as $id_talla) {
+                    // Verificar si ya existe el registro
+                    $existe = ejecutarSQL("select", "SELECT stock FROM producto_tallas WHERE id_producto = ? AND id_talla = ?", [$id_producto, $id_talla]);
+                    
+                    if (!empty($existe)) {
+                        // Actualizar stock existente
+                        $resultado = ejecutarSQL("update", "UPDATE producto_tallas SET stock = stock + ? WHERE id_producto = ? AND id_talla = ?", [$cantidad_agregar, $id_producto, $id_talla]);
+                    } else {
+                        // Insertar nuevo registro
+                        $resultado = ejecutarSQL("insert", "INSERT INTO producto_tallas (id_producto, id_talla, stock) VALUES (?, ?, ?)", [$id_producto, $id_talla, $cantidad_agregar]);
+                    }
+                    
+                    if ($resultado) {
+                        $actualizaciones_exitosas++;
+                    }
+                }
+                
+                if ($actualizaciones_exitosas > 0) {
+                    $mensaje = "Se agregaron $cantidad_agregar unidades a las " . count($tallas_ids) . " tallas específicas de categoría '$categoria' ($actualizaciones_exitosas tallas actualizadas)";
                 } else {
-                    // Insertar nuevo registro
-                    $resultado = ejecutarSQL("insert", "INSERT INTO producto_tallas (id_producto, id_talla, stock) VALUES (?, ?, ?)", [$id_producto, $id_talla, $cantidad_agregar]);
+                    $error = "Error al agregar stock masivo";
                 }
-                
-                if ($resultado) {
-                    $actualizaciones_exitosas++;
-                }
-            }
-            
-            if ($actualizaciones_exitosas > 0) {
-                $mensaje = "Se agregaron $cantidad_agregar unidades a todas las tallas ($actualizaciones_exitosas tallas actualizadas)";
             } else {
-                $error = "Error al agregar stock masivo";
+                $error = "Producto no encontrado";
             }
         } else {
             $error = "Ingresa una cantidad válida para agregar";
@@ -133,8 +193,14 @@ $where_conditions = [];
 $params = [];
 
 if (!empty($filtro_producto)) {
-    $where_conditions[] = "p.id_producto = ?";
-    $params[] = $filtro_producto;
+    // Buscar por ID si es numérico, sino buscar por nombre
+    if (is_numeric($filtro_producto)) {
+        $where_conditions[] = "p.id_producto = ?";
+        $params[] = intval($filtro_producto);
+    } else {
+        $where_conditions[] = "p.nombre LIKE ?";
+        $params[] = "%$filtro_producto%";
+    }
 }
 
 if (!empty($filtro_marca)) {
@@ -144,59 +210,73 @@ if (!empty($filtro_marca)) {
 
 $where_clause = !empty($where_conditions) ? "WHERE " . implode(" AND ", $where_conditions) : "";
 
-// Consulta principal de inventario
+// Consulta mejorada: solo obtener tallas específicas para cada producto según su categoría
 $sql_inventario = "
-    SELECT 
+    SELECT DISTINCT
         p.id_producto,
         p.nombre,
         p.marca,
         p.precio,
         p.imagen_url,
+        p.descripcion,
         g.nombre as genero,
         u.nombre as uso,
-        d.nombre as deporte,
-        t.id_talla,
-        t.talla,
-        COALESCE(pt.stock, 0) as stock
+        d.nombre as deporte
     FROM productos p
     LEFT JOIN generos g ON p.id_genero = g.id_genero
     LEFT JOIN usos u ON p.id_uso = u.id_uso
     LEFT JOIN deportes d ON p.id_deporte = d.id_deporte
-    CROSS JOIN tallas t
-    LEFT JOIN producto_tallas pt ON (p.id_producto = pt.id_producto AND t.id_talla = pt.id_talla)
     $where_clause
-    ORDER BY p.nombre, t.talla
+    ORDER BY p.nombre
 ";
 
-$inventario = ejecutarSQL("select", $sql_inventario, $params);
+$productos_base = ejecutarSQL("select", $sql_inventario, $params);
 
-// Agrupar por producto
+// Agrupar productos con sus tallas específicas
 $productos_agrupados = [];
-foreach ($inventario as $item) {
-    $id_producto = $item['id_producto'];
-    if (!isset($productos_agrupados[$id_producto])) {
-        $productos_agrupados[$id_producto] = [
-            'info' => [
-                'id_producto' => $item['id_producto'],
-                'nombre' => $item['nombre'],
-                'marca' => $item['marca'],
-                'precio' => $item['precio'],
-                'imagen_url' => $item['imagen_url'],
-                'genero' => $item['genero'],
-                'uso' => $item['uso'],
-                'deporte' => $item['deporte']
-            ],
-            'tallas' => [],
-            'stock_total' => 0
-        ];
-    }
+foreach ($productos_base as $producto) {
+    $id_producto = $producto['id_producto'];
     
-    $productos_agrupados[$id_producto]['tallas'][$item['id_talla']] = [
-        'talla' => $item['talla'],
-        'stock' => intval($item['stock'])
+    // Detectar categoría y obtener tallas específicas
+    $categoria = detectarCategoria($producto['nombre'], $producto['descripcion'], $producto['marca']);
+    $tallas_especificas = obtenerTallasEspecificas($categoria);
+    
+    // Inicializar estructura del producto
+    $productos_agrupados[$id_producto] = [
+        'info' => [
+            'id_producto' => $producto['id_producto'],
+            'nombre' => $producto['nombre'],
+            'marca' => $producto['marca'],
+            'precio' => $producto['precio'],
+            'imagen_url' => $producto['imagen_url'],
+            'genero' => $producto['genero'],
+            'uso' => $producto['uso'],
+            'deporte' => $producto['deporte'],
+            'categoria' => $categoria
+        ],
+        'tallas' => [],
+        'stock_total' => 0
     ];
     
-    $productos_agrupados[$id_producto]['stock_total'] += intval($item['stock']);
+    // Obtener stock para cada talla específica de esta categoría
+    foreach ($tallas_especificas as $talla_nombre) {
+        // Obtener ID de la talla
+        $talla_info = ejecutarSQL("select", "SELECT id_talla FROM tallas WHERE talla = ?", [$talla_nombre]);
+        if (!empty($talla_info)) {
+            $id_talla = $talla_info[0]['id_talla'];
+            
+            // Obtener stock actual para esta talla y producto
+            $stock_info = ejecutarSQL("select", "SELECT stock FROM producto_tallas WHERE id_producto = ? AND id_talla = ?", [$id_producto, $id_talla]);
+            $stock_actual = !empty($stock_info) ? intval($stock_info[0]['stock']) : 0;
+            
+            $productos_agrupados[$id_producto]['tallas'][$id_talla] = [
+                'talla' => $talla_nombre,
+                'stock' => $stock_actual
+            ];
+            
+            $productos_agrupados[$id_producto]['stock_total'] += $stock_actual;
+        }
+    }
 }
 
 // Filtrar productos con stock bajo si se solicita
@@ -770,6 +850,11 @@ $tallas = ejecutarSQL("select", "SELECT * FROM tallas ORDER BY talla");
                             <p><strong>Marca:</strong> <?php echo htmlspecialchars($producto['info']['marca']); ?></p>
                             <p><strong>ID:</strong> <?php echo $producto['info']['id_producto']; ?></p>
                             <p><strong>Categoría:</strong> 
+                                <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; text-transform: capitalize;">
+                                    <?php echo $producto['info']['categoria']; ?>
+                                </span>
+                            </p>
+                            <p><strong>Clasificación:</strong> 
                                 <?php echo htmlspecialchars($producto['info']['genero'] ?? 'N/A'); ?> | 
                                 <?php echo htmlspecialchars($producto['info']['uso'] ?? 'N/A'); ?> | 
                                 <?php echo htmlspecialchars($producto['info']['deporte'] ?? 'N/A'); ?>

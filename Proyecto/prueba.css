@@ -850,3 +850,37 @@ svg[data-slot="icon"] {
   background: #c82333;
   transform: translateY(-1px);
 }
+
+
+
+
+
+/* Panel Administrativo */
+
+
+.nav-admin-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;              /* espacio entre icono y texto */
+    padding: 0.4em 0.8em;    /* espacio dentro del “botón” */
+    color: #fff;              /* texto blanco */
+    background: rgba(255, 255, 255, 0.1); /* fondo transparente */
+    border-radius: 8px;       /* bordes redondeados */
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* sombra sutil */
+}
+
+.nav-admin-btn svg {
+    transition: transform 0.2s ease; /* para animación en hover */
+}
+
+.nav-admin-btn:hover {
+    background: rgba(255, 255, 255, 0.2); /* fondo más visible al pasar mouse */
+    color: #fff;
+}
+
+.nav-admin-btn:hover svg {
+    transform: scale(1.2); /* icono crece un poco al hover */
+}

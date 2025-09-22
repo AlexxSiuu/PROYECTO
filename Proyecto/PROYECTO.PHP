@@ -371,6 +371,8 @@
     <ul class="nav-links">
   <li><a href="PROYECTO.php">Inicio</a></li>
 
+
+
 <!-- Equipos en desarrollo no funciona aun--> 
 <li class="dropdown">
   <a href="productos.php?equipos">Niños</a>
@@ -507,6 +509,23 @@
     </div>
   </div>
 </li>
+
+
+
+<!-- Panel Administrativo -->
+
+
+<?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true && $_SESSION['correo'] === 'admin@tienda.com'): ?>
+    <li>
+        <a href="dashboard.php" class="nav-admin-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M0 0h1v15h15v1H0V0zm10 10h1v5h-1v-5zm-4-4h1v9H6V6zm-4 3h1v6H2v-6z"/>
+            </svg>
+            Panel Administrativo
+        </a>
+    </li>
+<?php endif; ?>
+
 
     </ul>
 
@@ -663,6 +682,10 @@
         </div>
     </div>
 </div>
+
+
+
+
 <?php else: ?>
 <!-- Mantén tu icono de login actual aquí -->
 <span id="login-icon" style="cursor:pointer; color:white;">

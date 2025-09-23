@@ -13,73 +13,109 @@ if (!is_dir('images')) {
     mkdir('images', 0755, true);
 }
 
-// Función para detectar categoría automáticamente - MEJORADA
+
+
+
+
+
+// Función para detectar categoría automáticamente - MEJORADA CON DETECCIÓN DE EDAD
 function detectarCategoria($nombre, $descripcion = '', $marca = '') {
     $texto = strtolower($nombre . ' ' . $descripcion . ' ' . $marca);
     
-    // Calzado - MEJORADO con más patrones específicos
-    if (preg_match('/\b(zapato|tennis|tenis|zapatilla|bota|sandalia|calzado|shoe|shoes)\b/i', $texto) ||
+    // Detectar si es específicamente para niños
+    $esNinos = preg_match('/\b(niño|niña|niños|niñas|infantil|kids|junior|child|bebé|bebe|baby)\b/i', $texto);
+    
+    // CALCETINES / MEDIAS
+    if (preg_match('/\b(calcet|calceta|media|medias|sock|stocking)\b/i', $texto)) {
+        return $esNinos ? 'calcetines_ninos' : 'calcetines_adultos';
+    }
+    
+    // CALZADO (con marcas y sinónimos)
+    if (preg_match('/\b(zapato|tenis|tennis|zapatilla|bota|botín|sandalia|sneaker|calzado|shoe|shoes)\b/i', $texto) ||
         preg_match('/\b(air|max|force|jordan|slides|mercurial|vapor|cloudfoam|copa|mundial|stan|smith)\b/i', $texto) ||
-        preg_match('/\b(runner|running|deportivo|futbol|soccer|basketball|skate)\b/i', $texto) ||
-        preg_match('/\b(adidas.*pure|adidas.*copa|adidas.*stan|nike.*air|nike.*jordan|nike.*mercurial)\b/i', $texto) ||
-        preg_match('/\b(puma.*suede|puma.*rs|converse|vans|new.*balance|reebok)\b/i', $texto)) {
-        return 'calzado';
+        preg_match('/\b(runner|running|futbol|soccer|basketball|skate)\b/i', $texto) ||
+        preg_match('/\b(adidas.*(pure|copa|stan)|nike.*(air|jordan|mercurial)|puma.*(suede|rs)|converse|vans|new.*balance|reebok|under.*armour|asics|mizuno|lotto|diadora)\b/i', $texto)) {
+        return $esNinos ? 'calzado_ninos' : 'calzado_adultos';
     }
     
-    // Camisetas/Tops
-    if (preg_match('/\b(camiseta|camisa|polo|playera|blusa|top|jersey|shirt|tee|dri.?fit|pro)\b/i', $texto)) {
-        return 'camisetas';
-    }
-    
-    // Pantalones/Bottoms
-    if (preg_match('/\b(pantalon|short|bermuda|leggin|jogger|pants|tiro|deportivo)\b/i', $texto)) {
-        return 'pantalones';
-    }
-    
-    // Sudaderas/Hoodies
-    if (preg_match('/\b(sudadera|hoodie|capucha|buzo|chaqueta|jacket|chamarra)\b/i', $texto)) {
-        return 'sudaderas';
-    }
-    
-    // Accesorios
-    if (preg_match('/\b(gorra|cap|sombrero|balon|pelota|guante|reloj|banda|accesorio|mochila|bolsa|bag)\b/i', $texto)) {
+    // ACCESORIOS (talla única)
+    if (preg_match('/\b(gorra|cap|sombrero|balon|balón|pelota|ball|guante|reloj|banda|accesorio|mochila|bolsa|bag|cinturón|espinillera|rodillera|muñequera|botella)\b/i', $texto)) {
         return 'accesorios';
     }
     
+    // ROPA
+    if (preg_match('/\b(camiseta|camisa|polo|playera|blusa|top|jersey|shirt|tee|dri.?fit|pro|uniforme|conjunto|ropa ligera)\b/i', $texto)) {
+        return $esNinos ? 'ropa_ninos' : 'ropa_adultos';
+    }
+    
+    if (preg_match('/\b(pantalon|pantalón|short|bermuda|leggin|legging|jogger|pants|tiro)\b/i', $texto)) {
+        return $esNinos ? 'ropa_ninos' : 'ropa_adultos';
+    }
+    
+    if (preg_match('/\b(sudadera|hoodie|capucha|buzo|chaqueta|jacket|chamarra)\b/i', $texto)) {
+        return $esNinos ? 'ropa_ninos' : 'ropa_adultos';
+    }
+    
+    // Fallback
     return 'general';
 }
+
 
 // Función para obtener tallas según categoría detectada
 function obtenerTallasPorCategoria($categoria) {
     $todas_las_tallas = [
-        'calzado' => [
+        // CALZADO
+        'calzado_ninos' => [
             'tallas' => ['23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33'],
-            'descripcion' => 'Tallas numéricas para calzado deportivo'
+            'descripcion' => 'Tallas numéricas para calzado infantil (23-33)'
         ],
-        'camisetas' => [
-            'tallas' => ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-            'descripcion' => 'Tallas estándar para camisetas y tops'
+        'calzado_adultos' => [
+            'tallas' => ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'],
+            'descripcion' => 'Tallas numéricas para calzado de adultos (35-46)'
         ],
-        'pantalones' => [
-            'tallas' => ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-            'descripcion' => 'Tallas estándar para pantalones y shorts'
+        
+        // ROPA
+        'ropa_ninos' => [
+            'tallas' => ['XS', 'S', 'M', 'L', 'XL'],
+            'descripcion' => 'Tallas para ropa infantil (XS-XL)'
         ],
-        'sudaderas' => [
+        'ropa_adultos' => [
             'tallas' => ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
-            'descripcion' => 'Tallas para sudaderas y chaquetas'
+            'descripcion' => 'Tallas para ropa de adultos (XS-XXXL)'
         ],
+        
+        // CALCETINES
+        'calcetines_ninos' => [
+            'tallas' => ['S (23-26)', 'M (27-30)', 'L (31-33)'],
+            'descripcion' => 'Tallas para calcetines infantiles'
+        ],
+        'calcetines_adultos' => [
+            'tallas' => ['S (35-38)', 'M (39-42)', 'L (43-46)'],
+            'descripcion' => 'Tallas para calcetines de adultos'
+        ],
+        
+        // ACCESORIOS
         'accesorios' => [
             'tallas' => ['ÚNICA'],
-            'descripcion' => 'Talla única para accesorios'
+            'descripcion' => 'Talla única para accesorios (gorras, mochilas, balones, etc.)'
         ],
+        
+        // GENERAL -> BLOQUEADO
         'general' => [
-            'tallas' => ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-            'descripcion' => 'Tallas generales por defecto'
+            'tallas' => ['SIN TALLA'],
+            'descripcion' => 'Categoría no reconocida. Revisar manualmente.'
         ]
     ];
     
     return $todas_las_tallas[$categoria] ?? $todas_las_tallas['general'];
 }
+
+
+
+
+
+
+
 
 // Función para crear tallas en BD si no existen
 function crearTallaSiNoExiste($talla) {
@@ -281,6 +317,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Detectar categoría automáticamente
         $categoria = detectarCategoria($nombre, $descripcion, $marca);
         $tallas_categoria = obtenerTallasPorCategoria($categoria);
+// 🚨 Bloqueo si no se reconoce categoría
+if ($categoria === 'general') {
+
+    // Deshabilitar el botón de agregar automáticamente
+    echo '
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const btnAgregar = document.querySelector("button[type=\'submit\']");
+            if(btnAgregar){
+                btnAgregar.disabled = true;
+                btnAgregar.style.backgroundColor = "#ccc";
+                btnAgregar.style.cursor = "not-allowed";
+            }
+        });
+    </script>
+    ';
+
+    // Mostrar mensaje flotante con redirección al cerrar
+    echo '
+    <div style="
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 500px;
+        padding: 20px;
+        border: 2px solid #f44336;
+        background-color: #ffe6e6;
+        color: #b71c1c;
+        border-radius: 10px;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        z-index: 9999;
+    ">
+        <h2 style="margin-bottom: 10px;">❌ Categoría no reconocida</h2>
+        <p style="margin-bottom: 20px;">
+            El sistema no pudo determinar la categoría de este producto.<br>
+            Por favor revisa el nombre, descripción o marca antes de continuar.
+        </p>
+        <button onclick="window.location.href=\'admin_productos.php\';" style="
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        ">
+            Cerrar
+        </button>
+    </div>
+    ';
+
+    // Detener la ejecución para que NO se inserte el producto
+    exit;
+}
+
+
+
         
         $imagen_final = '';
         $mensaje_imagen = '';

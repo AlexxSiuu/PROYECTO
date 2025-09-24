@@ -380,23 +380,23 @@
     <div class="mega-right">
       <div class="column">
         <h4><a href="productos.php?genero=1&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
-        <a href="productos.php?genero=1&uso=2&deporte=2">Zapatillas deportivas</a>
-        <a href="productos.php?genero=1&uso=2&deporte=1">Botines de fútbol</a>
-        <a href="productos.php?genero=1&uso=2&deporte=3">Sandalias</a>
-        <a href="productos.php?genero=1&uso=2&deporte=3">Sneakers de moda</a>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Zapatillas%20deportivas">Zapatillas deportivas</a>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Botines%20de%20fútbol">Botines de fútbol</a>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Sandalias">Sandalias</a>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Sneakers%20de%20moda">Sneakers de moda</a>
       </div>
       <div class="column">
         <h4><a href="productos.php?genero=1&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
-        <a href="productos.php?genero=1&uso=1&deporte=3">Camisetas</a>
-        <a href="productos.php?genero=1&uso=1&deporte=2">Pantalones deportivos</a>
-        <a href="productos.php?genero=1&uso=1&deporte=3">Sudaderas / Hoodies</a>
-        <a href="productos.php?genero=1&uso=1&deporte=2">Shorts</a>
+        <a href="productos.php?genero=1&uso=1&subcategoria=Camisetas">Camisetas</a>
+        <a href="productos.php?genero=1&uso=1&subcategoria=Pantalones%20deportivos">Pantalones deportivos</a>
+        <a href="productos.php?genero=1&uso=1&subcategoria=Sudaderas%20/%20Hoodies">Sudaderas / Hoodies</a>
+        <a href="productos.php?genero=1&uso=1&subcategoria=Shorts">Shorts</a>
       </div>
       <div class="column">
         <h4><a href="productos.php?genero=1&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
-        <a href="productos.php?genero=1&uso=3&deporte=3">Gorras</a>
-        <a href="productos.php?genero=1&uso=3&deporte=3">Mochilas</a>
-        <a href="productos.php?genero=1&uso=3&deporte=3">Calcetines</a>
+        <a href="productos.php?genero=1&uso=3&subcategoria=Gorras">Gorras</a>
+        <a href="productos.php?genero=1&uso=3&subcategoria=Mochilas">Mochilas</a>
+        <a href="productos.php?genero=1&uso=3&subcategoria=Calcetines">Calcetines</a>
       </div>
     </div>
   </div>
@@ -410,22 +410,22 @@
     <div class="mega-right">
       <div class="column">
         <h4><a href="productos.php?genero=2&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
-        <a href="productos.php?genero=2&uso=2&deporte=2">Zapatillas deportivas</a>
-        <a href="productos.php?genero=2&uso=2&deporte=3">Sandalias</a>
-        <a href="productos.php?genero=2&uso=2&deporte=1">Botines deportivos</a>
+        <a href="productos.php?genero=2&uso=2&subcategoria=Zapatillas%20deportivas">Zapatillas deportivas</a>
+        <a href="productos.php?genero=2&uso=2&subcategoria=Sandalias">Sandalias</a>
+        <a href="productos.php?genero=2&uso=2&subcategoria=Botines%20deportivos">Botines deportivos</a>
       </div>
       <div class="column">
         <h4><a href="productos.php?genero=2&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
-        <a href="productos.php?genero=2&uso=1&deporte=3">Tops deportivos</a>
-        <a href="productos.php?genero=2&uso=1&deporte=3">Leggings</a>
-        <a href="productos.php?genero=2&uso=1&deporte=3">Sudaderas</a>
-        <a href="productos.php?genero=2&uso=1&deporte=2">Shorts</a>
+        <a href="productos.php?genero=2&uso=1&subcategoria=Tops%20deportivos">Tops deportivos</a>
+        <a href="productos.php?genero=2&uso=1&subcategoria=Leggings">Leggings</a>
+        <a href="productos.php?genero=2&uso=1&subcategoria=Sudaderas">Sudaderas</a>
+        <a href="productos.php?genero=2&uso=1&subcategoria=Shorts">Shorts</a>
       </div>
       <div class="column">
         <h4><a href="productos.php?genero=2&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
-        <a href="productos.php?genero=2&uso=3&deporte=3">Gorras</a>
-        <a href="productos.php?genero=2&uso=3&deporte=3">Mochilas</a>
-        <a href="productos.php?genero=2&uso=3&deporte=3">Medias</a>
+        <a href="productos.php?genero=2&uso=3&subcategoria=Gorras">Gorras</a>
+        <a href="productos.php?genero=2&uso=3&subcategoria=Mochilas">Mochilas</a>
+        <a href="productos.php?genero=2&uso=3&subcategoria=Medias">Medias</a>
       </div>
     </div>
   </div>
@@ -439,19 +439,19 @@
     <div class="mega-right">
       <div class="column">
         <h4><a href="productos.php?genero=3&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
-        <a href="productos.php?genero=3&uso=2&deporte=1">Botines</a>
-        <a href="productos.php?genero=3&uso=2&deporte=3">Sandalias</a>
+        <a href="productos.php?genero=3&uso=2&subcategoria=Botines">Botines</a>
+        <a href="productos.php?genero=3&uso=2&subcategoria=Sandalias">Sandalias</a>
       </div>
       <div class="column">
         <h4><a href="productos.php?genero=3&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
-        <a href="productos.php?genero=3&uso=1&deporte=3">Camisetas</a>
-        <a href="productos.php?genero=3&uso=1&deporte=2">Conjuntos deportivos</a>
-        <a href="productos.php?genero=3&uso=1&deporte=2">Shorts</a>
+        <a href="productos.php?genero=3&uso=1&subcategoria=Camisetas">Camisetas</a>
+        <a href="productos.php?genero=3&uso=1&subcategoria=Conjuntos%20deportivos">Conjuntos deportivos</a>
+        <a href="productos.php?genero=3&uso=1&subcategoria=Shorts">Shorts</a>
       </div>
       <div class="column">
         <h4><a href="productos.php?genero=3&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
-        <a href="productos.php?genero=3&uso=3&deporte=3">Mochilas</a>
-        <a href="productos.php?genero=3&uso=3&deporte=3">Gorras</a>
+        <a href="productos.php?genero=3&uso=3&subcategoria=Mochilas">Mochilas</a>
+        <a href="productos.php?genero=3&uso=3&subcategoria=Gorras">Gorras</a>
       </div>
     </div>
   </div>
@@ -465,24 +465,25 @@
     <div class="mega-right">
       <div class="column">
         <h4><a href="productos.php?deporte=1" style="color:inherit; text-decoration:none;">Fútbol</a></h4>
-        <a href="productos.php?uso=2&deporte=1">Botines</a>
-        <a href="productos.php?uso=1&deporte=1">Camisetas</a>
-        <a href="productos.php?uso=3&deporte=1">Balones</a>
+        <a href="productos.php?uso=2&deporte=1&subcategoria=Botines">Botines</a>
+        <a href="productos.php?uso=1&deporte=1&subcategoria=Camisetas">Camisetas</a>
+        <a href="productos.php?uso=3&deporte=1&subcategoria=Balones">Balones</a>
       </div>
       <div class="column">
         <h4><a href="productos.php?deporte=2" style="color:inherit; text-decoration:none;">Running</a></h4>
-        <a href="productos.php?uso=2&deporte=2">Zapatillas</a>
-        <a href="productos.php?uso=1&deporte=2">Ropa ligera</a>
+        <a href="productos.php?uso=2&deporte=2&subcategoria=Zapatillas">Zapatillas</a>
+        <a href="productos.php?uso=1&deporte=2&subcategoria=Ropa%20ligera">Ropa ligera</a>
       </div>
       <div class="column">
         <h4><a href="productos.php?deporte=4" style="color:inherit; text-decoration:none;">Básquetbol</a></h4>
-        <a href="productos.php?uso=1&deporte=4">Ropa</a>
-        <a href="productos.php?uso=2&deporte=4">Tenis</a>
-        <a href="productos.php?uso=3&deporte=4">Balones</a>
+        <a href="productos.php?uso=1&deporte=4&subcategoria=Ropa">Ropa</a>
+        <a href="productos.php?uso=2&deporte=4&subcategoria=Tenis">Tenis</a>
+        <a href="productos.php?uso=3&deporte=4&subcategoria=Balones">Balones</a>
       </div>
     </div>
   </div>
 </li>
+
 
 
 

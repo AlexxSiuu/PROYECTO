@@ -15,48 +15,45 @@ if (!is_dir('images')) {
 
 
 
-
-
-
-// Función para detectar categoría automáticamente - MEJORADA CON DETECCIÓN DE EDAD
 function detectarCategoria($nombre, $descripcion = '', $marca = '') {
     $texto = strtolower($nombre . ' ' . $descripcion . ' ' . $marca);
     
-    // Detectar si es específicamente para niños
+    // Detectar niños
     $esNinos = preg_match('/\b(niño|niña|niños|niñas|infantil|kids|junior|child|bebé|bebe|baby)\b/i', $texto);
     
-    // CALCETINES / MEDIAS
-    if (preg_match('/\b(calcet|calceta|media|medias|sock|stocking)\b/i', $texto)) {
-        return $esNinos ? 'calcetines_ninos' : 'calcetines_adultos';
-    }
-    
-    // CALZADO (con marcas y sinónimos)
-    if (preg_match('/\b(zapato|tenis|tennis|zapatilla|bota|botín|sandalia|sneaker|calzado|shoe|shoes)\b/i', $texto) ||
-        preg_match('/\b(air|max|force|jordan|slides|mercurial|vapor|cloudfoam|copa|mundial|stan|smith)\b/i', $texto) ||
-        preg_match('/\b(runner|running|futbol|soccer|basketball|skate)\b/i', $texto) ||
-        preg_match('/\b(adidas.*(pure|copa|stan)|nike.*(air|jordan|mercurial)|puma.*(suede|rs)|converse|vans|new.*balance|reebok|under.*armour|asics|mizuno|lotto|diadora)\b/i', $texto)) {
-        return $esNinos ? 'calzado_ninos' : 'calzado_adultos';
-    }
-    
-    // ACCESORIOS (talla única)
-    if (preg_match('/\b(gorra|cap|sombrero|balon|balón|pelota|ball|guante|reloj|banda|accesorio|mochila|bolsa|bag|cinturón|espinillera|rodillera|muñequera|botella)\b/i', $texto)) {
+    // 1. ACCESORIOS ESPECÍFICOS PRIMERO
+    if (preg_match('/\b(balon|balón|pelota|ball|gorra|mochila|mochilas|gorras)\b/i', $texto) ||
+        preg_match('/\b(guante|muñequera|banda|cinturón|accesorio|accesorios)\b/i', $texto)) {
         return 'accesorios';
     }
     
-    // ROPA
-    if (preg_match('/\b(camiseta|camisa|polo|playera|blusa|top|jersey|shirt|tee|dri.?fit|pro|uniforme|conjunto|ropa ligera)\b/i', $texto)) {
+    // 2. CALCETINES/MEDIAS (están en accesorios en tu menú)
+    if (preg_match('/\b(calcet|calceta|calcetines|media|medias|sock|socks)\b/i', $texto)) {
+        return 'accesorios'; // En tu menú están como accesorios
+    }
+    
+    // 3. CALZADO (mejorado para evitar "tenis" en muñequeras)
+    if (preg_match('/\b(zapatos?|zapatillas?|botas?|botines?|botín|sandalias?|chanclas|sneakers?|calzado)\b/i', $texto) ||
+        preg_match('/\b(air|max|force|jordan|slides|mercurial|vapor|cloudfoam|copa|mundial|stan|smith|predator)\b/i', $texto) ||
+        preg_match('/\b(runner|running|cleats)\b/i', $texto) ||
+        preg_match('/\b(adidas.*(pure|copa|stan|predator|ultraboost)|nike.*(air|jordan|mercurial)|puma.*(suede|rs)|converse|vans|new.*balance|reebok)\b/i', $texto)) {
+        
+        // VERIFICACIÓN: si contiene palabras de accesorios, NO es calzado
+        if (preg_match('/\b(muñequera|banda|gorra|mochila|balon|guante)\b/i', $texto)) {
+            return 'accesorios';
+        }
+        
+        return $esNinos ? 'calzado_ninos' : 'calzado_adultos';
+    }
+    
+    // 4. ROPA (ampliado)
+    if (preg_match('/\b(camiseta|camisetas|camisa|polo|playera|top|tops|jersey|shirt|uniforme|kit.*deportivo)\b/i', $texto) ||
+        preg_match('/\b(pantalon|pantalón|short|shorts|bermuda|leggin|leggings|jogger|pants|conjunto|conjuntos)\b/i', $texto) ||
+        preg_match('/\b(sudadera|sudaderas|hoodie|hoodies|capucha|buzo|chaqueta)\b/i', $texto) ||
+        preg_match('/\b(traje.*baño|ropa.*interior|ropa.*ligera|ropa.*deportiva)\b/i', $texto)) {
         return $esNinos ? 'ropa_ninos' : 'ropa_adultos';
     }
     
-    if (preg_match('/\b(pantalon|pantalón|short|bermuda|leggin|legging|jogger|pants|tiro)\b/i', $texto)) {
-        return $esNinos ? 'ropa_ninos' : 'ropa_adultos';
-    }
-    
-    if (preg_match('/\b(sudadera|hoodie|capucha|buzo|chaqueta|jacket|chamarra)\b/i', $texto)) {
-        return $esNinos ? 'ropa_ninos' : 'ropa_adultos';
-    }
-    
-    // Fallback
     return 'general';
 }
 
@@ -292,19 +289,74 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Obtener datos para los selects
 $generos = ejecutarSQL("select", "SELECT * FROM generos ORDER BY nombre");
 $usos = ejecutarSQL("select", "SELECT * FROM usos ORDER BY nombre");
 $deportes = ejecutarSQL("select", "SELECT * FROM deportes ORDER BY nombre");
 
-// Procesar acciones
+// Subcategorías por género y uso
+$subcategorias = [
+    1 => [ // Hombre
+        2 => ['Zapatillas deportivas','Botines de fútbol','Sandalias','Sneakers de moda'], // Calzado
+        1 => ['Camisetas','Pantalones deportivos','Sudaderas / Hoodies','Shorts'], // Ropa
+        3 => ['Gorras','Mochilas','Calcetines'] // Accesorios
+    ],
+    2 => [ // Mujer
+        2 => ['Zapatillas deportivas','Sandalias','Botines deportivos'],
+        1 => ['Tops deportivos','Leggings','Sudaderas','Shorts'],
+        3 => ['Gorras','Mochilas','Medias']
+    ],
+    3 => [ // Niños
+        2 => ['Botines','Sandalias'],
+        1 => ['Camisetas','Conjuntos deportivos','Shorts'],
+        3 => ['Mochilas','Gorras']
+    ]
+];
+
+// Variables de mensaje
 $mensaje = "";
 $error = "";
-$categoria_detectada = "";
+$categoria_detectada = ''; // Inicializamos la variable
 
+// Procesar POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accion = $_POST['accion'] ?? '';
-    
+
     if ($accion === 'agregar') {
         $nombre = trim($_POST['nombre']);
         $marca = trim($_POST['marca']);
@@ -313,67 +365,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id_genero = intval($_POST['id_genero']);
         $id_uso = intval($_POST['id_uso']);
         $id_deporte = intval($_POST['id_deporte']);
-        
+        $subcategoria = trim($_POST['subcategoria'] ?? '');
+
         // Detectar categoría automáticamente
         $categoria = detectarCategoria($nombre, $descripcion, $marca);
+        $categoria_detectada = $categoria; // ahora tiene valor y evita el warning
+
         $tallas_categoria = obtenerTallasPorCategoria($categoria);
-// 🚨 Bloqueo si no se reconoce categoría
-if ($categoria === 'general') {
 
-    // Deshabilitar el botón de agregar automáticamente
-    echo '
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const btnAgregar = document.querySelector("button[type=\'submit\']");
-            if(btnAgregar){
-                btnAgregar.disabled = true;
-                btnAgregar.style.backgroundColor = "#ccc";
-                btnAgregar.style.cursor = "not-allowed";
-            }
-        });
-    </script>
-    ';
+        if ($categoria === 'general') {
+            echo '<div class="mensaje-flotante error">
+                    <h2>❌ Categoría no reconocida</h2>
+                    <p>Revisa el nombre, descripción o marca antes de continuar.</p>
+                    <button onclick="window.location.href=\'admin_productos.php\';">Cerrar</button>
+                  </div>';
+            exit;
+        }
 
-    // Mostrar mensaje flotante con redirección al cerrar
-    echo '
-    <div style="
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        max-width: 500px;
-        padding: 20px;
-        border: 2px solid #f44336;
-        background-color: #ffe6e6;
-        color: #b71c1c;
-        border-radius: 10px;
-        text-align: center;
-        font-family: Arial, sans-serif;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        z-index: 9999;
-    ">
-        <h2 style="margin-bottom: 10px;">❌ Categoría no reconocida</h2>
-        <p style="margin-bottom: 20px;">
-            El sistema no pudo determinar la categoría de este producto.<br>
-            Por favor revisa el nombre, descripción o marca antes de continuar.
-        </p>
-        <button onclick="window.location.href=\'admin_productos.php\';" style="
-            padding: 10px 20px;
-            background-color: #f44336;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        ">
-            Cerrar
-        </button>
-    </div>
-    ';
+      
+       // Insertar producto
+// Insertar producto
+$sql = "INSERT INTO productos 
+        (nombre, marca, descripcion, precio, id_genero, id_uso, id_deporte, subcategoria) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+ejecutarSQL("insert", $sql, [
+    $nombre, $marca, $descripcion, $precio,
+    $id_genero, $id_uso, $id_deporte, $subcategoria
+]);
 
-    // Detener la ejecución para que NO se inserte el producto
-    exit;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -437,8 +489,9 @@ if ($categoria === 'general') {
                 }
             }
         }
-    }
     
+    $accion = $_POST['accion'] ?? '';
+
     // Resto de acciones (editar, eliminar)
     if ($accion === 'editar') {
         $id_producto = intval($_POST['id_producto']);
@@ -517,6 +570,8 @@ if ($categoria === 'general') {
         $marca = $_POST['marca'] ?? '';
         
         $categoria = detectarCategoria($nombre, $descripcion, $marca);
+        $categoria_detectada = $categoria; // ahora tiene valor y evita el warning
+
         $tallas_categoria = obtenerTallasPorCategoria($categoria);
         
         header('Content-Type: application/json');
@@ -527,7 +582,7 @@ if ($categoria === 'general') {
         ]);
         exit;
     }
-}
+
 
 // Obtener productos con información completa
 $sql_productos = "
@@ -563,6 +618,19 @@ if ($producto_editar) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
+
+<!-- Vincular el CSS -->
+<link rel="stylesheet" href="prueba.css">
+
+<!-- Vincular el JS -->
+<script src="categorias.js" defer></script>
+
+
+
+
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Productos - Admin</title>
@@ -1023,45 +1091,89 @@ if ($producto_editar) {
                                value="<?php echo $producto_editar['precio'] ?? ''; ?>">
                     </div>
                     
-                    <div class="form-group">
-                        <label for="id_genero">Género</label>
-                        <select id="id_genero" name="id_genero" required>
-                            <option value="">Seleccionar género</option>
-                            <?php foreach ($generos as $genero): ?>
-                                <option value="<?php echo $genero['id_genero']; ?>"
-                                    <?php echo ($producto_editar && $producto_editar['id_genero'] == $genero['id_genero']) ? 'selected' : ''; ?>>
-                                    <?php echo $genero['nombre']; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="id_uso">Uso</label>
-                        <select id="id_uso" name="id_uso" required>
-                            <option value="">Seleccionar uso</option>
-                            <?php foreach ($usos as $uso): ?>
-                                <option value="<?php echo $uso['id_uso']; ?>"
-                                    <?php echo ($producto_editar && $producto_editar['id_uso'] == $uso['id_uso']) ? 'selected' : ''; ?>>
-                                    <?php echo $uso['nombre']; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="id_deporte">Deporte</label>
-                        <select id="id_deporte" name="id_deporte" required>
-                            <option value="">Seleccionar deporte</option>
-                            <?php foreach ($deportes as $deporte): ?>
-                                <option value="<?php echo $deporte['id_deporte']; ?>"
-                                    <?php echo ($producto_editar && $producto_editar['id_deporte'] == $deporte['id_deporte']) ? 'selected' : ''; ?>>
-                                    <?php echo $deporte['nombre']; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<form method="POST">
+    <input type="hidden" name="accion" value="agregar">
+
+    <div class="form-group">
+        <label for="id_genero">Género</label>
+        <select id="id_genero" name="id_genero" required>
+            <option value="">Seleccionar género</option>
+            <?php foreach ($generos as $g): ?>
+                <option value="<?= $g['id_genero'] ?>"><?= $g['nombre'] ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="id_uso">Uso</label>
+        <select id="id_uso" name="id_uso" required>
+            <option value="">Seleccionar uso</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="subcategoria">Subcategoría</label>
+        <select id="subcategoria" name="subcategoria" required>
+            <option value="">Seleccionar subcategoría</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="id_deporte">Deporte</label>
+        <select id="id_deporte" name="id_deporte" required>
+            <?php foreach ($deportes as $d): ?>
+                <option value="<?= $d['id_deporte'] ?>"><?= $d['nombre'] ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+
+<!-- Vincular el JS -->
+<script src="categorias.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     <?php if (!$producto_editar): ?>
                     <div class="form-group">
                         <label for="stock_inicial">Stock Inicial (para todas las tallas detectadas)</label>
@@ -1323,5 +1435,10 @@ if ($producto_editar) {
             }
         });
     </script>
+
+
+
+
+
 </body>
 </html>

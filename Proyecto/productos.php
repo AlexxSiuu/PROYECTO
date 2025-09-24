@@ -1,8 +1,6 @@
 <?php
 session_start();
 include('conexion.php');
-
-// Función mejorada con prepared statements
 function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     global $conexion;
     
@@ -20,9 +18,18 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
         return false;
     }
     
-    // Bind parameters si existen
+    // Bind parameters si existen - CORREGIDO PARA STRINGS
     if (!empty($params)) {
-        $types = str_repeat('i', count($params)); // 'i' para enteros
+        $types = '';
+        foreach ($params as $param) {
+            if (is_int($param)) {
+                $types .= 'i';
+            } elseif (is_float($param)) {
+                $types .= 'd';
+            } else {
+                $types .= 's'; // String por defecto
+            }
+        }
         $stmt->bind_param($types, ...$params);
     }
     
@@ -37,11 +44,17 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
         $stmt->close();
         return $datos;
     } else {
-        $success = $stmt->affected_rows > 0;
+        $success = $stmt->affected_rows >= 0; // Cambio: >= 0 en lugar de > 0
         $stmt->close();
         return $success;
     }
 }
+
+
+$productos = [];
+
+
+
 
 // Obtener datos del usuario logueado para el dropdown
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true && isset($_SESSION['id_usuario'])) {
@@ -54,12 +67,35 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true && isset($_SE
     $usuario = $datosUsuario ? $datosUsuario[0] : null;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Obtener y validar filtros desde URL
 $genero = isset($_GET['genero']) ? intval($_GET['genero']) : 0;
 $uso = isset($_GET['uso']) ? intval($_GET['uso']) : 0;
 $deporte = isset($_GET['deporte']) ? intval($_GET['deporte']) : 0;
+$subcategoria = isset($_GET['subcategoria']) ? trim($_GET['subcategoria']) : '';
 
-// revisa que los id existan en la Base de datos
+// Revisar que los id existan en la Base de datos
 $generos_validos = [1, 2, 3]; // Hombre, Mujer, Niños
 $usos_validos = [1, 2, 3];    // Ropa, Calzado, Accesorios  
 $deportes_validos = [1, 2, 3, 4]; // Fútbol, Running, General, Básquetbol
@@ -67,8 +103,7 @@ $deportes_validos = [1, 2, 3, 4]; // Fútbol, Running, General, Básquetbol
 if ($genero > 0 && !in_array($genero, $generos_validos)) $genero = 0;
 if ($uso > 0 && !in_array($uso, $usos_validos)) $uso = 0;
 if ($deporte > 0 && !in_array($deporte, $deportes_validos)) $deporte = 0;
-
-// Construir consulta con placeholders seguros
+// Construir condiciones de consulta
 $where_conditions = ["pt.stock > 0"];
 $params = [];
 
@@ -87,28 +122,82 @@ if ($deporte > 0) {
     $params[] = $deporte;
 }
 
-// Consulta con JOINs para obtener nombres de categorías
-$sql = "SELECT DISTINCT 
-            p.id_producto, 
-            p.nombre, 
-            p.precio, 
-            p.imagen_url,
-            p.marca,
-            g.nombre AS genero_nombre,
-            u.nombre AS uso_nombre,
-            d.nombre AS deporte_nombre
-        FROM productos p
-        JOIN producto_tallas pt ON p.id_producto = pt.id_producto
-        LEFT JOIN generos g ON p.id_genero = g.id_genero
-        LEFT JOIN usos u ON p.id_uso = u.id_uso
-        LEFT JOIN deportes d ON p.id_deporte = d.id_deporte
-        WHERE " . implode(" AND ", $where_conditions) . "
-        ORDER BY p.nombre";
+// FILTRO POR SUBCATEGORÍA - COMPLETO
+if ($subcategoria != '') {
+    // Mapeo de subcategorías del menú a términos de búsqueda
+    $mapeo_terminos = [
+        // ROPA
+        'Camisetas' => 'camiseta',
+        'Pantalones deportivos' => 'pantalón',
+        'Sudaderas / Hoodies' => ['sudadera', 'hoodie'],
+        'Shorts' => 'short',
+        'Tops deportivos' => 'top',
+        'Leggings' => 'legging',
+        'Sudaderas' => 'sudadera',
+        'Conjuntos deportivos' => 'conjunto',
+        'Ropa ligera' => 'ligera',
+        'Ropa' => 'ropa',
+        
+        // CALZADO
+        'Zapatillas deportivas' => 'zapatilla',
+        'Zapatillas' => 'zapatilla',
+        'Botines de fútbol' => 'botin',
+        'Botines' => 'botin',
+        'Botines deportivos' => 'botin',
+        'Sandalias' => 'sandalia',
+        'Sneakers de moda' => 'sneaker',
+        'Tenis' => 'tenis',
+        
+        // ACCESORIOS
+        'Gorras' => 'gorra',
+        'Mochilas' => 'mochila',
+        'Calcetines' => 'calcetín',
+        'Medias' => 'media',
+        'Balones' => 'balon'
+    ];
+    
+    // Obtener términos de búsqueda
+    $terminos = isset($mapeo_terminos[$subcategoria]) ? $mapeo_terminos[$subcategoria] : strtolower($subcategoria);
+    
+    // Convertir a array si es string
+    if (!is_array($terminos)) {
+        $terminos = [$terminos];
+    }
+    
+    // Construir condición OR para múltiples términos
+    $condiciones_busqueda = [];
+    
+    // 1. Buscar por subcategoría exacta
+    $condiciones_busqueda[] = "p.subcategoria = ?";
+    $params[] = $subcategoria;
+    
+    // 2. Buscar por términos en nombre y descripción
+    foreach ($terminos as $termino) {
+        $condiciones_busqueda[] = "LOWER(p.nombre) LIKE ?";
+        $condiciones_busqueda[] = "LOWER(p.descripcion) LIKE ?";
+        $params[] = "%{$termino}%";
+        $params[] = "%{$termino}%";
+    }
+    
+    // Combinar todas las condiciones con OR
+    $where_conditions[] = "(" . implode(" OR ", $condiciones_busqueda) . ")";
+    
+    // DEBUG temporal
+    echo "<div style='background: #e7f3ff; padding: 10px; margin: 10px; border: 1px solid #007bff; border-radius: 5px;'>";
+    echo "<strong>SUBCATEGORÍA:</strong> '{$subcategoria}'<br>";
+    echo "<strong>TÉRMINOS:</strong> " . implode(', ', $terminos) . "<br>";
+    echo "<strong>CONDICIÓN:</strong> " . end($where_conditions) . "<br>";
+    echo "<strong>PARÁMETROS NUEVOS:</strong> " . implode(', ', array_slice($params, -count($condiciones_busqueda))) . "";
+    echo "</div>";
+}
 
-// Ejecutar consulta de forma segura
-$productos = ejecutarSQL("select", $sql, $params);
 
-// Obtener nombres de categorías para el título
+
+
+
+
+
+// Construir título dinámico
 $titulo_partes = [];
 if ($genero > 0) {
     $nombres_generos = [1 => 'Hombre', 2 => 'Mujer', 3 => 'Niños'];
@@ -118,6 +207,9 @@ if ($uso > 0) {
     $nombres_usos = [1 => 'Ropa', 2 => 'Calzado', 3 => 'Accesorios'];
     $titulo_partes[] = $nombres_usos[$uso];
 }
+if ($subcategoria != '') {
+    $titulo_partes[] = $subcategoria; // Agrega subcategoría al título
+}
 if ($deporte > 0) {
     $nombres_deportes = [1 => 'Fútbol', 2 => 'Running', 3 => 'General', 4 => 'Básquetbol'];
     $titulo_partes[] = $nombres_deportes[$deporte];
@@ -125,6 +217,25 @@ if ($deporte > 0) {
 
 $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos los Productos";
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -146,114 +257,119 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
         </div>
         <ul class="nav-links">
             <li><a href="PROYECTO.php">Inicio</a></li>
-            <!-- HOMBRE -->
-            <li class="dropdown">
-                <a href="productos.php?genero=1">Hombre</a>
-                <div class="mega-menu">
-                    <div class="mega-left hombre-img"></div>
-                    <div class="mega-right">
-                        <div class="column">
-                            <h4><a href="productos.php?genero=1&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
-                            <a href="productos.php?genero=1&uso=2&deporte=2">Zapatillas deportivas</a>
-                            <a href="productos.php?genero=1&uso=2&deporte=1">Botines de fútbol</a>
-                            <a href="productos.php?genero=1&uso=2&deporte=3">Sandalias</a>
-                            <a href="productos.php?genero=1&uso=2&deporte=3">Sneakers de moda</a>
-                        </div>
-                        <div class="column">
-                            <h4><a href="productos.php?genero=1&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
-                            <a href="productos.php?genero=1&uso=1&deporte=3">Camisetas</a>
-                            <a href="productos.php?genero=1&uso=1&deporte=2">Pantalones deportivos</a>
-                            <a href="productos.php?genero=1&uso=1&deporte=3">Sudaderas / Hoodies</a>
-                            <a href="productos.php?genero=1&uso=1&deporte=2">Shorts</a>
-                        </div>
-                        <div class="column">
-                            <h4><a href="productos.php?genero=1&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
-                            <a href="productos.php?genero=1&uso=3&deporte=3">Gorras</a>
-                            <a href="productos.php?genero=1&uso=3&deporte=3">Mochilas</a>
-                            <a href="productos.php?genero=1&uso=3&deporte=3">Calcetines</a>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <!-- MUJER -->
-            <li class="dropdown">
-                <a href="productos.php?genero=2">Mujer</a>
-                <div class="mega-menu">
-                    <div class="mega-left mujer-img"></div>
-                    <div class="mega-right">
-                        <div class="column">
-                            <h4><a href="productos.php?genero=2&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
-                            <a href="productos.php?genero=2&uso=2&deporte=2">Zapatillas deportivas</a>
-                            <a href="productos.php?genero=2&uso=2&deporte=3">Sandalias</a>
-                            <a href="productos.php?genero=2&uso=2&deporte=1">Botines deportivos</a>
-                        </div>
-                        <div class="column">
-                            <h4><a href="productos.php?genero=2&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
-                            <a href="productos.php?genero=2&uso=1&deporte=3">Tops deportivos</a>
-                            <a href="productos.php?genero=2&uso=1&deporte=3">Leggings</a>
-                            <a href="productos.php?genero=2&uso=1&deporte=3">Sudaderas</a>
-                            <a href="productos.php?genero=2&uso=1&deporte=2">Shorts</a>
-                        </div>
-                        <div class="column">
-                            <h4><a href="productos.php?genero=2&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
-                            <a href="productos.php?genero=2&uso=3&deporte=3">Gorras</a>
-                            <a href="productos.php?genero=2&uso=3&deporte=3">Mochilas</a>
-                            <a href="productos.php?genero=2&uso=3&deporte=3">Medias</a>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <!-- NIÑOS -->
-            <li class="dropdown">
-                <a href="productos.php?genero=3">Niños</a>
-                <div class="mega-menu">
-                    <div class="mega-left ninos-img"></div>
-                    <div class="mega-right">
-                        <div class="column">
-                            <h4><a href="productos.php?genero=3&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
-                            <a href="productos.php?genero=3&uso=2&deporte=1">Botines</a>
-                            <a href="productos.php?genero=3&uso=2&deporte=3">Sandalias</a>
-                        </div>
-                        <div class="column">
-                            <h4><a href="productos.php?genero=3&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
-                            <a href="productos.php?genero=3&uso=1&deporte=3">Camisetas</a>
-                            <a href="productos.php?genero=3&uso=1&deporte=2">Conjuntos deportivos</a>
-                            <a href="productos.php?genero=3&uso=1&deporte=2">Shorts</a>
-                        </div>
-                        <div class="column">
-                            <h4><a href="productos.php?genero=3&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
-                            <a href="productos.php?genero=3&uso=3&deporte=3">Mochilas</a>
-                            <a href="productos.php?genero=3&uso=3&deporte=3">Gorras</a>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <!-- DEPORTES -->
-            <li class="dropdown">
-                <a href="productos.php">Deportes</a>
-                <div class="mega-menu">
-                    <div class="mega-left deportes-img"></div>
-                    <div class="mega-right">
-                        <div class="column">
-                            <h4><a href="productos.php?deporte=1" style="color:inherit; text-decoration:none;">Fútbol</a></h4>
-                            <a href="productos.php?uso=2&deporte=1">Botines</a>
-                            <a href="productos.php?uso=1&deporte=1">Camisetas</a>
-                            <a href="productos.php?uso=3&deporte=1">Balones</a>
-                        </div>
-                        <div class="column">
-                            <h4><a href="productos.php?deporte=2" style="color:inherit; text-decoration:none;">Running</a></h4>
-                            <a href="productos.php?uso=2&deporte=2">Zapatillas</a>
-                            <a href="productos.php?uso=1&deporte=2">Ropa ligera</a>
-                        </div>
-                        <div class="column">
-                            <h4><a href="productos.php?deporte=4" style="color:inherit; text-decoration:none;">Básquetbol</a></h4>
-                            <a href="productos.php?uso=1&deporte=4">Ropa</a>
-                            <a href="productos.php?uso=2&deporte=4">Tenis</a>
-                            <a href="productos.php?uso=3&deporte=4">Balones</a>
-                        </div>
-                    </div>
-                </div>
-            </li>
+<!-- HOMBRE -->
+<li class="dropdown">
+  <a href="productos.php?genero=1">Hombre</a>
+  <div class="mega-menu">
+    <div class="mega-left hombre-img"></div>
+    <div class="mega-right">
+      <div class="column">
+        <h4><a href="productos.php?genero=1&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Zapatillas%20deportivas">Zapatillas deportivas</a>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Botines%20de%20fútbol">Botines de fútbol</a>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Sandalias">Sandalias</a>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Sneakers%20de%20moda">Sneakers de moda</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=1&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
+        <a href="productos.php?genero=1&uso=1&subcategoria=Camisetas">Camisetas</a>
+        <a href="productos.php?genero=1&uso=1&subcategoria=Pantalones%20deportivos">Pantalones deportivos</a>
+        <a href="productos.php?genero=1&uso=1&subcategoria=Sudaderas%20/%20Hoodies">Sudaderas / Hoodies</a>
+        <a href="productos.php?genero=1&uso=1&subcategoria=Shorts">Shorts</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=1&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
+        <a href="productos.php?genero=1&uso=3&subcategoria=Gorras">Gorras</a>
+        <a href="productos.php?genero=1&uso=3&subcategoria=Mochilas">Mochilas</a>
+        <a href="productos.php?genero=1&uso=3&subcategoria=Calcetines">Calcetines</a>
+      </div>
+    </div>
+  </div>
+</li>
+
+<!-- MUJER -->
+<li class="dropdown">
+  <a href="productos.php?genero=2">Mujer</a>
+  <div class="mega-menu">
+    <div class="mega-left mujer-img"></div>
+    <div class="mega-right">
+      <div class="column">
+        <h4><a href="productos.php?genero=2&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
+        <a href="productos.php?genero=2&uso=2&subcategoria=Zapatillas%20deportivas">Zapatillas deportivas</a>
+        <a href="productos.php?genero=2&uso=2&subcategoria=Sandalias">Sandalias</a>
+        <a href="productos.php?genero=2&uso=2&subcategoria=Botines%20deportivos">Botines deportivos</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=2&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
+        <a href="productos.php?genero=2&uso=1&subcategoria=Tops%20deportivos">Tops deportivos</a>
+        <a href="productos.php?genero=2&uso=1&subcategoria=Leggings">Leggings</a>
+        <a href="productos.php?genero=2&uso=1&subcategoria=Sudaderas">Sudaderas</a>
+        <a href="productos.php?genero=2&uso=1&subcategoria=Shorts">Shorts</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=2&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
+        <a href="productos.php?genero=2&uso=3&subcategoria=Gorras">Gorras</a>
+        <a href="productos.php?genero=2&uso=3&subcategoria=Mochilas">Mochilas</a>
+        <a href="productos.php?genero=2&uso=3&subcategoria=Medias">Medias</a>
+      </div>
+    </div>
+  </div>
+</li>
+
+<!-- NIÑOS -->
+<li class="dropdown">
+  <a href="productos.php?genero=3">Niños</a>
+  <div class="mega-menu">
+    <div class="mega-left ninos-img"></div>
+    <div class="mega-right">
+      <div class="column">
+        <h4><a href="productos.php?genero=3&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
+        <a href="productos.php?genero=3&uso=2&subcategoria=Botines">Botines</a>
+        <a href="productos.php?genero=3&uso=2&subcategoria=Sandalias">Sandalias</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=3&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
+        <a href="productos.php?genero=3&uso=1&subcategoria=Camisetas">Camisetas</a>
+        <a href="productos.php?genero=3&uso=1&subcategoria=Conjuntos%20deportivos">Conjuntos deportivos</a>
+        <a href="productos.php?genero=3&uso=1&subcategoria=Shorts">Shorts</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=3&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
+        <a href="productos.php?genero=3&uso=3&subcategoria=Mochilas">Mochilas</a>
+        <a href="productos.php?genero=3&uso=3&subcategoria=Gorras">Gorras</a>
+      </div>
+    </div>
+  </div>
+</li>
+
+<!-- DEPORTES -->
+<li class="dropdown">
+  <a href="productos.php">Deportes</a>
+  <div class="mega-menu">
+    <div class="mega-left deportes-img"></div>
+    <div class="mega-right">
+      <div class="column">
+        <h4><a href="productos.php?deporte=1" style="color:inherit; text-decoration:none;">Fútbol</a></h4>
+        <a href="productos.php?uso=2&deporte=1&subcategoria=Botines">Botines</a>
+        <a href="productos.php?uso=1&deporte=1&subcategoria=Camisetas">Camisetas</a>
+        <a href="productos.php?uso=3&deporte=1&subcategoria=Balones">Balones</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?deporte=2" style="color:inherit; text-decoration:none;">Running</a></h4>
+        <a href="productos.php?uso=2&deporte=2&subcategoria=Zapatillas">Zapatillas</a>
+        <a href="productos.php?uso=1&deporte=2&subcategoria=Ropa%20ligera">Ropa ligera</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?deporte=4" style="color:inherit; text-decoration:none;">Básquetbol</a></h4>
+        <a href="productos.php?uso=1&deporte=4&subcategoria=Ropa">Ropa</a>
+        <a href="productos.php?uso=2&deporte=4&subcategoria=Tenis">Tenis</a>
+        <a href="productos.php?uso=3&deporte=4&subcategoria=Balones">Balones</a>
+      </div>
+    </div>
+  </div>
+</li>
+
+
         </ul>
         
         <div class="nav-icons">

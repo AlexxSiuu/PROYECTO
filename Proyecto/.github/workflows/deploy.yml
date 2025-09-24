@@ -1,0 +1,34 @@
+name: Deploy to InfinityFree
+
+# Se ejecuta cada vez que hagas push a main
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Descargar el código del repositorio
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    # Subir archivos via FTP a InfinityFree
+    - name: Deploy via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./
+        server-dir: /htdocs/
+        port: 21
+        protocol: ftp
+        exclude: |
+          */.git
+          */.git/**
+          */node_modules/*
+          .github/
+          README.md
+          .gitignore

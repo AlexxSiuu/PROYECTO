@@ -927,6 +927,7 @@ if ($producto_editar) {
         <div class="header">
             <h1>Gestión de Productos</h1>
             <div class="nav-links">
+                    <a href="PROYECTO.php">🏠 Tienda</a>
                 <a href="dashboard.php">Dashboard</a>
                 <a href="admin_inventario.php">Inventario</a>
                 <a href="logout.php">Cerrar Sesión</a>

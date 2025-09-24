@@ -561,9 +561,135 @@ $topClientes = ejecutarSQL("select", "
             margin-bottom: 10px;
             color: #999;
         }
+
+
+
+
+
+
+
+/* Notificaciones flotantes */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.notification {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 15px 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border-left: 4px solid;
+    max-width: 350px;
+    animation: slideInRight 0.3s ease;
+    pointer-events: all;
+    cursor: pointer;
+}
+
+.notification.warning {
+    border-left-color: #ff6b35;
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 255, 255, 0.95) 100%);
+}
+
+.notification.success {
+    border-left-color: #28a745;
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(255, 255, 255, 0.95) 100%);
+}
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.notification-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-body {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.4;
+}
+
+.notification-action {
+    margin-top: 10px;
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.notification-action:hover {
+    background: #5a67d8;
+    transform: translateY(-1px);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification.hiding {
+    animation: slideOutRight 0.3s ease forwards;
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+
+
+
+
+
     </style>
 </head>
 <body>
+
+    <div class="notification-container" id="notificationContainer"></div>
     <div class="container">
         <div class="header">
             <div>
@@ -931,22 +1057,108 @@ $topClientes = ejecutarSQL("select", "
             });
         });
 
-        // Mostrar alertas si hay productos sin stock
-        <?php if ($productosSinStock > 0): ?>
-        setTimeout(function() {
-            if (confirm('⚠️ Tienes <?php echo $productosSinStock; ?> producto(s) sin stock. ¿Quieres revisar el inventario ahora?')) {
-                window.location.href = 'admin_inventario.php?stock_bajo=1';
-            }
-        }, 2000);
-        <?php endif; ?>
 
-        // Función para refrescar datos cada 5 minutos
-        setInterval(function() {
-            // Solo refrescar si la página está visible
-            if (!document.hidden) {
-                location.reload();
-            }
-        }, 300000); // 5 minutos
+
+
+
+
+
+
+
+
+
+
+// Función para crear notificaciones
+function mostrarNotificacion(tipo, titulo, mensaje, accion = null) {
+    const container = document.getElementById('notificationContainer');
+    
+    const notification = document.createElement('div');
+    notification.className = `notification ${tipo}`;
+    
+    notification.innerHTML = `
+        <div class="notification-header">
+            <span class="notification-title">${titulo}</span>
+            <button class="notification-close" onclick="cerrarNotificacion(this)">×</button>
+        </div>
+        <div class="notification-body">
+            ${mensaje}
+            ${accion ? `<a href="${accion.url}" class="notification-action">${accion.texto}</a>` : ''}
+        </div>
+    `;
+    
+    container.appendChild(notification);
+    
+    // Auto-cerrar después de 8 segundos
+    setTimeout(() => {
+        cerrarNotificacion(notification.querySelector('.notification-close'));
+    }, 8000);
+}
+
+function cerrarNotificacion(button) {
+    const notification = button.closest('.notification');
+    notification.classList.add('hiding');
+    setTimeout(() => {
+        notification.remove();
+    }, 300);
+}
+
+// REEMPLAZAR ESTA SECCIÓN (eliminar el código viejo y usar este):
+// Mostrar alertas si hay productos sin stock
+<?php if ($productosSinStock > 0): ?>
+setTimeout(function() {
+    mostrarNotificacion(
+        'warning',
+        '⚠️ Alerta de Inventario',
+        'Tienes <?php echo $productosSinStock; ?> producto(s) sin stock que requieren atención inmediata.',
+        {
+            url: 'admin_inventario.php?stock_bajo=1',
+            texto: 'Revisar Inventario'
+        }
+    );
+}, 2000);
+<?php endif; ?>
+
+<?php if ($productosStockBajo > 0 && $productosSinStock == 0): ?>
+setTimeout(function() {
+    mostrarNotificacion(
+        'warning',
+        '📦 Stock Bajo',
+        'Hay <?php echo $productosStockBajo; ?> producto(s) con stock bajo (≤10 unidades).',
+        {
+            url: 'admin_inventario.php?stock_bajo=1',
+            texto: 'Ver Detalles'
+        }
+    );
+}, 3000);
+<?php endif; ?>
+
+// El resto del JavaScript permanece igual...
+// Función para refrescar datos cada 5 minutos
+setInterval(function() {
+    if (!document.hidden) {
+        location.reload();
+    }
+}, 300000);
+
+// Resto del código JavaScript existente...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Guardar estado de scroll al refrescar
         window.addEventListener('beforeunload', function() {

@@ -433,7 +433,7 @@
 
 <!-- NIÑOS -->
 <li class="dropdown">
-  <a href="productos.php?genero=3">Niños</a>
+  <a href="productos.php?genero=3">Ninos</a>
   <div class="mega-menu">
     <div class="mega-left ninos-img"></div>
     <div class="mega-right">

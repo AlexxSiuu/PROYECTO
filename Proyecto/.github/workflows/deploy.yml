@@ -1,34 +1,88 @@
-name: Deploy to InfinityFree
+// deploy.js - Script Node.js para deploy automático
+// npm install ftp-deploy git-diff
 
-# Se ejecuta cada vez que hagas push a main
-on:
-  push:
-    branches: [ main ]
+const FtpDeploy = require('ftp-deploy');
+const { execSync } = require('child_process');
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+// Configuración
+const config = {
+    user: "tu_usuario_ftp",
+    password: "tu_contraseña_ftp", 
+    host: "ftpupload.net", // Tu servidor FTP de InfinityFree
+    port: 21,
+    localRoot: __dirname,
+    remoteRoot: "/htdocs/",
+    include: ["", "/"],
+    exclude: [
+        "node_modules/**",
+        ".git/**",
+        ".github/**",
+        "*.md",
+        "deploy.js",
+        "package*.json"
+    ],
+    deleteRemote: false,
+    forcePasv: true
+};
+
+async function deployToInfinityFree() {
+    console.log("🚀 Iniciando deploy...");
     
-    steps:
-    # Descargar el código del repositorio
-    - name: Checkout code
-      uses: actions/checkout@v3
+    try {
+        // Verificar si hay cambios
+        const status = execSync('git status --porcelain', { encoding: 'utf8' });
+        if (status.trim() === '') {
+            console.log("📝 Haciendo git pull para obtener últimos cambios...");
+            execSync('git pull origin main');
+        }
+        
+        // Deploy via FTP
+        const ftpDeploy = new FtpDeploy();
+        
+        ftpDeploy.on('uploading', function(data) {
+            console.log(📤 Subiendo: ${data.filename});
+        });
+        
+        ftpDeploy.on('uploaded', function(data) {
+            console.log(✅ Subido: ${data.filename});
+        });
+        
+        await ftpDeploy.deploy(config);
+        console.log("🎉 Deploy completado exitosamente!");
+        
+    } catch (err) {
+        console.error("❌ Error en deploy:", err.message);
+    }
+}
+
+// Función para watch de archivos (opcional)
+function watchAndDeploy() {
+    const fs = require('fs');
+    const path = require('path');
     
-    # Subir archivos via FTP a InfinityFree
-    - name: Deploy via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./
-        server-dir: /htdocs/
-        port: 21
-        protocol: ftp
-        exclude: |
-          */.git*
-          **/.git/**
-          **/node_modules/**
-          .github/
-          README.md
-          .gitignore
+    console.log("👀 Monitoreando cambios en archivos...");
+    
+    fs.watch(__dirname, { recursive: true }, (eventType, filename) => {
+        if (filename && !filename.includes('node_modules') && !filename.includes('.git')) {
+            console.log(📝 Archivo modificado: ${filename});
+            console.log("⏳ Deploy en 3 segundos...");
+            
+            setTimeout(() => {
+                deployToInfinityFree();
+            }, 3000);
+        }
+    });
+}
+
+// Ejecutar según argumento
+const command = process.argv[2];
+
+if (command === 'watch') {
+    watchAndDeploy();
+} else {
+    deployToInfinityFree();
+}
+
+// Uso:
+// node deploy.js          -> Deploy una vez
+// node deploy.js watch    -> Monitorea cambios y deploy automático

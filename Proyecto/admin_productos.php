@@ -13,8 +13,6 @@ if (!is_dir('images')) {
     mkdir('images', 0755, true);
 }
 
-
-
 function detectarCategoria($nombre, $descripcion = '', $marca = '') {
     $texto = strtolower($nombre . ' ' . $descripcion . ' ' . $marca);
     
@@ -56,7 +54,6 @@ function detectarCategoria($nombre, $descripcion = '', $marca = '') {
     
     return 'general';
 }
-
 
 // Función para obtener tallas según categoría detectada
 function obtenerTallasPorCategoria($categoria) {
@@ -106,13 +103,6 @@ function obtenerTallasPorCategoria($categoria) {
     
     return $todas_las_tallas[$categoria] ?? $todas_las_tallas['general'];
 }
-
-
-
-
-
-
-
 
 // Función para crear tallas en BD si no existen
 function crearTallaSiNoExiste($talla) {
@@ -289,41 +279,6 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Obtener datos para los selects
 $generos = ejecutarSQL("select", "SELECT * FROM generos ORDER BY nombre");
 $usos = ejecutarSQL("select", "SELECT * FROM usos ORDER BY nombre");
@@ -351,7 +306,7 @@ $subcategorias = [
 // Variables de mensaje
 $mensaje = "";
 $error = "";
-$categoria_detectada = ''; // Inicializamos la variable
+$categoria_detectada = '';
 
 // Procesar POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -369,67 +324,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Detectar categoría automáticamente
         $categoria = detectarCategoria($nombre, $descripcion, $marca);
-        $categoria_detectada = $categoria; // ahora tiene valor y evita el warning
+        $categoria_detectada = $categoria;
 
         $tallas_categoria = obtenerTallasPorCategoria($categoria);
 
         if ($categoria === 'general') {
             echo '<div class="mensaje-flotante error">
-                    <h2>❌ Categoría no reconocida</h2>
+                    <h2>⚠ Categoría no reconocida</h2>
                     <p>Revisa el nombre, descripción o marca antes de continuar.</p>
                     <button onclick="window.location.href=\'admin_productos.php\';">Cerrar</button>
                   </div>';
             exit;
         }
 
-      
-       // Insertar producto
-// Insertar producto
-$sql = "INSERT INTO productos 
-        (nombre, marca, descripcion, precio, id_genero, id_uso, id_deporte, subcategoria) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-ejecutarSQL("insert", $sql, [
-    $nombre, $marca, $descripcion, $precio,
-    $id_genero, $id_uso, $id_deporte, $subcategoria
-]);
-
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
         $imagen_final = '';
         $mensaje_imagen = '';
         
@@ -449,8 +356,8 @@ ejecutarSQL("insert", $sql, [
         
         if (empty($error)) {
             if (!empty($nombre) && !empty($marca) && $precio > 0) {
-                $sql = "INSERT INTO productos (nombre, marca, descripcion, precio, imagen_url, id_genero, id_uso, id_deporte) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                $resultado = ejecutarSQL("insert", $sql, [$nombre, $marca, $descripcion, $precio, $imagen_final, $id_genero, $id_uso, $id_deporte]);
+                $sql = "INSERT INTO productos (nombre, marca, descripcion, precio, imagen_url, id_genero, id_uso, id_deporte, subcategoria) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $resultado = ejecutarSQL("insert", $sql, [$nombre, $marca, $descripcion, $precio, $imagen_final, $id_genero, $id_uso, $id_deporte, $subcategoria]);
                 
                 if ($resultado) {
                     $id_producto = $conexion->insert_id;
@@ -489,10 +396,8 @@ ejecutarSQL("insert", $sql, [
                 }
             }
         }
-    
-    $accion = $_POST['accion'] ?? '';
+    }
 
-    // Resto de acciones (editar, eliminar)
     if ($accion === 'editar') {
         $id_producto = intval($_POST['id_producto']);
         $nombre = trim($_POST['nombre']);
@@ -502,6 +407,7 @@ ejecutarSQL("insert", $sql, [
         $id_genero = intval($_POST['id_genero']);
         $id_uso = intval($_POST['id_uso']);
         $id_deporte = intval($_POST['id_deporte']);
+        $subcategoria = trim($_POST['subcategoria'] ?? '');
         
         $producto_actual = ejecutarSQL("select", "SELECT imagen_url FROM productos WHERE id_producto = ?", [$id_producto]);
         $imagen_actual = $producto_actual[0]['imagen_url'] ?? '';
@@ -526,8 +432,8 @@ ejecutarSQL("insert", $sql, [
         }
         
         if (empty($error)) {
-            $sql = "UPDATE productos SET nombre=?, marca=?, descripcion=?, precio=?, imagen_url=?, id_genero=?, id_uso=?, id_deporte=? WHERE id_producto=?";
-            $resultado = ejecutarSQL("update", $sql, [$nombre, $marca, $descripcion, $precio, $imagen_final, $id_genero, $id_uso, $id_deporte, $id_producto]);
+            $sql = "UPDATE productos SET nombre=?, marca=?, descripcion=?, precio=?, imagen_url=?, id_genero=?, id_uso=?, id_deporte=?, subcategoria=? WHERE id_producto=?";
+            $resultado = ejecutarSQL("update", $sql, [$nombre, $marca, $descripcion, $precio, $imagen_final, $id_genero, $id_uso, $id_deporte, $subcategoria, $id_producto]);
             
             if ($resultado) {
                 if (!empty($imagen_eliminada) && file_exists($imagen_eliminada) && strpos($imagen_eliminada, 'images/') === 0) {
@@ -570,7 +476,7 @@ ejecutarSQL("insert", $sql, [
         $marca = $_POST['marca'] ?? '';
         
         $categoria = detectarCategoria($nombre, $descripcion, $marca);
-        $categoria_detectada = $categoria; // ahora tiene valor y evita el warning
+        $categoria_detectada = $categoria;
 
         $tallas_categoria = obtenerTallasPorCategoria($categoria);
         
@@ -582,7 +488,7 @@ ejecutarSQL("insert", $sql, [
         ]);
         exit;
     }
-
+}
 
 // Obtener productos con información completa
 $sql_productos = "
@@ -618,22 +524,16 @@ if ($producto_editar) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Vincular el CSS -->
+    <link rel="stylesheet" href="prueba.css">
 
-
-<!-- Vincular el CSS -->
-<link rel="stylesheet" href="prueba.css">
-
-<!-- Vincular el JS -->
-<script src="categorias.js" defer></script>
-
-
-
-
-
+    <!-- Vincular el JS -->
+    <script src="categorias.js" defer></script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Productos - Admin</title>
+    
     <style>
         * {
             margin: 0;
@@ -745,7 +645,7 @@ if ($producto_editar) {
             -webkit-text-fill-color: transparent;
         }
         
-        /* SECCIÓN DE CATEGORÍA AUTOMÁTICA */
+        /* SECCIÃ“N DE CATEGORÃA AUTOMÃTICA */
         .categoria-preview {
             background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
             border: 2px dashed #667eea;
@@ -1090,89 +990,54 @@ if ($producto_editar) {
                         <input type="number" id="precio" name="precio" step="0.01" min="0" required 
                                value="<?php echo $producto_editar['precio'] ?? ''; ?>">
                     </div>
-                    
 
+                    <div class="form-group">
+                        <label for="id_genero">Género *</label>
+                        <select id="id_genero" name="id_genero" required>
+                            <option value="">Seleccionar género</option>
+                            <?php foreach ($generos as $g): ?>
+                                <option value="<?= $g['id_genero'] ?>" <?= ($producto_editar && $producto_editar['id_genero'] == $g['id_genero']) ? 'selected' : '' ?>>
+                                    <?= $g['nombre'] ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
+                    <div class="form-group">
+                        <label for="id_uso">Uso *</label>
+                        <select id="id_uso" name="id_uso" required>
+                            <option value="">Seleccionar uso</option>
+                            <?php foreach ($usos as $u): ?>
+                                <option value="<?= $u['id_uso'] ?>" <?= ($producto_editar && $producto_editar['id_uso'] == $u['id_uso']) ? 'selected' : '' ?>>
+                                    <?= $u['nombre'] ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
+                    <div class="form-group">
+                        <label for="subcategoria">Subcategoría *</label>
+                        <select id="subcategoria" name="subcategoria" required>
+                            <option value="">Seleccionar subcategoría</option>
+                            <?php if ($producto_editar && $producto_editar['subcategoria']): ?>
+                                <option value="<?= htmlspecialchars($producto_editar['subcategoria']) ?>" selected>
+                                    <?= htmlspecialchars($producto_editar['subcategoria']) ?>
+                                </option>
+                            <?php endif; ?>
+                        </select>
+                    </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<form method="POST">
-    <input type="hidden" name="accion" value="agregar">
-
-    <div class="form-group">
-        <label for="id_genero">Género</label>
-        <select id="id_genero" name="id_genero" required>
-            <option value="">Seleccionar género</option>
-            <?php foreach ($generos as $g): ?>
-                <option value="<?= $g['id_genero'] ?>"><?= $g['nombre'] ?></option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="id_uso">Uso</label>
-        <select id="id_uso" name="id_uso" required>
-            <option value="">Seleccionar uso</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="subcategoria">Subcategoría</label>
-        <select id="subcategoria" name="subcategoria" required>
-            <option value="">Seleccionar subcategoría</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="id_deporte">Deporte</label>
-        <select id="id_deporte" name="id_deporte" required>
-            <?php foreach ($deportes as $d): ?>
-                <option value="<?= $d['id_deporte'] ?>"><?= $d['nombre'] ?></option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-
-<!-- Vincular el JS -->
-<script src="categorias.js" defer></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    <div class="form-group">
+                        <label for="id_deporte">Deporte *</label>
+                        <select id="id_deporte" name="id_deporte" required>
+                            <option value="">Seleccionar deporte</option>
+                            <?php foreach ($deportes as $d): ?>
+                                <option value="<?= $d['id_deporte'] ?>" <?= ($producto_editar && $producto_editar['id_deporte'] == $d['id_deporte']) ? 'selected' : '' ?>>
+                                    <?= $d['nombre'] ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
                     <?php if (!$producto_editar): ?>
                     <div class="form-group">
@@ -1280,6 +1145,9 @@ if ($producto_editar) {
                                     <div>
                                         <strong><?php echo htmlspecialchars($producto['nombre']); ?></strong><br>
                                         <small style="color: #666;"><?php echo htmlspecialchars($producto['marca']); ?></small>
+                                        <?php if ($producto['subcategoria']): ?>
+                                            <br><small style="color: #007bff;"><?php echo htmlspecialchars($producto['subcategoria']); ?></small>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </td>
@@ -1305,6 +1173,11 @@ if ($producto_editar) {
                                        class="btn warning" style="padding: 6px 12px; font-size: 12px;">Editar</a>
                                     <a href="admin_inventario.php?producto=<?php echo $producto['id_producto']; ?>" 
                                        class="btn primary" style="padding: 6px 12px; font-size: 12px;">Stock</a>
+                                    <form method="POST" style="display: inline;" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?')">
+                                        <input type="hidden" name="accion" value="eliminar">
+                                        <input type="hidden" name="id_producto" value="<?php echo $producto['id_producto']; ?>">
+                                        <button type="submit" class="btn" style="background: #dc3545; color: white; padding: 6px 12px; font-size: 12px;">Eliminar</button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -1316,6 +1189,60 @@ if ($producto_editar) {
     </div>
 
     <script>
+        // Datos de subcategorías para JavaScript
+        const subcategorias = <?php echo json_encode($subcategorias); ?>;
+        
+        // Referencias a los selects
+        const generoSelect = document.getElementById('id_genero');
+        const usoSelect = document.getElementById('id_uso');
+        const subcategoriaSelect = document.getElementById('subcategoria');
+        
+        // Función para limpiar select
+        function limpiarSelect(select, textoPredeterminado) {
+            select.innerHTML = '';
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = textoPredeterminado;
+            select.appendChild(option);
+        }
+        
+        // Cuando cambia Género
+        generoSelect.addEventListener('change', () => {
+            const genero = generoSelect.value;
+            limpiarSelect(usoSelect, 'Seleccionar uso');
+            limpiarSelect(subcategoriaSelect, 'Seleccionar subcategoría');
+            
+            if (subcategorias[genero]) {
+                for (const idUso in subcategorias[genero]) {
+                    const option = document.createElement('option');
+                    option.value = idUso;
+                    // Nombre del uso según ID
+                    let nombreUso = '';
+                    if (idUso == 1) nombreUso = 'Ropa';
+                    else if (idUso == 2) nombreUso = 'Calzado';
+                    else if (idUso == 3) nombreUso = 'Accesorios';
+                    option.textContent = nombreUso;
+                    usoSelect.appendChild(option);
+                }
+            }
+        });
+        
+        // Cuando cambia Uso
+        usoSelect.addEventListener('change', () => {
+            const genero = generoSelect.value;
+            const uso = usoSelect.value;
+            limpiarSelect(subcategoriaSelect, 'Seleccionar subcategoría');
+            
+            if (subcategorias[genero] && subcategorias[genero][uso]) {
+                subcategorias[genero][uso].forEach(subcat => {
+                    const option = document.createElement('option');
+                    option.value = subcat;
+                    option.textContent = subcat;
+                    subcategoriaSelect.appendChild(option);
+                });
+            }
+        });
+
         // Función para actualizar vista previa de categoría
         function actualizarCategoriaPreview() {
             const nombre = document.getElementById('nombre').value;
@@ -1404,6 +1331,24 @@ if ($producto_editar) {
             if (nombre.trim()) {
                 actualizarCategoriaPreview();
             }
+            
+            // Si estamos editando, cargar subcategorías
+            <?php if ($producto_editar): ?>
+            const generoValue = <?php echo $producto_editar['id_genero'] ?? 0; ?>;
+            const usoValue = <?php echo $producto_editar['id_uso'] ?? 0; ?>;
+            
+            if (generoValue && usoValue) {
+                // Simular cambio de género para cargar usos
+                generoSelect.value = generoValue;
+                generoSelect.dispatchEvent(new Event('change'));
+                
+                // Después cargar uso
+                setTimeout(() => {
+                    usoSelect.value = usoValue;
+                    usoSelect.dispatchEvent(new Event('change'));
+                }, 100);
+            }
+            <?php endif; ?>
         });
         
         // Drag and drop funcionalidad
@@ -1435,10 +1380,6 @@ if ($producto_editar) {
             }
         });
     </script>
-
-
-
-
 
 </body>
 </html>

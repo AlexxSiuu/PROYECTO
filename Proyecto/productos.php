@@ -1,11 +1,13 @@
 <?php
 session_start();
 include('conexion.php');
+
+// FunciÃ³n mejorada con prepared statements
 function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     global $conexion;
     
     if ($conexion->connect_error) {
-        error_log("Error de conexión: " . $conexion->connect_error);
+        error_log("Error de conexiÃ³n: " . $conexion->connect_error);
         return false;
     }
     
@@ -18,18 +20,9 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
         return false;
     }
     
-    // Bind parameters si existen - CORREGIDO PARA STRINGS
+    // Bind parameters si existen
     if (!empty($params)) {
-        $types = '';
-        foreach ($params as $param) {
-            if (is_int($param)) {
-                $types .= 'i';
-            } elseif (is_float($param)) {
-                $types .= 'd';
-            } else {
-                $types .= 's'; // String por defecto
-            }
-        }
+        $types = str_repeat('i', count($params)); // 'i' para enteros
         $stmt->bind_param($types, ...$params);
     }
     
@@ -44,14 +37,14 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
         $stmt->close();
         return $datos;
     } else {
-        $success = $stmt->affected_rows >= 0; // Cambio: >= 0 en lugar de > 0
+        $success = $stmt->affected_rows > 0;
         $stmt->close();
         return $success;
     }
 }
 
 
-$productos = [];
+
 
 
 
@@ -96,13 +89,14 @@ $deporte = isset($_GET['deporte']) ? intval($_GET['deporte']) : 0;
 $subcategoria = isset($_GET['subcategoria']) ? trim($_GET['subcategoria']) : '';
 
 // Revisar que los id existan en la Base de datos
-$generos_validos = [1, 2, 3]; // Hombre, Mujer, Niños
+$generos_validos = [1, 2, 3]; // Hombre, Mujer, NiÃ±os
 $usos_validos = [1, 2, 3];    // Ropa, Calzado, Accesorios  
-$deportes_validos = [1, 2, 3, 4]; // Fútbol, Running, General, Básquetbol
+$deportes_validos = [1, 2, 3, 4]; // FÃºtbol, Running, General, BÃ¡squetbol
 
 if ($genero > 0 && !in_array($genero, $generos_validos)) $genero = 0;
 if ($uso > 0 && !in_array($uso, $usos_validos)) $uso = 0;
 if ($deporte > 0 && !in_array($deporte, $deportes_validos)) $deporte = 0;
+
 // Construir condiciones de consulta
 $where_conditions = ["pt.stock > 0"];
 $params = [];
@@ -122,85 +116,38 @@ if ($deporte > 0) {
     $params[] = $deporte;
 }
 
-// FILTRO POR SUBCATEGORÍA - COMPLETO
+// FILTRO POR SUBCATEGORÃA (si existe)
 if ($subcategoria != '') {
-    // Mapeo de subcategorías del menú a términos de búsqueda
-    $mapeo_terminos = [
-        // ROPA
-        'Camisetas' => 'camiseta',
-        'Pantalones deportivos' => 'pantalón',
-        'Sudaderas / Hoodies' => ['sudadera', 'hoodie'],
-        'Shorts' => 'short',
-        'Tops deportivos' => 'top',
-        'Leggings' => 'legging',
-        'Sudaderas' => 'sudadera',
-        'Conjuntos deportivos' => 'conjunto',
-        'Ropa ligera' => 'ligera',
-        'Ropa' => 'ropa',
-        
-        // CALZADO
-        'Zapatillas deportivas' => 'zapatilla',
-        'Zapatillas' => 'zapatilla',
-        'Botines de fútbol' => 'botin',
-        'Botines' => 'botin',
-        'Botines deportivos' => 'botin',
-        'Sandalias' => 'sandalia',
-        'Sneakers de moda' => 'sneaker',
-        'Tenis' => 'tenis',
-        
-        // ACCESORIOS
-        'Gorras' => 'gorra',
-        'Mochilas' => 'mochila',
-        'Calcetines' => 'calcetín',
-        'Medias' => 'media',
-        'Balones' => 'balon'
-    ];
-    
-    // Obtener términos de búsqueda
-    $terminos = isset($mapeo_terminos[$subcategoria]) ? $mapeo_terminos[$subcategoria] : strtolower($subcategoria);
-    
-    // Convertir a array si es string
-    if (!is_array($terminos)) {
-        $terminos = [$terminos];
-    }
-    
-    // Construir condición OR para múltiples términos
-    $condiciones_busqueda = [];
-    
-    // 1. Buscar por subcategoría exacta
-    $condiciones_busqueda[] = "p.subcategoria = ?";
+    $where_conditions[] = "p.subcategoria = ?";
     $params[] = $subcategoria;
-    
-    // 2. Buscar por términos en nombre y descripción
-    foreach ($terminos as $termino) {
-        $condiciones_busqueda[] = "LOWER(p.nombre) LIKE ?";
-        $condiciones_busqueda[] = "LOWER(p.descripcion) LIKE ?";
-        $params[] = "%{$termino}%";
-        $params[] = "%{$termino}%";
-    }
-    
-    // Combinar todas las condiciones con OR
-    $where_conditions[] = "(" . implode(" OR ", $condiciones_busqueda) . ")";
-    
-    // DEBUG temporal
-    echo "<div style='background: #e7f3ff; padding: 10px; margin: 10px; border: 1px solid #007bff; border-radius: 5px;'>";
-    echo "<strong>SUBCATEGORÍA:</strong> '{$subcategoria}'<br>";
-    echo "<strong>TÉRMINOS:</strong> " . implode(', ', $terminos) . "<br>";
-    echo "<strong>CONDICIÓN:</strong> " . end($where_conditions) . "<br>";
-    echo "<strong>PARÁMETROS NUEVOS:</strong> " . implode(', ', array_slice($params, -count($condiciones_busqueda))) . "";
-    echo "</div>";
 }
 
+// Consulta SQL con JOINs
+$sql = "SELECT DISTINCT 
+            p.id_producto, 
+            p.nombre, 
+            p.precio, 
+            p.imagen_url,
+            p.marca,
+            g.nombre AS genero_nombre,
+            u.nombre AS uso_nombre,
+            d.nombre AS deporte_nombre,
+            p.subcategoria
+        FROM productos p
+        JOIN producto_tallas pt ON p.id_producto = pt.id_producto
+        LEFT JOIN generos g ON p.id_genero = g.id_genero
+        LEFT JOIN usos u ON p.id_uso = u.id_uso
+        LEFT JOIN deportes d ON p.id_deporte = d.id_deporte
+        WHERE " . implode(" AND ", $where_conditions) . "
+        ORDER BY p.nombre";
 
+// Ejecutar consulta de forma segura
+$productos = ejecutarSQL("select", $sql, $params);
 
-
-
-
-
-// Construir título dinámico
+// Construir tÃ­tulo dinÃ¡mico
 $titulo_partes = [];
 if ($genero > 0) {
-    $nombres_generos = [1 => 'Hombre', 2 => 'Mujer', 3 => 'Niños'];
+    $nombres_generos = [1 => 'Hombre', 2 => 'Mujer', 3 => 'NiÃ±os'];
     $titulo_partes[] = $nombres_generos[$genero];
 }
 if ($uso > 0) {
@@ -208,10 +155,10 @@ if ($uso > 0) {
     $titulo_partes[] = $nombres_usos[$uso];
 }
 if ($subcategoria != '') {
-    $titulo_partes[] = $subcategoria; // Agrega subcategoría al título
+    $titulo_partes[] = $subcategoria; // Agrega subcategorÃ­a al tÃ­tulo
 }
 if ($deporte > 0) {
-    $nombres_deportes = [1 => 'Fútbol', 2 => 'Running', 3 => 'General', 4 => 'Básquetbol'];
+    $nombres_deportes = [1 => 'FÃºtbol', 2 => 'Running', 3 => 'General', 4 => 'BÃ¡squetbol'];
     $titulo_partes[] = $nombres_deportes[$deporte];
 }
 
@@ -266,7 +213,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
       <div class="column">
         <h4><a href="productos.php?genero=1&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
         <a href="productos.php?genero=1&uso=2&subcategoria=Zapatillas%20deportivas">Zapatillas deportivas</a>
-        <a href="productos.php?genero=1&uso=2&subcategoria=Botines%20de%20fútbol">Botines de fútbol</a>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Botines%20de%20fÃºtbol">Botines de fÃºtbol</a>
         <a href="productos.php?genero=1&uso=2&subcategoria=Sandalias">Sandalias</a>
         <a href="productos.php?genero=1&uso=2&subcategoria=Sneakers%20de%20moda">Sneakers de moda</a>
       </div>
@@ -316,9 +263,9 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
   </div>
 </li>
 
-<!-- NIÑOS -->
+<!-- NIÃ‘OS -->
 <li class="dropdown">
-  <a href="productos.php?genero=3">Niños</a>
+  <a href="productos.php?genero=3">NiÃ±os</a>
   <div class="mega-menu">
     <div class="mega-left ninos-img"></div>
     <div class="mega-right">
@@ -349,7 +296,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
     <div class="mega-left deportes-img"></div>
     <div class="mega-right">
       <div class="column">
-        <h4><a href="productos.php?deporte=1" style="color:inherit; text-decoration:none;">Fútbol</a></h4>
+        <h4><a href="productos.php?deporte=1" style="color:inherit; text-decoration:none;">FÃºtbol</a></h4>
         <a href="productos.php?uso=2&deporte=1&subcategoria=Botines">Botines</a>
         <a href="productos.php?uso=1&deporte=1&subcategoria=Camisetas">Camisetas</a>
         <a href="productos.php?uso=3&deporte=1&subcategoria=Balones">Balones</a>
@@ -360,7 +307,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
         <a href="productos.php?uso=1&deporte=2&subcategoria=Ropa%20ligera">Ropa ligera</a>
       </div>
       <div class="column">
-        <h4><a href="productos.php?deporte=4" style="color:inherit; text-decoration:none;">Básquetbol</a></h4>
+        <h4><a href="productos.php?deporte=4" style="color:inherit; text-decoration:none;">BÃ¡squetbol</a></h4>
         <a href="productos.php?uso=1&deporte=4&subcategoria=Ropa">Ropa</a>
         <a href="productos.php?uso=2&deporte=4&subcategoria=Tenis">Tenis</a>
         <a href="productos.php?uso=3&deporte=4&subcategoria=Balones">Balones</a>
@@ -397,7 +344,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                     </div>
                     <div class="cart-content" id="cart-content">
                         <div class="cart-empty">
-                            <p>Tu carrito está vacío</p>
+                            <p>Tu carrito estÃ¡ vacÃ­o</p>
                             <small>Agrega productos para comenzar</small>
                         </div>
                     </div>
@@ -450,10 +397,10 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                             </div>
                         </div>
 
-                        <!-- Información del usuario -->
+                        <!-- InformaciÃ³n del usuario -->
                         <div class="user-info-section">
                             <div class="info-group">
-                                <div class="info-label">Información Personal</div>
+                                <div class="info-label">InformaciÃ³n Personal</div>
                                 <div class="info-item">
                                     <div class="info-icon">
                                         <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24">
@@ -473,7 +420,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                                         </svg>
                                     </div>
                                     <div class="info-text">
-                                        <span class="info-title">Correo electrónico</span>
+                                        <span class="info-title">Correo electrÃ³nico</span>
                                         <span class="info-value"><?php echo isset($usuario->correo) ? htmlspecialchars($usuario->correo) : 'No definido'; ?></span>
                                     </div>
                                 </div>
@@ -485,7 +432,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                                         </svg>
                                     </div>
                                     <div class="info-text">
-                                        <span class="info-title">Teléfono</span>
+                                        <span class="info-title">TelÃ©fono</span>
                                         <span class="info-value"><?php echo isset($usuario->telefono) ? htmlspecialchars($usuario->telefono) : 'No definido'; ?></span>
                                     </div>
                                 </div>
@@ -498,14 +445,14 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                                         </svg>
                                     </div>
                                     <div class="info-text">
-                                        <span class="info-title">Dirección</span>
+                                        <span class="info-title">DirecciÃ³n</span>
                                         <span class="info-value"><?php echo isset($usuario->direccion) ? htmlspecialchars($usuario->direccion) : 'No definida'; ?></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Acciones rápidas -->
+                        <!-- Acciones rÃ¡pidas -->
                         <div class="quick-actions">
                             <a href="mi-cuenta.php" class="action-item">
                                 <div class="action-icon">
@@ -527,7 +474,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                             </a>
                         </div>
 
-                        <!-- Botón cerrar sesión -->
+                        <!-- BotÃ³n cerrar sesiÃ³n -->
                         <div class="logout-section">
                             <a href="logout.php" class="logout-btn-apple">
                                 <div class="logout-icon">
@@ -535,7 +482,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                                     </svg>
                                 </div>
-                                <span>Cerrar sesión</span>
+                                <span>Cerrar sesiÃ³n</span>
                             </a>
                         </div>
                     </div>
@@ -546,7 +493,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                 <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:1em; height:1em; vertical-align:middle;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0A18 18 0 0 1 12 21.8c-2.7 0-5.2-.6-7.5-1.7Z" />
                 </svg>
-                Iniciar sesión
+                Iniciar sesiÃ³n
             </span>
             <?php endif; ?>
         </div>
@@ -559,24 +506,24 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
 <div class="modal" id="loginModal" style="display:none;">
     <div class="modal-content" style="background:white; padding:20px; border-radius:8px; min-width:300px; position:relative;">
         <span id="closeLogin" style="position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; color:#999;">&times;</span>
-        <h2>Iniciar sesión</h2>
+        <h2>Iniciar sesiÃ³n</h2>
         <!-- Mostrar mensaje de error si existe -->
         <?php if (isset($_GET['error']) && $_GET['error'] == '1'): ?>
         <div style="color:red; background:#ffe6e6; padding:10px; border-radius:4px; margin:10px 0;">
-            ❌ Correo o contraseña incorrectos
+            âŒ Correo o contraseÃ±a incorrectos
         </div>
         <?php endif; ?>
         <form method="POST" action="procesar_login.php">
             <div style="margin-bottom:15px;">
-                <input type="email" name="correo" placeholder="Correo electrónico" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
+                <input type="email" name="correo" placeholder="Correo electrÃ³nico" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
             </div>
             <div style="margin-bottom:15px;">
-                <input type="password" name="contrasena" placeholder="Contraseña" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
+                <input type="password" name="contrasena" placeholder="ContraseÃ±a" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
             </div>
-            <input type="submit" value="Iniciar sesión" style="width:100%; padding:10px; background:#007bff; color:white; border:none; border-radius:4px; cursor:pointer;">
+            <input type="submit" value="Iniciar sesiÃ³n" style="width:100%; padding:10px; background:#007bff; color:white; border:none; border-radius:4px; cursor:pointer;">
         </form>
         <p style="text-align:center; margin-top:15px;">
-            ¿No tienes cuenta? <a href="registro.php" style="color:#007bff;">Regístrate</a>
+            Â¿No tienes cuenta? <a href="registro.php" style="color:#007bff;">RegÃ­strate</a>
         </p>
     </div>
 </div>
@@ -607,10 +554,10 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                     </div>
                     
                     <div class="producto-info">
-                        <!-- Marca pequeña arriba -->
+                        <!-- Marca pequeÃ±a arriba -->
                         <div class="producto-marca"><?= htmlspecialchars($producto->marca) ?></div>
                         
-                        <!-- Título del producto -->
+                        <!-- TÃ­tulo del producto -->
                         <h3 class="producto-titulo">
                             <?= htmlspecialchars($producto->nombre) ?>
                         </h3>
@@ -618,7 +565,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                         <!-- Precio prominente -->
                         <div class="producto-precio">$<?= number_format($producto->precio, 2) ?></div>
                         
-                        <!-- 🔥 Eliminado el bloque de categorías -->
+                        <!-- ðŸ”¥ Eliminado el bloque de categorÃ­as -->
                     </div>
                 </a>
             <?php endforeach; ?>
@@ -1677,17 +1624,17 @@ function mostrarNotificacion(mensaje, tipo = 'info', titulo = null) {
     const container = document.getElementById('notification-container');
     
     const iconos = {
-        success: '✅',
-        error: '❌',
-        warning: '⚠️',
-        info: 'ℹ️'
+        success: 'âœ…',
+        error: 'âŒ',
+        warning: 'âš ï¸',
+        info: 'â„¹ï¸'
     };
     
     const titulos = {
-        success: titulo || 'Éxito',
+        success: titulo || 'Ã‰xito',
         error: titulo || 'Error',
         warning: titulo || 'Advertencia',
-        info: titulo || 'Información'
+        info: titulo || 'InformaciÃ³n'
     };
     
     const notification = document.createElement('div');
@@ -1698,7 +1645,7 @@ function mostrarNotificacion(mensaje, tipo = 'info', titulo = null) {
             <div class="notification-title">${titulos[tipo]}</div>
             <div class="notification-message">${mensaje}</div>
         </div>
-        <div class="notification-close" onclick="cerrarNotificacion(this)">×</div>
+        <div class="notification-close" onclick="cerrarNotificacion(this)">Ã—</div>
     `;
     
     container.appendChild(notification);
@@ -1838,7 +1785,7 @@ function actualizarVistaCarrito(data) {
     if (data.items.length === 0) {
         cartContent.innerHTML = `
             <div class="cart-empty">
-                <p>Tu carrito está vacío</p>
+                <p>Tu carrito estÃ¡ vacÃ­o</p>
                 <small>Agrega productos para comenzar</small>
             </div>`;
         cartFooter.style.display = 'none';
@@ -1852,7 +1799,7 @@ function actualizarVistaCarrito(data) {
                         <div class="cart-item-name">${item.nombre}</div>
                         <div class="cart-item-info">
                             <span>Talla: ${item.talla}</span>
-                            <span>•</span>
+                            <span>â€¢</span>
                             <span>${item.marca}</span>
                         </div>
                         <div class="cart-item-price">${item.subtotal}</div>
@@ -1860,7 +1807,7 @@ function actualizarVistaCarrito(data) {
                     <div class="cart-item-actions">
                         <div class="quantity-controls">
                             <button class="qty-btn" onclick="actualizarCantidad(${item.id_carrito}, 'disminuir')" ${item.cantidad <= 1 ? 'title="Eliminar producto"' : ''}>
-                                ${item.cantidad <= 1 ? '🗑️' : '−'}
+                                ${item.cantidad <= 1 ? 'ðŸ—‘ï¸' : 'âˆ’'}
                             </button>
                             <input type="text" class="qty-input" value="${item.cantidad}" readonly>
                             <button class="qty-btn" onclick="actualizarCantidad(${item.id_carrito}, 'aumentar')" ${item.cantidad >= item.stock_disponible ? 'disabled' : ''}>+</button>
@@ -1896,14 +1843,14 @@ function actualizarCantidad(idCarrito, accion) {
     })
     .catch(error => {
         console.error('Error:', error);
-        mostrarNotificacion('Error de conexión', 'error');
+        mostrarNotificacion('Error de conexiÃ³n', 'error');
     });
 }
 
 function eliminarDelCarrito(idCarrito) {
     mostrarConfirmacion(
-        '¿Seguro que deseas eliminar este producto de tu carrito?',
-        'Confirmar eliminación',
+        'Â¿Seguro que deseas eliminar este producto de tu carrito?',
+        'Confirmar eliminaciÃ³n',
         () => {
             const formData = new FormData();
             formData.append('accion', 'eliminar');
@@ -1925,7 +1872,7 @@ function eliminarDelCarrito(idCarrito) {
             })
             .catch(error => {
                 console.error('Error:', error);
-                mostrarNotificacion('Error de conexión', 'error');
+                mostrarNotificacion('Error de conexiÃ³n', 'error');
             });
         }
     );
@@ -1944,10 +1891,10 @@ function actualizarContadorCarrito(count) {
 function mostrarLoginRequerido() {
     document.getElementById('cart-content').innerHTML = `
         <div class="cart-empty">
-            <p>Inicia sesión para ver tu carrito</p>
+            <p>Inicia sesiÃ³n para ver tu carrito</p>
             <small>
                 <a href="#" onclick="document.getElementById('login-icon').click(); toggleCarrito();" style="color: #007bff; text-decoration: underline;">
-                    Hacer clic aquí para iniciar sesión
+                    Hacer clic aquÃ­ para iniciar sesiÃ³n
                 </a>
             </small>
         </div>`;
@@ -2009,7 +1956,7 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Cargar contador inicial del carrito al cargar la página
+// Cargar contador inicial del carrito al cargar la pÃ¡gina
 <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) { ?>
 fetch('carrito_ajax.php')
     .then(response => response.json())

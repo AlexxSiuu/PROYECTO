@@ -26,9 +26,9 @@ jobs:
         port: 21
         protocol: ftp
         exclude: |
-          */.git
-          */.git/**
-          */node_modules/*
+          */.git*
+          **/.git/**
+          **/node_modules/**
           .github/
           README.md
           .gitignore

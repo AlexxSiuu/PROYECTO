@@ -682,8 +682,6 @@ $topClientes = ejecutarSQL("select", "
             }
         }
 
-
-
     </style>
 </head>
 <body>
@@ -692,13 +690,13 @@ $topClientes = ejecutarSQL("select", "
     <div class="container">
         <div class="header">
             <div>
-                <h1>Dashboard Administrativo</h1>
+                <h1>Panel del administrador</h1>
                 <p class="welcome">Bienvenido, <?php echo htmlspecialchars($_SESSION['nombre']); ?> | <?php echo date('d/m/Y H:i'); ?></p>
             </div>
             <div class="nav-links">
-                <a href="admin_productos.php">📦 Productos</a>
-                <a href="admin_inventario.php">📊 Inventario</a>
-                <a href="logout.php" class="logout">🚪 Salir</a>
+                <a href="admin_productos.php"> Productos</a>
+                <a href="admin_inventario.php"> Inventario</a>
+                <a href="logout.php" class="logout"> Cerrar sesión</a>
             </div>
         </div>
 
@@ -711,7 +709,11 @@ $topClientes = ejecutarSQL("select", "
                         <div class="stat-value">$<?php echo number_format($ventasHoy, 2); ?></div>
                         <div class="stat-subtitle"><?php echo $pedidosHoy; ?> pedidos</div>
                     </div>
-                    <div class="stat-icon primary">💰</div>
+                    <div class="stat-icon primary"><div class="stat-icon primary">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.9 1 3 1.9 3 3V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V9Z"/>
+    </svg>
+</div></div>
                 </div>
             </div>
 
@@ -722,7 +724,11 @@ $topClientes = ejecutarSQL("select", "
                         <div class="stat-value">$<?php echo number_format($ventasMes, 2); ?></div>
                         <div class="stat-subtitle"><?php echo $pedidosMes; ?> pedidos</div>
                     </div>
-                    <div class="stat-icon success">📈</div>
+                    <div class="stat-icon success"><div class="stat-icon success">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M16,6L18.29,8.29L13.41,13.17L9.41,9.17L2,16.59L3.41,18L9.41,12L13.41,16L19.71,9.71L22,12V6"/>
+    </svg>
+</div></div>
                 </div>
             </div>
 
@@ -733,7 +739,11 @@ $topClientes = ejecutarSQL("select", "
                         <div class="stat-value"><?php echo number_format($totalProductos); ?></div>
                         <div class="stat-subtitle"><?php echo number_format($stockTotal); ?> en stock</div>
                     </div>
-                    <div class="stat-icon info">📦</div>
+                    <div class="stat-icon info"><div class="stat-icon info">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12,2L2,7L12,12L22,7L12,2M2,17L12,22L22,17M2,12L12,17L22,12"/>
+    </svg>
+</div></div>
                 </div>
             </div>
 
@@ -744,7 +754,11 @@ $topClientes = ejecutarSQL("select", "
                         <div class="stat-value"><?php echo number_format($totalClientes); ?></div>
                         <div class="stat-subtitle">usuarios registrados</div>
                     </div>
-                    <div class="stat-icon purple">👥</div>
+                    <div class="stat-icon purple"><div class="stat-icon purple">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M16 4C18.2 4 20 5.8 20 8S18.2 12 16 12 12 10.2 12 8 13.8 4 16 4M16 14C20.4 14 24 15.8 24 18V20H8V18C8 15.8 11.6 14 16 14M8.5 4C10.7 4 12.5 5.8 12.5 8S10.7 12 8.5 12 4.5 10.2 4.5 8 6.3 4 8.5 4M8.5 14C12.9 14 16.5 15.8 16.5 18V20H.5V18C.5 15.8 4.1 14 8.5 14Z"/>
+    </svg>
+</div></div>
                 </div>
             </div>
 
@@ -755,7 +769,11 @@ $topClientes = ejecutarSQL("select", "
                         <div class="stat-value"><?php echo $productosStockBajo; ?></div>
                         <div class="stat-subtitle">productos ≤ 10 unidades</div>
                     </div>
-                    <div class="stat-icon warning">⚠️</div>
+                    <div class="stat-icon warning"><div class="stat-icon warning">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M1,21H23L12,2M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"/>
+    </svg>
+</div></div>
                 </div>
             </div>
 
@@ -766,7 +784,11 @@ $topClientes = ejecutarSQL("select", "
                         <div class="stat-value"><?php echo $productosSinStock; ?></div>
                         <div class="stat-subtitle">productos agotados</div>
                     </div>
-                    <div class="stat-icon danger">🚫</div>
+                    <div class="stat-icon danger"><div class="stat-icon danger">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M15.41,16.59L10.83,12L15.41,7.41L14,6L8,12L14,18"/>
+    </svg>
+</div></div>
                 </div>
             </div>
         </div>
@@ -775,7 +797,12 @@ $topClientes = ejecutarSQL("select", "
             <div class="main-content">
                 <!-- Gráfico de Ventas por Mes -->
                 <div class="card">
-                    <h3>📊 Ventas Últimos 6 Meses</h3>
+                    <h3>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3 3v18h18V3H3zm2 16V5h14v14H5zm2-10h10v2H7V9zm0 4h10v2H7v-2z"/>
+    </svg>
+    Ventas Últimos 6 Meses
+</h3>
                     <?php if (!empty($ventasPorMes)): ?>
                         <div class="chart-container">
                             <?php
@@ -800,7 +827,12 @@ $topClientes = ejecutarSQL("select", "
 
                 <!-- Productos Más Vendidos -->
                 <div class="card">
-                    <h3>🏆 Productos Más Vendidos (Últimos 30 días)</h3>
+                   <h3>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M5,16C3,14 3,9 5,9H9L11,2L13,9H17C19,9 19,14 17,16H13L11,22L9,16H5Z"/>
+    </svg>
+    Productos Más Vendidos (Últimos 30 días)
+</h3>
                     <?php if (!empty($productosMasVendidos)): ?>
                         <div class="table-container">
                             <table>
@@ -853,7 +885,12 @@ $topClientes = ejecutarSQL("select", "
 
                 <!-- Últimas Ventas -->
                 <div class="card">
-                    <h3>🛒 Últimas Ventas</h3>
+                    <h3>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M7,4V2A1,1 0 0,1 8,1A1,1 0 0,1 9,2V4H15V2A1,1 0 0,1 16,1A1,1 0 0,1 17,2V4H20A2,2 0 0,1 22,6V20A2,2 0 0,1 20,22H4A2,2 0 0,1 2,20V6A2,2 0 0,1 4,4H7M4,8V20H20V8H4Z"/>
+    </svg>
+    Últimas Ventas
+</h3>
                     <?php if (!empty($ultimasVentas)): ?>
                         <div class="table-container">
                             <table>
@@ -865,7 +902,7 @@ $topClientes = ejecutarSQL("select", "
                                         <th>Total</th>
                                         <th>Estado</th>
                                         <th>Fecha</th>
-                                    </tr>
+                                   </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($ultimasVentas as $venta): ?>
@@ -900,7 +937,12 @@ $topClientes = ejecutarSQL("select", "
             <div class="sidebar">
                 <!-- Alertas de Stock -->
                 <div class="card">
-                    <h3>⚠️ Alertas de Stock</h3>
+                    <h3>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M1,21H23L12,2M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"/>
+    </svg>
+    Alertas de Stock
+</h3>
                     <?php if (!empty($alertasStock)): ?>
                         <?php foreach ($alertasStock as $alerta): ?>
                             <div class="alert-item <?php echo $alerta['stock_total'] == 0 ? 'critical' : ''; ?>">
@@ -935,8 +977,12 @@ $topClientes = ejecutarSQL("select", "
 
                 <!-- Top Clientes -->
                 <div class="card">
-                    <h3>👑 Top Clientes</h3>
-                    <?php if (!empty($topClientes)): ?>
+                    <h3>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M5,16C3,14 3,9 5,9H9L11,2L13,9H17C19,9 19,14 17,16H13L11,22L9,16H5Z"/>
+    </svg>
+    Top Clientes
+</h3>                    <?php if (!empty($topClientes)): ?>
                         <?php foreach ($topClientes as $index => $cliente): ?>
                             <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
                                 <div>
@@ -966,7 +1012,12 @@ $topClientes = ejecutarSQL("select", "
 
                 <!-- Resumen Rápido -->
                 <div class="card">
-                    <h3>📋 Resumen Rápido</h3>
+                    <h3>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+    </svg>
+    Resumen Rápido
+</h3>
                     <div style="space-y: 15px;">
                         <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -995,18 +1046,32 @@ $topClientes = ejecutarSQL("select", "
 
                 <!-- Acciones Rápidas -->
                 <div class="card">
-                    <h3>⚡ Acciones Rápidas</h3>
+                  <h3>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z"/>
+    </svg>
+    Acciones Rápidas
+</h3>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <a href="admin_productos.php" style="background: #667eea; color: white; padding: 12px; text-decoration: none; border-radius: 8px; text-align: center; transition: all 0.3s ease;">
-                            ➕ Agregar Producto
-                        </a>
-                        <a href="admin_inventario.php" style="background: #28a745; color: white; padding: 12px; text-decoration: none; border-radius: 8px; text-align: center; transition: all 0.3s ease;">
-                            📊 Actualizar Inventario
-                        </a>
-                        <a href="admin_inventario.php?stock_bajo=1" style="background: #ffc107; color: #212529; padding: 12px; text-decoration: none; border-radius: 8px; text-align: center; transition: all 0.3s ease;">
-                            ⚠️ Revisar Stock Bajo
-                        </a>
-                    </div>
+    <a href="admin_productos.php" style="background: #667eea; color: white; padding: 12px; text-decoration: none; border-radius: 8px; text-align: center; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
+        </svg>
+        Agregar Producto
+    </a>
+    <a href="admin_inventario.php" style="background: #28a745; color: white; padding: 12px; text-decoration: none; border-radius: 8px; text-align: center; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 3v18h18V3H3zm2 16V5h14v14H5zm2-10h10v2H7V9zm0 4h10v2H7v-2z"/>
+        </svg>
+        Actualizar Inventario
+    </a>
+    <a href="admin_inventario.php?stock_bajo=1" style="background: #ffc107; color: #212529; padding: 12px; text-decoration: none; border-radius: 8px; text-align: center; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M1,21H23L12,2M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"/>
+        </svg>
+        Revisar Stock Bajo
+    </a>
+</div>
                 </div>
             </div>
         </div>

@@ -696,6 +696,7 @@ $topClientes = ejecutarSQL("select", "
             <div class="nav-links">
                 <a href="admin_productos.php"> Productos</a>
                 <a href="admin_inventario.php"> Inventario</a>
+                <a href="admin_pedidos.php">Pedidos</a>
                 <a href="logout.php" class="logout"> Cerrar sesión</a>
             </div>
         </div>

@@ -176,9 +176,9 @@ $topClientes = ejecutarSQL("select", "
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            color: #333;
+            color: #2d3748;
         }
 
         .container {
@@ -188,27 +188,27 @@ $topClientes = ejecutarSQL("select", "
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: #ffffff;
             padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            border: 1px solid #e2e8f0;
         }
 
         .header h1 {
-            color: #2c3e50;
+            color: #1a202c;
             font-size: 28px;
             font-weight: 700;
             margin-bottom: 5px;
         }
 
         .header .welcome {
-            color: #666;
+            color: #4a5568;
             font-size: 14px;
         }
 
@@ -219,31 +219,33 @@ $topClientes = ejecutarSQL("select", "
         }
 
         .nav-links a {
-            color: #667eea;
+            color: #4a5568;
             text-decoration: none;
             padding: 10px 20px;
-            border-radius: 25px;
-            background: rgba(102, 126, 234, 0.1);
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            background: #f7fafc;
+            transition: all 0.2s ease;
             font-weight: 500;
-            border: 2px solid transparent;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .nav-links a:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            background: #edf2f7;
+            color: #2d3748;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .nav-links a.logout {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
+            background: #fed7d7;
+            color: #c53030;
         }
 
         .nav-links a.logout:hover {
-            background: #dc3545;
-            color: white;
+            background: #feb2b2;
         }
 
         .stats-grid {
@@ -254,42 +256,42 @@ $topClientes = ejecutarSQL("select", "
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: #ffffff;
             padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border-left: 5px solid transparent;
-            transition: all 0.3s ease;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
 
         .stat-card.primary {
-            border-left-color: #667eea;
+            border-left-color: #4a5568;
         }
 
         .stat-card.success {
-            border-left-color: #28a745;
+            border-left-color: #38a169;
         }
 
         .stat-card.warning {
-            border-left-color: #ffc107;
+            border-left-color: #d69e2e;
         }
 
         .stat-card.danger {
-            border-left-color: #dc3545;
+            border-left-color: #e53e3e;
         }
 
         .stat-card.info {
-            border-left-color: #17a2b8;
+            border-left-color: #3182ce;
         }
 
         .stat-card.purple {
-            border-left-color: #6f42c1;
+            border-left-color: #805ad5;
         }
 
         .stat-header {
@@ -300,22 +302,27 @@ $topClientes = ejecutarSQL("select", "
         }
 
         .stat-icon {
-            font-size: 24px;
+            width: 48px;
+            height: 48px;
             padding: 12px;
-            border-radius: 10px;
+            border-radius: 8px;
             color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
         }
 
-        .stat-icon.primary { background: #667eea; }
-        .stat-icon.success { background: #28a745; }
-        .stat-icon.warning { background: #ffc107; }
-        .stat-icon.danger { background: #dc3545; }
-        .stat-icon.info { background: #17a2b8; }
-        .stat-icon.purple { background: #6f42c1; }
+        .stat-icon.primary { background: #4a5568; }
+        .stat-icon.success { background: #38a169; }
+        .stat-icon.warning { background: #d69e2e; }
+        .stat-icon.danger { background: #e53e3e; }
+        .stat-icon.info { background: #3182ce; }
+        .stat-icon.purple { background: #805ad5; }
 
         .stat-title {
             font-size: 14px;
-            color: #666;
+            color: #718096;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -324,13 +331,13 @@ $topClientes = ejecutarSQL("select", "
         .stat-value {
             font-size: 32px;
             font-weight: bold;
-            color: #2c3e50;
+            color: #1a202c;
             margin-bottom: 5px;
         }
 
         .stat-subtitle {
             font-size: 12px;
-            color: #999;
+            color: #a0aec0;
         }
 
         .content-grid {
@@ -353,15 +360,15 @@ $topClientes = ejecutarSQL("select", "
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: #ffffff;
             padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
         }
 
         .card h3 {
-            color: #2c3e50;
+            color: #1a202c;
             margin-bottom: 20px;
             font-size: 18px;
             font-weight: 600;
@@ -382,20 +389,20 @@ $topClientes = ejecutarSQL("select", "
         th, td {
             padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         th {
-            background: #f8f9fa;
+            background: #f7fafc;
             font-weight: 600;
-            color: #555;
+            color: #4a5568;
             font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         tr:hover {
-            background: #f8f9fa;
+            background: #f7fafc;
         }
 
         .product-img {
@@ -408,13 +415,14 @@ $topClientes = ejecutarSQL("select", "
         .no-img {
             width: 40px;
             height: 40px;
-            background: #f0f0f0;
+            background: #f7fafc;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 10px;
-            color: #999;
+            color: #a0aec0;
+            border: 1px solid #e2e8f0;
         }
 
         .badge {
@@ -426,24 +434,24 @@ $topClientes = ejecutarSQL("select", "
         }
 
         .badge.success {
-            background: #d4edda;
-            color: #155724;
+            background: #c6f6d5;
+            color: #22543d;
         }
 
         .badge.warning {
-            background: #fff3cd;
-            color: #856404;
+            background: #faf089;
+            color: #744210;
         }
 
         .badge.danger {
-            background: #f8d7da;
-            color: #721c24;
+            background: #fed7d7;
+            color: #742a2a;
         }
 
         .progress-bar {
             width: 100%;
             height: 8px;
-            background: #e9ecef;
+            background: #e2e8f0;
             border-radius: 4px;
             overflow: hidden;
             margin-top: 10px;
@@ -451,7 +459,7 @@ $topClientes = ejecutarSQL("select", "
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #28a745, #20c997);
+            background: linear-gradient(90deg, #4a5568, #718096);
             border-radius: 4px;
             transition: width 0.3s ease;
         }
@@ -462,13 +470,13 @@ $topClientes = ejecutarSQL("select", "
             align-items: end;
             gap: 10px;
             padding: 20px 0;
-            border-bottom: 2px solid #e9ecef;
+            border-bottom: 2px solid #e2e8f0;
             position: relative;
         }
 
         .chart-bar {
             flex: 1;
-            background: linear-gradient(0deg, #667eea, #764ba2);
+            background: linear-gradient(0deg, #4a5568, #718096);
             border-radius: 4px 4px 0 0;
             min-height: 20px;
             position: relative;
@@ -487,7 +495,7 @@ $topClientes = ejecutarSQL("select", "
             left: 50%;
             transform: translateX(-50%);
             font-size: 11px;
-            color: #666;
+            color: #718096;
             white-space: nowrap;
         }
 
@@ -497,7 +505,7 @@ $topClientes = ejecutarSQL("select", "
             left: 50%;
             transform: translateX(-50%);
             font-size: 10px;
-            color: #666;
+            color: #4a5568;
             font-weight: bold;
             background: white;
             padding: 2px 6px;
@@ -510,15 +518,15 @@ $topClientes = ejecutarSQL("select", "
             align-items: center;
             gap: 15px;
             padding: 15px;
-            border: 1px solid #ffeaa7;
-            background: #fffbf0;
+            border: 1px solid #e2e8f0;
+            background: #f7fafc;
             border-radius: 8px;
             margin-bottom: 10px;
         }
 
         .alert-item.critical {
-            border-color: #ff7675;
-            background: #fff5f5;
+            border-color: #feb2b2;
+            background: #fed7d7;
         }
 
         @media (max-width: 1200px) {
@@ -554,134 +562,125 @@ $topClientes = ejecutarSQL("select", "
         .empty-state {
             text-align: center;
             padding: 40px 20px;
-            color: #666;
+            color: #718096;
         }
 
         .empty-state h4 {
             margin-bottom: 10px;
-            color: #999;
+            color: #a0aec0;
         }
 
+        /* Notificaciones flotantes */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
 
+        .notification {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 15px 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border-left: 4px solid;
+            max-width: 350px;
+            animation: slideInRight 0.3s ease;
+            pointer-events: all;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+        }
 
+        .notification.warning {
+            border-left-color: #d69e2e;
+            background: linear-gradient(135deg, rgba(214, 158, 46, 0.1) 0%, #ffffff 100%);
+        }
 
+        .notification.success {
+            border-left-color: #38a169;
+            background: linear-gradient(135deg, rgba(56, 161, 105, 0.1) 0%, #ffffff 100%);
+        }
 
+        .notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
 
+        .notification-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1a202c;
+        }
 
-/* Notificaciones flotantes */
-.notification-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    pointer-events: none;
-}
+        .notification-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #718096;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.notification {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    padding: 15px 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    border-left: 4px solid;
-    max-width: 350px;
-    animation: slideInRight 0.3s ease;
-    pointer-events: all;
-    cursor: pointer;
-}
+        .notification-body {
+            font-size: 13px;
+            color: #4a5568;
+            line-height: 1.4;
+        }
 
-.notification.warning {
-    border-left-color: #ff6b35;
-    background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 255, 255, 0.95) 100%);
-}
+        .notification-action {
+            margin-top: 10px;
+            display: inline-block;
+            background: #4a5568;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
 
-.notification.success {
-    border-left-color: #28a745;
-    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(255, 255, 255, 0.95) 100%);
-}
+        .notification-action:hover {
+            background: #2d3748;
+            transform: translateY(-1px);
+        }
 
-.notification-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 5px;
-}
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
 
-.notification-title {
-    font-weight: 700;
-    font-size: 14px;
-    color: #2c3e50;
-}
+        .notification.hiding {
+            animation: slideOutRight 0.3s ease forwards;
+        }
 
-.notification-close {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: #666;
-    padding: 0;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.notification-body {
-    font-size: 13px;
-    color: #555;
-    line-height: 1.4;
-}
-
-.notification-action {
-    margin-top: 10px;
-    display: inline-block;
-    background: #667eea;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.notification-action:hover {
-    background: #5a67d8;
-    transform: translateY(-1px);
-}
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.notification.hiding {
-    animation: slideOutRight 0.3s ease forwards;
-}
-
-@keyframes slideOutRight {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-}
-
-
-
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
 
 
 
@@ -1056,16 +1055,6 @@ $topClientes = ejecutarSQL("select", "
                 this.style.boxShadow = 'none';
             });
         });
-
-
-
-
-
-
-
-
-
-
 
 
 // Función para crear notificaciones

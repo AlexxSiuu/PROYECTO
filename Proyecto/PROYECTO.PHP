@@ -2205,6 +2205,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
-  <h1>HOLA</h1>
+  
 </body>
 </html>

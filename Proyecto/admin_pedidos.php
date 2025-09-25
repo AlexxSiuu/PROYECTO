@@ -542,6 +542,7 @@ $stats = [
         </div>
     </div>
 
+
     <script>
         // Auto-refresh cada 30 segundos si hay pedidos pendientes
         <?php if ($stats['pendientes'] > 0): ?>

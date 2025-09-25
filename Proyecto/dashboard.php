@@ -802,36 +802,7 @@ $topClientes = ejecutarSQL("select", "
     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M3 3v18h18V3H3zm2 16V5h14v14H5zm2-10h10v2H7V9zm0 4h10v2H7v-2z"/>
     </svg>
-    Ventas Últimos 6 Meses
-</h3>
-                    <?php if (!empty($ventasPorMes)): ?>
-                        <div class="chart-container">
-                            <?php
-                            $maxIngresos = max(array_column($ventasPorMes, 'total_ingresos'));
-                            foreach (array_reverse($ventasPorMes) as $mes):
-                                $altura = $maxIngresos > 0 ? (($mes['total_ingresos'] / $maxIngresos) * 100) : 0;
-                            ?>
-                                <div class="chart-bar" style="height: <?php echo max($altura, 5); ?>%;" 
-                                     title="<?php echo $mes['mes_nombre']; ?>: $<?php echo number_format($mes['total_ingresos'], 2); ?>">
-                                    <div class="chart-label"><?php echo date('M', strtotime($mes['mes'] . '-01')); ?></div>
-                                    <div class="chart-value">$<?php echo number_format($mes['total_ingresos'], 0); ?></div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php else: ?>
-                        <div class="empty-state">
-                            <h4>Sin datos de ventas</h4>
-                            <p>No hay ventas registradas en los últimos meses</p>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
-                <!-- Productos Más Vendidos -->
-                <div class="card">
-                   <h3>
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M5,16C3,14 3,9 5,9H9L11,2L13,9H17C19,9 19,14 17,16H13L11,22L9,16H5Z"/>
-    </svg>
+    
     Productos Más Vendidos (Últimos 30 días)
 </h3>
                     <?php if (!empty($productosMasVendidos)): ?>
@@ -976,40 +947,16 @@ $topClientes = ejecutarSQL("select", "
                     <?php endif; ?>
                 </div>
 
-                <!-- Top Clientes -->
-                <div class="card">
-                    <h3>
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M5,16C3,14 3,9 5,9H9L11,2L13,9H17C19,9 19,14 17,16H13L11,22L9,16H5Z"/>
-    </svg>
-    Top Clientes
-</h3>                    <?php if (!empty($topClientes)): ?>
-                        <?php foreach ($topClientes as $index => $cliente): ?>
-                            <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <div style="background: #667eea; color: white; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">
-                                            <?php echo $index + 1; ?>
-                                        </div>
-                                        <div>
-                                            <strong><?php echo htmlspecialchars($cliente['nombre']); ?></strong><br>
-                                            <small style="color: #666;"><?php echo htmlspecialchars($cliente['correo']); ?></small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <div><strong><?php echo $cliente['total_compras']; ?></strong> compras</div>
-                                    <div style="color: #28a745; font-weight: bold;">$<?php echo number_format($cliente['total_gastado'], 2); ?></div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="empty-state">
-                            <h4>Sin clientes aún</h4>
-                            <p>No hay compras registradas de clientes</p>
-                        </div>
-                    <?php endif; ?>
-                </div>
+
+
+
+
+
+
+
+
+
+
 
                 <!-- Resumen Rápido -->
                 <div class="card">
@@ -1033,15 +980,7 @@ $topClientes = ejecutarSQL("select", "
                                 <strong style="color: #667eea;"><?php echo number_format($pedidosTotal); ?></strong>
                             </div>
                         </div>
-                        
-                        <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: #666;">Promedio por Venta</span>
-                                <strong style="color: #17a2b8;">
-                                    $<?php echo $pedidosTotal > 0 ? number_format($ventasTotal / $pedidosTotal, 2) : '0.00'; ?>
-                                </strong>
-                            </div>
-                        </div>
+                      
                     </div>
                 </div>
 

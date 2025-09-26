@@ -2,7 +2,7 @@
 session_start();
 include('conexion.php');
 
-// FunciÃ³n mejorada con prepared statements
+
 function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     global $conexion;
     
@@ -19,12 +19,14 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
         error_log("Error preparando consulta: " . $conexion->error);
         return false;
     }
-    
-    // Bind parameters si existen
-    if (!empty($params)) {
-        $types = str_repeat('i', count($params)); // 'i' para enteros
-        $stmt->bind_param($types, ...$params);
+  if (!empty($params)) {
+    $types = str_repeat('s', count($params));
+    foreach ($params as $i => $param) {
+        if (is_int($param)) $types[$i] = 'i';
+        if (is_float($param)) $types[$i] = 'd';
     }
+    $stmt->bind_param($types, ...$params);
+}
     
     $stmt->execute();
     
@@ -86,12 +88,12 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true && isset($_SE
 $genero = isset($_GET['genero']) ? intval($_GET['genero']) : 0;
 $uso = isset($_GET['uso']) ? intval($_GET['uso']) : 0;
 $deporte = isset($_GET['deporte']) ? intval($_GET['deporte']) : 0;
-$subcategoria = isset($_GET['subcategoria']) ? trim($_GET['subcategoria']) : '';
+$subcategoria = isset($_GET['subcategoria']) ? urldecode(trim($_GET['subcategoria'])) : '';
 
 // Revisar que los id existan en la Base de datos
 $generos_validos = [1, 2, 3]; // Hombre, Mujer, NiÃ±os
 $usos_validos = [1, 2, 3];    // Ropa, Calzado, Accesorios  
-$deportes_validos = [1, 2, 3, 4]; // FÃºtbol, Running, General, BÃ¡squetbol
+$deportes_validos = [1, 2, 3, 4]; 
 
 if ($genero > 0 && !in_array($genero, $generos_validos)) $genero = 0;
 if ($uso > 0 && !in_array($uso, $usos_validos)) $uso = 0;
@@ -116,7 +118,7 @@ if ($deporte > 0) {
     $params[] = $deporte;
 }
 
-// FILTRO POR SUBCATEGORÃA (si existe)
+
 if ($subcategoria != '') {
     $where_conditions[] = "p.subcategoria = ?";
     $params[] = $subcategoria;
@@ -144,10 +146,13 @@ $sql = "SELECT DISTINCT
 // Ejecutar consulta de forma segura
 $productos = ejecutarSQL("select", $sql, $params);
 
-// Construir tÃ­tulo dinÃ¡mico
+
+
+
+
 $titulo_partes = [];
 if ($genero > 0) {
-    $nombres_generos = [1 => 'Hombre', 2 => 'Mujer', 3 => 'NiÃ±os'];
+    $nombres_generos = [1 => 'Hombre', 2 => 'Mujer', 3 => 'Niños'];
     $titulo_partes[] = $nombres_generos[$genero];
 }
 if ($uso > 0) {
@@ -155,10 +160,10 @@ if ($uso > 0) {
     $titulo_partes[] = $nombres_usos[$uso];
 }
 if ($subcategoria != '') {
-    $titulo_partes[] = $subcategoria; // Agrega subcategorÃ­a al tÃ­tulo
+    $titulo_partes[] = $subcategoria; 
 }
 if ($deporte > 0) {
-    $nombres_deportes = [1 => 'FÃºtbol', 2 => 'Running', 3 => 'General', 4 => 'BÃ¡squetbol'];
+    $nombres_deportes = [1 => 'Futbol', 2 => 'Running', 3 => 'General', 4 => 'Basquetbol'];
     $titulo_partes[] = $nombres_deportes[$deporte];
 }
 

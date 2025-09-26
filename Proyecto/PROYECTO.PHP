@@ -2,7 +2,7 @@
   session_start(); 
   include ('conexion.php');
 
-  // Función mejorada con prepared statements
+
   function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
       global $conexion;
       
@@ -20,9 +20,9 @@
           return false;
       }
       
-      // Bind parameters si existen
+ 
       if (!empty($params)) {
-          $types = str_repeat('s', count($params)); // Asume que todos son strings
+          $types = str_repeat('s', count($params)); 
           $stmt->bind_param($types, ...$params);
       }
       
@@ -145,6 +145,18 @@
   ";
 
   $productos = ejecutarSQL("select", $sqlProductos);
+
+
+
+
+
+
+
+
+
+
+
+
 
 ?>
 <!DOCTYPE html>

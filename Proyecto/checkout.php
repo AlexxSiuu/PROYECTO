@@ -89,6 +89,12 @@ foreach ($productos_carrito as $item) {
 // Procesar la compra si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_compra'])) {
     
+
+  // Capturar datos del formulario
+    $telefono = $_POST['telefono'];
+    $direccion = $_POST['direccion'];
+
+    
     // Iniciar transacción
     $conexion->autocommit(FALSE);
     
@@ -109,9 +115,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_compra'])) 
         }
         
         // 2. Crear registro de venta
-        $sqlVenta = "INSERT INTO ventas (id_usuario, total, fecha_venta, estado) VALUES (?, ?, NOW(), 'completada')";
+    $sqlVenta = "INSERT INTO ventas (id_usuario, total, telefono, direccion_entrega, fecha_venta, estado) VALUES (?, ?, ?, ?, NOW(), 'completada')";
         $stmt = $conexion->prepare($sqlVenta);
-        $stmt->bind_param("sd", $id_usuario, $total);
+ $stmt->bind_param("sdss", $id_usuario, $total, $_POST['telefono'], $_POST['direccion']);
         $stmt->execute();
         $id_venta = $conexion->insert_id;
         $stmt->close();

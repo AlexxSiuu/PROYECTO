@@ -268,9 +268,8 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
   </div>
 </li>
 
-<!-- NIÃ‘OS -->
 <li class="dropdown">
-  <a href="productos.php?genero=3">NiÃ±os</a>
+  <a href="productos.php?genero=3">Niños</a>
   <div class="mega-menu">
     <div class="mega-left ninos-img"></div>
     <div class="mega-right">
@@ -301,7 +300,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
     <div class="mega-left deportes-img"></div>
     <div class="mega-right">
       <div class="column">
-        <h4><a href="productos.php?deporte=1" style="color:inherit; text-decoration:none;">FÃºtbol</a></h4>
+        <h4><a href="productos.php?deporte=1" style="color:inherit; text-decoration:none;">Futbol</a></h4>
         <a href="productos.php?uso=2&deporte=1&subcategoria=Botines">Botines</a>
         <a href="productos.php?uso=1&deporte=1&subcategoria=Camisetas">Camisetas</a>
         <a href="productos.php?uso=3&deporte=1&subcategoria=Balones">Balones</a>
@@ -312,7 +311,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
         <a href="productos.php?uso=1&deporte=2&subcategoria=Ropa%20ligera">Ropa ligera</a>
       </div>
       <div class="column">
-        <h4><a href="productos.php?deporte=4" style="color:inherit; text-decoration:none;">BÃ¡squetbol</a></h4>
+        <h4><a href="productos.php?deporte=4" style="color:inherit; text-decoration:none;">Basketball</a></h4>
         <a href="productos.php?uso=1&deporte=4&subcategoria=Ropa">Ropa</a>
         <a href="productos.php?uso=2&deporte=4&subcategoria=Tenis">Tenis</a>
         <a href="productos.php?uso=3&deporte=4&subcategoria=Balones">Balones</a>
@@ -349,7 +348,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                     </div>
                     <div class="cart-content" id="cart-content">
                         <div class="cart-empty">
-                            <p>Tu carrito estÃ¡ vacÃ­o</p>
+                            <p>Tu carrito esta vacio</p>
                             <small>Agrega productos para comenzar</small>
                         </div>
                     </div>
@@ -402,10 +401,10 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                             </div>
                         </div>
 
-                        <!-- InformaciÃ³n del usuario -->
+                        <!-- Info del usuario -->
                         <div class="user-info-section">
                             <div class="info-group">
-                                <div class="info-label">InformaciÃ³n Personal</div>
+                                <div class="info-label">Informacion Personal</div>
                                 <div class="info-item">
                                     <div class="info-icon">
                                         <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24">
@@ -425,7 +424,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                                         </svg>
                                     </div>
                                     <div class="info-text">
-                                        <span class="info-title">Correo electrÃ³nico</span>
+                                        <span class="info-title">Correo electronico</span>
                                         <span class="info-value"><?php echo isset($usuario->correo) ? htmlspecialchars($usuario->correo) : 'No definido'; ?></span>
                                     </div>
                                 </div>
@@ -450,14 +449,14 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                                         </svg>
                                     </div>
                                     <div class="info-text">
-                                        <span class="info-title">DirecciÃ³n</span>
+                                        <span class="info-title">Direccion</span>
                                         <span class="info-value"><?php echo isset($usuario->direccion) ? htmlspecialchars($usuario->direccion) : 'No definida'; ?></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Acciones rÃ¡pidas -->
+                        <!-- Acciones rapidas -->
                         <div class="quick-actions">
                             <a href="mi-cuenta.php" class="action-item">
                                 <div class="action-icon">
@@ -487,7 +486,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                                     </svg>
                                 </div>
-                                <span>Cerrar sesiÃ³n</span>
+                                <span>Cerrar sesion</span>
                             </a>
                         </div>
                     </div>
@@ -498,7 +497,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
                 <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:1em; height:1em; vertical-align:middle;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0A18 18 0 0 1 12 21.8c-2.7 0-5.2-.6-7.5-1.7Z" />
                 </svg>
-                Iniciar sesiÃ³n
+                Iniciar sesion
             </span>
             <?php endif; ?>
         </div>

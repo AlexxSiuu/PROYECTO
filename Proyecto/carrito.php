@@ -51,7 +51,7 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     }
 }
 
-// CONSULTA ADAPTADA A TU ESTRUCTURA
+
 $sqlCarrito = "
     SELECT 
         c.id_carrito,
@@ -62,11 +62,11 @@ $sqlCarrito = "
         p.imagen_url,
         t.talla,
         pt.stock,
-        p.marca,  -- Usar directamente la marca del producto
+        p.marca,  
         (p.precio * c.cantidad) as subtotal
     FROM carrito c
     INNER JOIN productos p ON c.id_producto = p.id_producto
-    INNER JOIN tallas t ON c.id_talla = t.id_talla  -- Usar tu estructura actual
+    INNER JOIN tallas t ON c.id_talla = t.id_talla  
     INNER JOIN producto_tallas pt ON (c.id_producto = pt.id_producto AND c.id_talla = pt.id_talla)
     WHERE c.id_usuario = ?
     ORDER BY c.fecha_agregado DESC

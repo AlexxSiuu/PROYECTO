@@ -282,8 +282,7 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
 // Obtener datos para los selects
 $generos = ejecutarSQL("select", "SELECT * FROM generos ORDER BY nombre");
 $usos = ejecutarSQL("select", "SELECT * FROM usos ORDER BY nombre");
-$deportes = ejecutarSQL("select", "SELECT * FROM deportes ORDER BY nombre");
-
+$deportes = ejecutarSQL("select", "SELECT * FROM deportes WHERE nombre != 'General' ORDER BY nombre");
 // Subcategorías por género y uso
 $subcategorias = [
     1 => [ // Hombre

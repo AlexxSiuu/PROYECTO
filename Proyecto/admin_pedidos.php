@@ -63,7 +63,6 @@ if ($_POST && isset($_POST['cambiar_estado'])) {
 // Obtener filtro de estado
 $filtro_estado = $_GET['estado'] ?? 'todos';
 
-// Consulta base
 $sql_base = "
     SELECT 
         v.id_venta,
@@ -72,7 +71,7 @@ $sql_base = "
         v.estado,
         v.direccion_entrega,
         v.telefono,
-        v.metodo_pago,
+        'Pago con efectivo (contraentrega)' as metodo_pago,
         u.nombre as cliente_nombre,
         u.correo as cliente_correo,
         COUNT(dv.id_detalle) as total_productos

@@ -71,14 +71,9 @@ $productosStockBajo = ejecutarSQL("select", "
     HAVING COALESCE(SUM(pt.stock), 0) <= 10
 ")[0]['total'] ?? 0;
 
-// 6. Productos sin stock
-$productosSinStock = ejecutarSQL("select", "
-    SELECT COUNT(DISTINCT p.id_producto) as total 
-    FROM productos p 
-    LEFT JOIN producto_tallas pt ON p.id_producto = pt.id_producto 
-    GROUP BY p.id_producto 
-    HAVING COALESCE(SUM(pt.stock), 0) = 0
-")[0]['total'] ?? 0;
+
+
+
 
 // PRODUCTOS MÁS VENDIDOS (últimos 30 días)
 $productosMasVendidos = ejecutarSQL("select", "
@@ -763,35 +758,8 @@ $topClientes = ejecutarSQL("select", "
                 </div>
             </div>
 
-            <div class="stat-card warning">
-                <div class="stat-header">
-                    <div>
-                        <div class="stat-title">Stock Bajo</div>
-                        <div class="stat-value"><?php echo $productosStockBajo; ?></div>
-                        <div class="stat-subtitle">productos ≤ 10 unidades</div>
-                    </div>
-                    <div class="stat-icon warning"><div class="stat-icon warning">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M1,21H23L12,2M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"/>
-    </svg>
-</div></div>
-                </div>
-            </div>
-
-            <div class="stat-card danger">
-                <div class="stat-header">
-                    <div>
-                        <div class="stat-title">Sin Stock</div>
-                        <div class="stat-value"><?php echo $productosSinStock; ?></div>
-                        <div class="stat-subtitle">productos agotados</div>
-                    </div>
-                    <div class="stat-icon danger"><div class="stat-icon danger">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M15.41,16.59L10.83,12L15.41,7.41L14,6L8,12L14,18"/>
-    </svg>
-</div></div>
-                </div>
-            </div>
+      
+          
         </div>
 
         <div class="content-grid">
@@ -1096,7 +1064,6 @@ function cerrarNotificacion(button) {
     }, 300);
 }
 
-// REEMPLAZAR ESTA SECCIÓN (eliminar el código viejo y usar este):
 // Mostrar alertas si hay productos sin stock
 <?php if ($productosSinStock > 0): ?>
 setTimeout(function() {
@@ -1126,24 +1093,13 @@ setTimeout(function() {
 }, 3000);
 <?php endif; ?>
 
-// El resto del JavaScript permanece igual...
+
 // Función para refrescar datos cada 5 minutos
 setInterval(function() {
     if (!document.hidden) {
         location.reload();
     }
 }, 300000);
-
-// Resto del código JavaScript existente...
-
-
-
-
-
-
-
-
-
 
 
 

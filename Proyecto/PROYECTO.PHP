@@ -375,13 +375,13 @@
 <header class="header">
   <nav class="navbar">
     <div class="logo">
-    <a href="PROYECTO.php">
+    <a href="proyecto.php">
         <img src="img/logo_icono.ico.jpg" class="logo-img">
     </a>
 </div>
 
     <ul class="nav-links">
-  <li><a href="PROYECTO.php">Inicio</a></li>
+  <li><a href="proyecto.php">Inicio</a></li>
 
 
 <!-- HOMBRE -->

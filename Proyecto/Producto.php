@@ -397,7 +397,7 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
 <header class="header-simple">
     <nav class="navbar">
         <div class="logo">
-            <a href="PROYECTO.php">JERSEYKING</a>
+            <a href="/proyecto.php">JERSEYKING</a>
         </div>
         <div class="nav-back">
             <a href="javascript:history.back()">← Volver</a>
@@ -407,7 +407,7 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
 
 <!-- Breadcrumb -->
 <div class="breadcrumb">
-    <a href="PROYECTO.php">Inicio</a> > 
+    <a href="/proyecto.php">Inicio</a> > 
     <a href="productos.php?genero=<?= $producto->id_genero ?>"><?= htmlspecialchars($producto->genero) ?></a> > 
     <a href="productos.php?genero=<?= $producto->id_genero ?>&uso=<?= $producto->id_uso ?>"><?= htmlspecialchars($producto->uso) ?></a> > 
     <span><?= htmlspecialchars($producto->nombre) ?></span>
@@ -784,7 +784,7 @@ function mostrarModalLogin() {
             loginIcon.click();
         } else {
             // Redirigir a página de login
-            window.location.href = 'PROYECTO.php#login';
+            window.location.href = 'proyecto.php#login';
         }
     }, 1500);
 }

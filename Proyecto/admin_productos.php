@@ -8,9 +8,25 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION
     exit();
 }
 
-// Crear carpeta de imágenes si no existe
-if (!is_dir('images')) {
-    mkdir('images', 0755, true);
+// CONFIGURACIÓN DE CARPETA DE IMÁGENES (UNIFICADO)
+$carpeta_imagenes = __DIR__ . '/images';
+
+// Crear carpeta si no existe
+if (!is_dir($carpeta_imagenes)) {
+    if (!@mkdir($carpeta_imagenes, 0777, true)) {
+        die("ERROR CRÍTICO: No se puede crear la carpeta de imágenes. Contacta al administrador del servidor.");
+    }
+}
+
+// Intentar dar permisos de escriturael
+if (!is_writable($carpeta_imagenes)) {
+    @chmod($carpeta_imagenes, 0777);
+    
+    // Verificar nuevamente después de intentar cambiar permisos
+    if (!is_writable($carpeta_imagenes)) {
+        die("ERROR CRÍTICO: La carpeta images/ no tiene permisos de escritura. Permisos actuales: " . 
+            substr(sprintf('%o', fileperms($carpeta_imagenes)), -4));
+    }
 }
 
 function detectarCategoria($nombre, $descripcion = '', $marca = '') {
@@ -136,43 +152,85 @@ function subirImagen($archivo) {
     $errores = [];
     $ruta_final = '';
     
-    if (isset($archivo) && $archivo['error'] === UPLOAD_ERR_OK) {
+    // Verificar que el archivo fue subido
+    if (!isset($archivo) || $archivo['error'] !== UPLOAD_ERR_OK) {
+        $error_messages = [
+            UPLOAD_ERR_INI_SIZE => 'El archivo excede el tamaño permitido por el servidor (upload_max_filesize)',
+            UPLOAD_ERR_FORM_SIZE => 'El archivo excede el tamaño máximo permitido',
+            UPLOAD_ERR_PARTIAL => 'El archivo se subió parcialmente',
+            UPLOAD_ERR_NO_FILE => 'No se subió ningún archivo',
+            UPLOAD_ERR_NO_TMP_DIR => 'Falta la carpeta temporal en el servidor',
+            UPLOAD_ERR_CANT_WRITE => 'No se pudo escribir el archivo en el disco',
+            UPLOAD_ERR_EXTENSION => 'Una extensión de PHP detuvo la subida'
+        ];
         
-        if ($archivo['size'] > 5000000) {
-            $errores[] = "La imagen es muy grande. Máximo 5MB permitido.";
+        $error_code = $archivo['error'] ?? UPLOAD_ERR_NO_FILE;
+        $errores[] = $error_messages[$error_code] ?? 'Error desconocido al subir archivo';
+        return ['success' => false, 'error' => implode(' ', $errores), 'ruta' => ''];
+    }
+    
+    // Validar tamaño (5MB)
+    if ($archivo['size'] > 5000000) {
+        $errores[] = "La imagen es muy grande. Máximo 5MB permitido.";
+        return ['success' => false, 'error' => implode(' ', $errores), 'ruta' => ''];
+    }
+    
+    // Validar tipo MIME
+    $tipo_mime = mime_content_type($archivo['tmp_name']);
+    $mimes_permitidos = ['image/jpg' ,'image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!in_array($tipo_mime, $mimes_permitidos)) {
+        $errores[] = "El archivo no es una imagen válida.";
+        return ['success' => false, 'error' => implode(' ', $errores), 'ruta' => ''];
+    }
+    
+    // Obtener extensión
+    $info_archivo = pathinfo($archivo['name']);
+    $extension = strtolower($info_archivo['extension']);
+    
+    $extensiones_permitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    if (!in_array($extension, $extensiones_permitidas)) {
+        $errores[] = "Formato no permitido. Use: JPG, PNG, GIF o WebP.";
+        return ['success' => false, 'error' => implode(' ', $errores), 'ruta' => ''];
+    }
+    
+    // Generar nombre único
+    $timestamp = time();
+    $random = uniqid();
+    $nombre_limpio = preg_replace("/[^a-zA-Z0-9]/", "", $info_archivo['filename']);
+    $nombre_limpio = substr($nombre_limpio, 0, 20);
+    $nombre_final = $timestamp . '_' . $nombre_limpio . '_' . $random . '.' . $extension;
+    
+    // Ruta absoluta usando __DIR__
+    $carpeta_destino = __DIR__ . '/images';
+    $ruta_destino = $carpeta_destino . '/' . $nombre_final;
+    $ruta_relativa = 'images/' . $nombre_final;
+    
+    // Verificar que la carpeta existe y es escribible
+    if (!is_dir($carpeta_destino)) {
+        if (!mkdir($carpeta_destino, 0755, true)) {
+            $errores[] = "No se pudo crear la carpeta de imágenes.";
             return ['success' => false, 'error' => implode(' ', $errores), 'ruta' => ''];
         }
-        
-        $info_archivo = pathinfo($archivo['name']);
-        $extension = strtolower($info_archivo['extension']);
-        
-        $extensiones_permitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        if (!in_array($extension, $extensiones_permitidas)) {
-            $errores[] = "Formato no permitido. Use: JPG, PNG, GIF o WebP.";
-            return ['success' => false, 'error' => implode(' ', $errores), 'ruta' => ''];
-        }
-        
-        $tipo_mime = mime_content_type($archivo['tmp_name']);
-        $mimes_permitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        if (!in_array($tipo_mime, $mimes_permitidos)) {
-            $errores[] = "El archivo no es una imagen válida.";
-            return ['success' => false, 'error' => implode(' ', $errores), 'ruta' => ''];
-        }
-        
-        $timestamp = time();
-        $random = uniqid();
-        $nombre_limpio = preg_replace("/[^a-zA-Z0-9]/", "", $info_archivo['filename']);
-        $nombre_limpio = substr($nombre_limpio, 0, 20);
-        $nombre_final = $timestamp . '_' . $nombre_limpio . '_' . $random . '.' . $extension;
-        
-        $ruta_destino = 'images/' . $nombre_final;
-        
-        if (move_uploaded_file($archivo['tmp_name'], $ruta_destino)) {
+    }
+    
+    if (!is_writable($carpeta_destino)) {
+        $errores[] = "La carpeta de imágenes no tiene permisos de escritura.";
+        error_log("Permisos de images/: " . substr(sprintf('%o', fileperms($carpeta_destino)), -4));
+        return ['success' => false, 'error' => implode(' ', $errores), 'ruta' => ''];
+    }
+    
+    // Mover archivo
+    if (move_uploaded_file($archivo['tmp_name'], $ruta_destino)) {
+        // Verificar que GD está disponible antes de redimensionar
+        if (extension_loaded('gd')) {
             redimensionarImagen($ruta_destino, 800, 800);
-            $ruta_final = $ruta_destino;
         } else {
-            $errores[] = "Error al guardar la imagen en el servidor.";
+            error_log("Advertencia: GD Library no disponible, imagen no redimensionada");
         }
+        $ruta_final = $ruta_relativa;
+    } else {
+        $errores[] = "Error al guardar la imagen en el servidor.";
+        error_log("Error move_uploaded_file: " . error_get_last()['message']);
     }
     
     if (!empty($errores)) {
@@ -181,40 +239,68 @@ function subirImagen($archivo) {
     
     return ['success' => true, 'error' => '', 'ruta' => $ruta_final];
 }
-
 // Función para redimensionar imagen
 function redimensionarImagen($ruta_imagen, $max_width = 800, $max_height = 800) {
-    list($width_actual, $height_actual, $tipo) = getimagesize($ruta_imagen);
+    // Verificar que GD está disponible
+    if (!extension_loaded('gd')) {
+        error_log("GD Library no disponible - imagen no redimensionada");
+        return false;
+    }
+    
+    // Verificar que el archivo existe
+    if (!file_exists($ruta_imagen)) {
+        error_log("Archivo no existe: $ruta_imagen");
+        return false;
+    }
+    
+    $info = @getimagesize($ruta_imagen);
+    if ($info === false) {
+        error_log("No se pudo obtener información de la imagen: $ruta_imagen");
+        return false;
+    }
+    
+    list($width_actual, $height_actual, $tipo) = $info;
     
     if ($width_actual <= $max_width && $height_actual <= $max_height) {
-        return;
+        return true; // No necesita redimensión
     }
     
     $ratio = min($max_width / $width_actual, $max_height / $height_actual);
     $nuevo_width = round($width_actual * $ratio);
     $nuevo_height = round($height_actual * $ratio);
     
+    // Crear imagen según tipo
+    $imagen_original = null;
     switch ($tipo) {
         case IMAGETYPE_JPEG:
-            $imagen_original = imagecreatefromjpeg($ruta_imagen);
+            $imagen_original = @imagecreatefromjpeg($ruta_imagen);
             break;
         case IMAGETYPE_PNG:
-            $imagen_original = imagecreatefrompng($ruta_imagen);
+            $imagen_original = @imagecreatefrompng($ruta_imagen);
             break;
         case IMAGETYPE_GIF:
-            $imagen_original = imagecreatefromgif($ruta_imagen);
+            $imagen_original = @imagecreatefromgif($ruta_imagen);
             break;
         case IMAGETYPE_WEBP:
-            $imagen_original = imagecreatefromwebp($ruta_imagen);
+            if (function_exists('imagecreatefromwebp')) {
+                $imagen_original = @imagecreatefromwebp($ruta_imagen);
+            }
             break;
-        default:
-            return;
     }
     
-    if (!$imagen_original) return;
+    if (!$imagen_original) {
+        error_log("No se pudo crear imagen desde: $ruta_imagen");
+        return false;
+    }
     
     $imagen_nueva = imagecreatetruecolor($nuevo_width, $nuevo_height);
     
+    if (!$imagen_nueva) {
+        imagedestroy($imagen_original);
+        return false;
+    }
+    
+    // Preservar transparencia
     if ($tipo == IMAGETYPE_PNG || $tipo == IMAGETYPE_GIF) {
         imagealphablending($imagen_nueva, false);
         imagesavealpha($imagen_nueva, true);
@@ -225,23 +311,29 @@ function redimensionarImagen($ruta_imagen, $max_width = 800, $max_height = 800) 
     imagecopyresampled($imagen_nueva, $imagen_original, 0, 0, 0, 0, 
                       $nuevo_width, $nuevo_height, $width_actual, $height_actual);
     
+    // Guardar según tipo
+    $success = false;
     switch ($tipo) {
         case IMAGETYPE_JPEG:
-            imagejpeg($imagen_nueva, $ruta_imagen, 85);
+            $success = imagejpeg($imagen_nueva, $ruta_imagen, 85);
             break;
         case IMAGETYPE_PNG:
-            imagepng($imagen_nueva, $ruta_imagen, 6);
+            $success = imagepng($imagen_nueva, $ruta_imagen, 6);
             break;
         case IMAGETYPE_GIF:
-            imagegif($imagen_nueva, $ruta_imagen);
+            $success = imagegif($imagen_nueva, $ruta_imagen);
             break;
         case IMAGETYPE_WEBP:
-            imagewebp($imagen_nueva, $ruta_imagen, 85);
+            if (function_exists('imagewebp')) {
+                $success = imagewebp($imagen_nueva, $ruta_imagen, 85);
+            }
             break;
     }
     
     imagedestroy($imagen_original);
     imagedestroy($imagen_nueva);
+    
+    return $success;
 }
 
 // Función para ejecutar consultas

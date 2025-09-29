@@ -204,7 +204,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
   <div class="form-container">
     <div class="back-link">
-      <a href="PROYECTO.php">← Volver al inicio</a>
+      <a href="/proyecto.php"><- Volver al inicio</a>
     </div>
     
     <h2>Registro de Usuario</h2>
@@ -236,7 +236,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-<p>¿Ya tienes cuenta? <a href="PROYECTO.php#login">Iniciar sesión</a></p>
+<p>¿Ya tienes cuenta? <a href="/proyecto.php#login">Iniciar sesión</a></p>
   </div>
 </body>
 </html>

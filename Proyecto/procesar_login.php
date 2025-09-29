@@ -56,9 +56,9 @@ try {
             
            // Redirigir al inicio o al dashboard si es admin
 if ($usuario['correo'] === "admin@tienda.com") { 
-    header("Location: dashboard.php"); 
+    header("Location: https://jerseyking.kesug.com/dashboard.php");
 } else {
-    header("Location: PROYECTO.php");
+    header("Location: proyecto.php");
 }
 exit;
 
@@ -66,21 +66,21 @@ exit;
             // Contraseña incorrecta
             $stmt->close();
             $conexion->close();
-            header("Location: PROYECTO.php?error=1");
+            header("Location: proyecto.php?error=1");
             exit;
         }
     } else {
         // Usuario no encontrado
         $stmt->close();
         $conexion->close();
-        header("Location: PROYECTO.php?error=1");
+        header("Location: proyecto.php?error=1");
         exit;
     }
     
 } catch (Exception $e) {
     // Log del error (no mostrar al usuario)
     error_log("Error en login: " . $e->getMessage());
-    header("Location: PROYECTO.php?error=1");
+    header("Location: proyecto.php?error=1");
     exit;
 }
 ?>

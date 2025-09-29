@@ -18,7 +18,7 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     if (!$stmt) {
         error_log("Error preparando consulta: " . $conexion->error);
         return false;
-    }
+    }   
   if (!empty($params)) {
     $types = str_repeat('s', count($params));
     foreach ($params as $i => $param) {
@@ -118,11 +118,11 @@ if ($deporte > 0) {
     $params[] = $deporte;
 }
 
-
-if ($subcategoria != '') {
-    $where_conditions[] = "p.subcategoria = ?";
-    $params[] = $subcategoria;
-}
+if ($subcategoria != '') 
+    { 
+        $where_conditions[] = "p.subcategoria = ?"; 
+        $params[] = $subcategoria; 
+    }
 
 // Consulta SQL con JOINs
 $sql = "SELECT DISTINCT 
@@ -199,16 +199,16 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
 </head>
 <body>
 
-<!-- Header completo igual que en PROYECTO.php -->
+<!-- Header completo igual que en proyecto.php -->
 <header class="header">
     <nav class="navbar">
         <div class="logo">
-            <a href="PROYECTO.php">
-                <img src="img/logo_icono.ico.jpg" class="logo-img">
+            <a href="/proyecto.php">
+                <img src="/img/logo_icono.ico.jpg" class="logo-img">
             </a>
         </div>
         <ul class="nav-links">
-            <li><a href="PROYECTO.php">Inicio</a></li>
+            <li><a href="/proyecto.php">Inicio</a></li>
 <!-- HOMBRE -->
 <li class="dropdown">
   <a href="productos.php?genero=1">Hombre</a>

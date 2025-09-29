@@ -47,7 +47,7 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($id <= 0) {
-    header("Location: PROYECTO.php");
+    header("Location: proyecto.php");
     exit("ID de producto inválido.");
 }
 
@@ -66,7 +66,7 @@ $productos = ejecutarSQL("select", $sqlProducto, [$id]);
 $producto = $productos ? $productos[0] : null;
 
 if (!$producto) {
-    header("Location: PROYECTO.php");
+    header("Location: proyecto.php");
     exit("Producto no encontrado.");
 }
 
@@ -487,7 +487,7 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
     <div class="relacionados-contenedor">
         <?php foreach ($relacionados as $p): ?>
             <div class="relacionado-item">
-                <a href="Producto.php?id=<?= $p->id_producto ?>">
+                <a href="producto.php?id=<?= $p->id_producto ?>">
                     <img src="<?= htmlspecialchars($p->imagen_url) ?>" 
                          alt="<?= htmlspecialchars($p->nombre) ?>"
                          onerror="this.src='img/placeholder.jpg'">

@@ -57,15 +57,15 @@
 
   // 1. REAL MADRID
   $sqlRealMadrid = "
-      SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
-            g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
-      FROM productos p
-      INNER JOIN generos g ON p.id_genero = g.id_genero
-      INNER JOIN usos u ON p.id_uso = u.id_uso
-      INNER JOIN deportes d ON p.id_deporte = d.id_deporte
-      WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%REAL MADRID%'
-      ORDER BY p.nombre
-  ";
+    SELECT p.id_producto, p.nombre, p.marca, p.descripcion, p.precio, p.imagen_url,
+           g.nombre AS genero, u.nombre AS uso, d.nombre AS deporte
+    FROM productos p
+    INNER JOIN generos g ON p.id_genero = g.id_genero
+    INNER JOIN usos u ON p.id_uso = u.id_uso
+    INNER JOIN deportes d ON p.id_deporte = d.id_deporte
+    WHERE LOWER(p.nombre) LIKE '%camiseta%' AND LOWER(p.nombre) LIKE '%real madrid%'
+    ORDER BY p.nombre
+";
 
   // 2. FC BARCELONA
   $sqlBarcelona = "
@@ -75,8 +75,8 @@
       INNER JOIN generos g ON p.id_genero = g.id_genero
       INNER JOIN usos u ON p.id_uso = u.id_uso
       INNER JOIN deportes d ON p.id_deporte = d.id_deporte
-      WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%FC BARCELONA%'
-      ORDER BY p.nombre
+      WHERE LOWER(p.nombre) LIKE '%camiseta%' AND LOWER(p.nombre) LIKE '%fc barcelona%'
+    ORDER BY p.nombre
   ";
 
   // 3. ATLÉTICO DE MADRID
@@ -87,8 +87,8 @@
       INNER JOIN generos g ON p.id_genero = g.id_genero
       INNER JOIN usos u ON p.id_uso = u.id_uso
       INNER JOIN deportes d ON p.id_deporte = d.id_deporte
-      WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%ATLÉTICO DE MADRID%'
-      ORDER BY p.nombre
+      WHERE LOWER(p.nombre) LIKE '%camiseta%' AND LOWER(p.nombre) LIKE '%atlético de madrid%'
+    ORDER BY p.nombre
   ";
 
   // 4. MANCHESTER CITY
@@ -99,8 +99,8 @@
       INNER JOIN generos g ON p.id_genero = g.id_genero
       INNER JOIN usos u ON p.id_uso = u.id_uso
       INNER JOIN deportes d ON p.id_deporte = d.id_deporte
-      WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%MANCHESTER CITY%'
-      ORDER BY p.nombre
+      WHERE LOWER(p.nombre) LIKE '%camiseta%' AND LOWER(p.nombre) LIKE '%manchester city%'
+    ORDER BY p.nombre
   ";
 
   // 5. MANCHESTER UNITED
@@ -111,8 +111,8 @@
       INNER JOIN generos g ON p.id_genero = g.id_genero
       INNER JOIN usos u ON p.id_uso = u.id_uso
       INNER JOIN deportes d ON p.id_deporte = d.id_deporte
-      WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%MANCHESTER UNITED%'
-      ORDER BY p.nombre
+      WHERE LOWER(p.nombre) LIKE '%camiseta%' AND LOWER(p.nombre) LIKE '%manchester united%'
+    ORDER BY p.nombre
   ";
 
   // 6. CHELSEA
@@ -123,8 +123,8 @@
       INNER JOIN generos g ON p.id_genero = g.id_genero
       INNER JOIN usos u ON p.id_uso = u.id_uso
       INNER JOIN deportes d ON p.id_deporte = d.id_deporte
-      WHERE p.nombre LIKE '%CAMISETA%' AND p.nombre LIKE '%CHELSEA%'
-      ORDER BY p.nombre
+      WHERE LOWER(p.nombre) LIKE '%camiseta%' AND LOWER(p.nombre) LIKE '%chelsea%'
+    ORDER BY p.nombre
   ";
 
   // Ejecutar las consultas
@@ -1356,7 +1356,7 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
     <div class="camisetas-grid">
       <?php if ($camisetasRealMadrid && count($camisetasRealMadrid) > 0): ?>
         <?php foreach ($camisetasRealMadrid as $camiseta): ?>
-          <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
+          <a href="producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
             <div class="camiseta-card">
               <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
               <div class="camiseta-info">
@@ -1387,7 +1387,7 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
   <div class="camisetas-grid">
     <?php if ($camisetasBarcelona && count($camisetasBarcelona) > 0): ?>
       <?php foreach ($camisetasBarcelona as $camiseta): ?>
-        <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
+        <a href="producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
           <div class="camiseta-card">
             <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
             <div class="camiseta-info">
@@ -1418,7 +1418,7 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
   <div class="camisetas-grid">
     <?php if ($camisetasAtletico && count($camisetasAtletico) > 0): ?>
       <?php foreach ($camisetasAtletico as $camiseta): ?>
-        <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
+        <a href="producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
           <div class="camiseta-card">
             <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
             <div class="camiseta-info">
@@ -1449,7 +1449,7 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
   <div class="camisetas-grid">
     <?php if ($camisetasCity && count($camisetasCity) > 0): ?>
       <?php foreach ($camisetasCity as $camiseta): ?>
-        <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
+        <a href="producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
           <div class="camiseta-card">
             <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
             <div class="camiseta-info">
@@ -1480,7 +1480,7 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
   <div class="camisetas-grid">
     <?php if ($camisetasUnited && count($camisetasUnited) > 0): ?>
       <?php foreach ($camisetasUnited as $camiseta): ?>
-        <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
+        <a href="producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
           <div class="camiseta-card">
             <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
             <div class="camiseta-info">
@@ -1511,7 +1511,7 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
   <div class="camisetas-grid">
     <?php if ($camisetasChelsea && count($camisetasChelsea) > 0): ?>
       <?php foreach ($camisetasChelsea as $camiseta): ?>
-        <a href="Producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
+        <a href="producto.php?id=<?= $camiseta->id_producto ?>" class="camiseta-card-link">
           <div class="camiseta-card">
             <img src="<?= htmlspecialchars($camiseta->imagen_url) ?>" alt="<?= htmlspecialchars($camiseta->nombre) ?>" class="camiseta-image">
             <div class="camiseta-info">
@@ -2161,7 +2161,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <section class="productos-lista">
         <?php if ($productos && count($productos) > 0): ?>
           <?php foreach ($productos as $producto): ?>
-            <a href="Producto.php?id=<?= $producto->id_producto ?>" style="text-decoration:none; color:inherit;">
+            <a href="producto.php?id=<?= $producto->id_producto ?>" style="text-decoration:none; color:inherit;">
               <div class="producto-item">
                 <img src="<?= htmlspecialchars($producto->imagen_url) ?>" alt="<?= htmlspecialchars($producto->nombre) ?>">
                 <h3><?= htmlspecialchars($producto->nombre) ?></h3>

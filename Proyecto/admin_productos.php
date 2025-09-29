@@ -175,19 +175,24 @@ function subirImagen($archivo) {
         return ['success' => false, 'error' => implode(' ', $errores), 'ruta' => ''];
     }
     
-    // Validar tipo MIME
-    $tipo_mime = mime_content_type($archivo['tmp_name']);
-    $mimes_permitidos = ['image/jpg' ,'image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!in_array($tipo_mime, $mimes_permitidos)) {
-        $errores[] = "El archivo no es una imagen válida.";
-        return ['success' => false, 'error' => implode(' ', $errores), 'ruta' => ''];
-    }
-    
+// Validar tipo MIME (más flexible)
+$tipo_mime = @mime_content_type($archivo['tmp_name']);
+$mimes_permitidos = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/pjpeg', 'image/avif'];
+
+// Si mime_content_type falla, validar solo por extensión
+if ($tipo_mime && !in_array($tipo_mime, $mimes_permitidos)) {
+    $errores[] = "El archivo no es una imagen válida. Tipo detectado: " . $tipo_mime;
+    return ['success' => false, 'error' => implode(' ', $errores), 'ruta' => ''];
+}
+
+
+
+
     // Obtener extensión
     $info_archivo = pathinfo($archivo['name']);
     $extension = strtolower($info_archivo['extension']);
     
-    $extensiones_permitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+$extensiones_permitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'];
     if (!in_array($extension, $extensiones_permitidas)) {
         $errores[] = "Formato no permitido. Use: JPG, PNG, GIF o WebP.";
         return ['success' => false, 'error' => implode(' ', $errores), 'ruta' => ''];

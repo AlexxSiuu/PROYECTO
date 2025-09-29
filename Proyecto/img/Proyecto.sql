@@ -122,3 +122,34 @@ CREATE INDEX idx_detalle_producto ON detalle_ventas(id_producto);
 
 ALTER TABLE productos
 ADD COLUMN subcategoria VARCHAR(120) NULL AFTER id_deporte;
+
+INSERT INTO generos (nombre) VALUES
+('Hombre'),    
+('Mujer'),   
+('Niños');     
+
+
+INSERT INTO usos (nombre) VALUES 
+('Ropa'),       
+('Calzado'),     
+('Accesorios');  
+
+
+INSERT INTO deportes (nombre) VALUES 
+('Fútbol'),     
+('Running'),    
+('General'),     
+('Básquetbol');  
+
+
+INSERT INTO tallas (talla) VALUES
+
+('35'), ('36'), ('37'), ('38'), ('39'), ('40'), ('41'), ('42'), ('43'), ('44'), ('45'),
+
+('28'), ('29'), ('30'), ('31'), ('32'), ('33'), ('34'),
+
+('XS'), ('S'), ('M'), ('L'), ('XL'), ('XXL'),
+
+('4'), ('6'), ('8'), ('10'), ('12'), ('14'),
+
+('Única'), ('Size 4'), ('Size 5'), ('Size 6'), ('Size 7');

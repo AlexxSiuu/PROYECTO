@@ -4,7 +4,7 @@ include 'conexion.php';
 
 // Verificar que sea admin
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION['correo'] !== "admin@tienda.com") {
-    header("Location: PROYECTO.php");
+    header("Location: proyecto.php");
     exit();
 }
 
@@ -436,7 +436,7 @@ $stats = [
                 <a href="admin_productos.php">Productos</a>
                 <a href="admin_inventario.php">Inventario</a>
                 <a href="admin_pedidos.php" style="background: #edf2f7; color: #2d3748;">Pedidos</a>
-                <a href="logout.php" class="logout">Salir</a>
+                <a href="proyecto.php" class="logout">Volver al Inicio</a>
             </div>
         </div>
 

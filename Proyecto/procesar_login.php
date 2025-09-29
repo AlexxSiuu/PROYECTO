@@ -2,85 +2,52 @@
 session_start();
 include 'conexion.php';
 
-// Validación de datos
-if (!isset($_POST['correo']) || !isset($_POST['contrasena']) || 
-    empty(trim($_POST['correo'])) || empty(trim($_POST['contrasena']))) {
-    header("Location: PROYECTO.php?error=1");
-    exit;
-}
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $correo = trim($_POST["correo"] ?? "");
+    $contrasena = trim($_POST["contrasena"] ?? "");
 
-$correo = filter_var(trim($_POST['correo']), FILTER_SANITIZE_EMAIL);
-$contrasena = trim($_POST['contrasena']);
-
-// Validar formato de email
-if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-    header("Location: PROYECTO.php?error=1");
-    exit;
-}
-
-try {
-    // Traer también el campo telefono
-    $sql = "SELECT id_usuario, nombre, correo, telefono, contraseña 
-            FROM usuarios 
-            WHERE correo = ?";
-    $stmt = $conexion->prepare($sql);
-    
-    if (!$stmt) {
-        error_log("Error preparando consulta: " . $conexion->error);
-        header("Location: PROYECTO.php?error=1");
-        exit;
-    }
-    
-    $stmt->bind_param("s", $correo);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows === 1) {
-        $usuario = $result->fetch_assoc();
-        
-        // Verificar contraseña encriptada
-        if (password_verify($contrasena, $usuario['contraseña'])) {
-            // Regenerar ID de sesión por seguridad
-            session_regenerate_id(true);
-            
-            // Guardar datos en sesión
-            $_SESSION['id_usuario'] = $usuario['id_usuario'];
-            $_SESSION['nombre']     = $usuario['nombre'];
-            $_SESSION['correo']     = $usuario['correo'];
-            $_SESSION['telefono']   = $usuario['telefono']; // ✅ ahora sí lo tienes
-            $_SESSION['loggedin']   = true;
-            
-            // Cerrar statement y conexión
-            $stmt->close();
-            $conexion->close();
-            
-           // Redirigir al inicio o al dashboard si es admin
-if ($usuario['correo'] === "admin@tienda.com") { 
-    header("Location: https://jerseyking.kesug.com/dashboard.php");
-} else {
-    header("Location: proyecto.php");
-}
-exit;
-
-        } else {
-            // Contraseña incorrecta
-            $stmt->close();
-            $conexion->close();
-            header("Location: proyecto.php?error=1");
-            exit;
-        }
-    } else {
-        // Usuario no encontrado
-        $stmt->close();
-        $conexion->close();
+    if (empty($correo) || empty($contrasena)) {
         header("Location: proyecto.php?error=1");
         exit;
     }
+
+    // Buscar usuario
+    $sql = "SELECT id_usuario, nombre, correo, contrasena, telefono, direccion 
+            FROM usuarios WHERE correo = ?";
+    $stmt = $conexion->prepare($sql);
     
-} catch (Exception $e) {
-    // Log del error (no mostrar al usuario)
-    error_log("Error en login: " . $e->getMessage());
-    header("Location: proyecto.php?error=1");
-    exit;
+    if ($stmt) {
+        $stmt->bind_param("s", $correo);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $usuario = $result->fetch_assoc();
+            
+            // ✅ AQUÍ ESTÁ LA CLAVE: usar password_verify()
+            if (password_verify($contrasena, $usuario['contrasena'])) {
+                // Login exitoso
+                $_SESSION['loggedin'] = true;
+                $_SESSION['id_usuario'] = $usuario['id_usuario'];
+                $_SESSION['nombre'] = $usuario['nombre'];
+                $_SESSION['correo'] = $usuario['correo'];
+                
+                header("Location: proyecto.php");
+                exit;
+            } else {
+                // Contraseña incorrecta
+                header("Location: proyecto.php?error=1");
+                exit;
+            }
+        } else {
+            // Usuario no existe
+            header("Location: proyecto.php?error=1");
+            exit;
+        }
+        $stmt->close();
+    } else {
+        header("Location: proyecto.php?error=1");
+        exit;
+    }
 }
 ?>

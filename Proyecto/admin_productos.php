@@ -4,7 +4,7 @@ include 'conexion.php';
 
 // Verificar que sea admin
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION['correo'] !== "admin@tienda.com") {
-    header("Location: PROYECTO.php");
+    header("Location: proyecto.php");
     exit();
 }
 
@@ -926,7 +926,7 @@ if ($producto_editar) {
         <div class="header">
             <h1>Gestión de Productos</h1>
             <div class="nav-links">
-                    <a href="PROYECTO.php">🏠 Tienda</a>
+                    <a href="proyecto.php">🏠 Tienda</a>
                 <a href="dashboard.php">Dashboard</a>
                 <a href="admin_inventario.php">Inventario</a>
                 <a href="logout.php">Cerrar Sesión</a>

@@ -1,22 +1,26 @@
 <?php
 session_start();
 
-// Vaciar variables de sesión
-$_SESSION = [];
+// Limpiar todas las variables de sesión
+$_SESSION = array();
 
-// Borrar la cookie de sesión si existe
+// Destruir la cookie de sesión
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
-    setcookie(session_name(), '', time() - 42000,
-        $params["path"], $params["domain"],
-        $params["secure"], $params["httponly"]
+    setcookie(
+        session_name(), 
+        '', 
+        time() - 42000,
+        $params["path"], 
+        $params["domain"],
+        $params["secure"], 
+        $params["httponly"]
     );
 }
 
-// Destruir sesión completamente
+// Destruir la sesión
 session_destroy();
 
-// Redirigir al archivo correcto
-header("Location: PROYECTO.php");
+// Redirigir al inicio
+header("Location: proyecto.php");
 exit;
-?>

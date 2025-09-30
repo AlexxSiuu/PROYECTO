@@ -6,8 +6,8 @@ include ('conexion.php');
 
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    header("Location: PROYECTO.php#login");
-    exit();
+    header("Location: proyecto.php#login");
+    exit(); 
 }
 
 $id_usuario = $_SESSION['id_usuario'];
@@ -499,14 +499,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_compra'])) 
 
 <header class="header">
     <nav class="navbar">
-        <div class="logo"><a href="PROYECTO.php">JERSEYKING</a></div>
-        <ul class="nav-links">
-            <li><a href="PROYECTO.php">Inicio</a></li>
-            <li><a href="carrito.php">Carrito</a></li>
-        </ul>
-        <div class="nav-icons">
-            <span>👤 <?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
-            <a href="logout.php" style="color:white;">Cerrar sesión</a>
+        <div class="logo">
+            <a href="proyecto.php">
+                <img src="img/logo_icono.ico.jpg" class="logo-img">
+            </a>
         </div>
     </nav>
 </header>

@@ -4,20 +4,20 @@ include ('conexion.php');
 
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    header("Location: PROYECTO.php#login");
+    header("Location: proyecto.php#login");
     exit();
 }
 
 // Verificar que se proporcione el ID de venta
 if (!isset($_GET['venta'])) {
-    header("Location: PROYECTO.php");
+    header("Location: proyecto.php");
     exit();
 }
 
 $id_venta = $_GET['venta'];
 $id_usuario = $_SESSION['id_usuario'];
 
-// Función ejecutarSQL (reutilizando la tuya)
+// Función ejecutarSQL
 function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     global $conexion;
     
@@ -67,7 +67,7 @@ $sqlVenta = "
 $venta = ejecutarSQL("select", $sqlVenta, [$id_venta, $id_usuario]);
 
 if (!$venta || count($venta) === 0) {
-    header("Location: PROYECTO.php");
+    header("Location: proyecto.php");
     exit();
 }
 
@@ -268,26 +268,15 @@ $detalles = ejecutarSQL("select", $sqlDetalles, [$id_venta]);
             letter-spacing: 0.5px;
         }
 
-        .btn-inicio {
+        .btn-seguir {
             background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
             color: white;
         }
 
-        .btn-inicio:hover {
+        .btn-seguir:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
-        }
-
-        .btn-seguir {
-            background: white;
-            border: 2px solid #111;
-            color: #111;
-        }
-
-        .btn-seguir:hover {
-            background: #111;
             color: white;
-            transform: translateY(-2px);
         }
 
         .mensaje-adicional {
@@ -330,13 +319,10 @@ $detalles = ejecutarSQL("select", $sqlDetalles, [$id_venta]);
 
 <header class="header">
     <nav class="navbar">
-        <div class="logo"><a href="PROYECTO.php">JERSEYKING</a></div>
-        <ul class="nav-links">
-            <li><a href="PROYECTO.php">Inicio</a></li>
-        </ul>
-        <div class="nav-icons">
-            <span>👤 <?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
-            <a href="logout.php" style="color:white;">Cerrar sesión</a>
+        <div class="logo">
+            <a href="proyecto.php">
+                <img src="img/logo_icono.ico.jpg" class="logo-img">
+            </a>
         </div>
     </nav>
 </header>
@@ -372,7 +358,7 @@ $detalles = ejecutarSQL("select", $sqlDetalles, [$id_venta]);
     <?php if ($detalles && count($detalles) > 0): ?>
     <div class="productos-vendidos">
         <div class="productos-header">
-            📦 Productos Comprados
+            Productos Comprados
         </div>
         
         <?php foreach ($detalles as $detalle): ?>
@@ -401,12 +387,11 @@ $detalles = ejecutarSQL("select", $sqlDetalles, [$id_venta]);
     </div>
 
     <div class="acciones-exito">
-        <a href="PROYECTO.php" class="btn-exito btn-inicio">🏠 Volver al Inicio</a>
-        <a href="PROYECTO.php" class="btn-exito btn-seguir">🛍️ Seguir Comprando</a>
+        <a href="proyecto.php" class="btn-exito btn-seguir">Seguir Comprando</a>
     </div>
 
     <div class="mensaje-adicional">
-        <h4>📧 Información Importante:</h4>
+        <h4>Información Importante:</h4>
         <p>
             • El tiempo estimado de entrega es de 3-5 días hábiles<br>
             • Puedes contactarnos si tienes alguna pregunta sobre tu pedido<br>

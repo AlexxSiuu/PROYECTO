@@ -2,6 +2,12 @@
 session_start();
 include('conexion.php');
 
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true && isset($_SESSION['id_usuario'])) {
+    $sqlUsuario = "SELECT nombre, correo, telefono, direccion FROM usuarios WHERE id_usuario = ?";
+    $datosUsuario = ejecutarSQL("select", $sqlUsuario, [$_SESSION['id_usuario']]);
+    $usuario = $datosUsuario ? $datosUsuario[0] : null;
+}
+
 // Función mejorada con prepared statements
 function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     global $conexion;
@@ -108,12 +114,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
             color: #111;
         }
 
-        /* Header simple para navegación */
-        .header-simple {
-            background: #000;
-            padding: 15px 0;
-            margin-bottom: 40px;
-        }
         
         .header-simple .navbar {
             max-width: 1200px;
@@ -393,16 +393,169 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
 </head>
 <body>
 
-<!-- Header simple -->
-<header class="header-simple">
-    <nav class="navbar">
-        <div class="logo">
-            <a href="/proyecto.php">JERSEYKING</a>
-        </div>
-        <div class="nav-back">
-            <a href="javascript:history.back()">← Volver</a>
-        </div>
-    </nav>
+<header class="header">
+  <nav class="navbar">
+    <div class="logo">
+    <a href="proyecto.php">
+        <img src="img/logo_icono.ico.jpg" class="logo-img">
+    </a>
+</div>
+
+    <ul class="nav-links">
+  <li><a href="proyecto.php">Inicio</a></li>
+
+<!-- HOMBRE -->
+<li class="dropdown">
+  <a href="productos.php?genero=1">Hombre</a>
+  <div class="mega-menu">
+    <div class="mega-left hombre-img"></div>
+    <div class="mega-right">
+      <div class="column">
+        <h4><a href="productos.php?genero=1&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Zapatillas%20deportivas">Zapatillas deportivas</a>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Botines%20de%20fútbol">Botines de fútbol</a>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Sandalias">Sandalias</a>
+        <a href="productos.php?genero=1&uso=2&subcategoria=Sneakers%20de%20moda">Sneakers de moda</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=1&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
+        <a href="productos.php?genero=1&uso=1&subcategoria=Camisetas">Camisetas</a>
+        <a href="productos.php?genero=1&uso=1&subcategoria=Pantalones%20deportivos">Pantalones deportivos</a>
+        <a href="productos.php?genero=1&uso=1&subcategoria=Sudaderas%20/%20Hoodies">Sudaderas / Hoodies</a>
+        <a href="productos.php?genero=1&uso=1&subcategoria=Shorts">Shorts</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=1&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
+        <a href="productos.php?genero=1&uso=3&subcategoria=Gorras">Gorras</a>
+        <a href="productos.php?genero=1&uso=3&subcategoria=Mochilas">Mochilas</a>
+        <a href="productos.php?genero=1&uso=3&subcategoria=Calcetines">Calcetines</a>
+      </div>
+    </div>
+  </div>
+</li>
+
+<!-- MUJER -->
+<li class="dropdown">
+  <a href="productos.php?genero=2">Mujer</a>
+  <div class="mega-menu">
+    <div class="mega-left mujer-img"></div>
+    <div class="mega-right">
+      <div class="column">
+        <h4><a href="productos.php?genero=2&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
+        <a href="productos.php?genero=2&uso=2&subcategoria=Zapatillas%20deportivas">Zapatillas deportivas</a>
+        <a href="productos.php?genero=2&uso=2&subcategoria=Sandalias">Sandalias</a>
+        <a href="productos.php?genero=2&uso=2&subcategoria=Botines%20deportivos">Botines deportivos</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=2&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
+        <a href="productos.php?genero=2&uso=1&subcategoria=Tops%20deportivos">Tops deportivos</a>
+        <a href="productos.php?genero=2&uso=1&subcategoria=Leggings">Leggings</a>
+        <a href="productos.php?genero=2&uso=1&subcategoria=Sudaderas">Sudaderas</a>
+        <a href="productos.php?genero=2&uso=1&subcategoria=Shorts">Shorts</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=2&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
+        <a href="productos.php?genero=2&uso=3&subcategoria=Gorras">Gorras</a>
+        <a href="productos.php?genero=2&uso=3&subcategoria=Mochilas">Mochilas</a>
+        <a href="productos.php?genero=2&uso=3&subcategoria=Medias">Medias</a>
+      </div>
+    </div>
+  </div>
+</li>
+
+<!-- NIÑOS -->
+<li class="dropdown">
+  <a href="productos.php?genero=3">Niños</a>
+  <div class="mega-menu">
+    <div class="mega-left ninos-img"></div>
+    <div class="mega-right">
+      <div class="column">
+        <h4><a href="productos.php?genero=3&uso=2" style="color:inherit; text-decoration:none;">Calzado</a></h4>
+        <a href="productos.php?genero=3&uso=2&subcategoria=Botines">Botines</a>
+        <a href="productos.php?genero=3&uso=2&subcategoria=Sandalias">Sandalias</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=3&uso=1" style="color:inherit; text-decoration:none;">Ropa</a></h4>
+        <a href="productos.php?genero=3&uso=1&subcategoria=Camisetas">Camisetas</a>
+        <a href="productos.php?genero=3&uso=1&subcategoria=Conjuntos%20deportivos">Conjuntos deportivos</a>
+        <a href="productos.php?genero=3&uso=1&subcategoria=Shorts">Shorts</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?genero=3&uso=3" style="color:inherit; text-decoration:none;">Accesorios</a></h4>
+        <a href="productos.php?genero=3&uso=3&subcategoria=Mochilas">Mochilas</a>
+        <a href="productos.php?genero=3&uso=3&subcategoria=Gorras">Gorras</a>
+      </div>
+    </div>
+  </div>
+</li>
+
+<!-- DEPORTES -->
+<li class="dropdown">
+  <a href="productos.php">Deportes</a>
+  <div class="mega-menu">
+    <div class="mega-left deportes-img"></div>
+    <div class="mega-right">
+      <div class="column">
+        <h4><a href="productos.php?deporte=1" style="color:inherit; text-decoration:none;">Fútbol</a></h4>
+        <a href="productos.php?uso=2&deporte=1&subcategoria=Botines">Botines</a>
+        <a href="productos.php?uso=1&deporte=1&subcategoria=Camisetas">Camisetas</a>
+        <a href="productos.php?uso=3&deporte=1&subcategoria=Balones">Balones</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?deporte=2" style="color:inherit; text-decoration:none;">Running</a></h4>
+        <a href="productos.php?uso=2&deporte=2&subcategoria=Zapatillas">Zapatillas</a>
+        <a href="productos.php?uso=1&deporte=2&subcategoria=Ropa%20ligera">Ropa ligera</a>
+      </div>
+      <div class="column">
+        <h4><a href="productos.php?deporte=4" style="color:inherit; text-decoration:none;">Básquetbol</a></h4>
+        <a href="productos.php?uso=1&deporte=4&subcategoria=Ropa">Ropa</a>
+        <a href="productos.php?uso=2&deporte=4&subcategoria=Tenis">Tenis</a>
+        <a href="productos.php?uso=3&deporte=4&subcategoria=Balones">Balones</a>
+      </div>
+    </div>
+  </div>
+</li>
+
+<?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true && $_SESSION['correo'] === 'admin@tienda.com'): ?>
+    <li>
+        <a href="dashboard.php" class="nav-admin-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M0 0h1v15h15v1H0V0zm10 10h1v5h-1v-5zm-4-4h1v9H6V6zm-4 3h1v6H2v-6z"/>
+            </svg>
+            Panel Administrativo
+        </a>
+    </li>
+<?php endif; ?>
+
+    </ul>
+
+<div class="nav-icons">
+  <input type="text" placeholder="Buscar...">
+  
+  <span class="search-icon">
+    <svg data-slot="icon" fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:1em; height:1em; color:white; vertical-align:middle;">
+      <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
+    </svg>
+  </span>
+  
+  <!-- CARRITO (copiar todo el código del carrito de proyecto.php) -->
+  <div class="cart-container">
+    <!-- ... código completo del carrito ... -->
+  </div>
+
+  <!-- USUARIO (copiar todo el código del dropdown de usuario de proyecto.php) -->
+  <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
+  <div class="user-container">
+    <!-- ... código completo del dropdown de usuario ... -->
+  </div>
+  <?php else: ?>
+  <span id="login-icon" style="cursor:pointer; color:white;">
+    <!-- ... código de login ... -->
+  </span>
+  <?php endif; ?>
+</div>
+
+  </nav>
 </header>
 
 <!-- Breadcrumb -->

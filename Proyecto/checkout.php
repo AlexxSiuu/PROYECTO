@@ -575,6 +575,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_compra'])) 
             <div style="display: flex; gap: 20px;">
                 <div class="form-grupo" style="flex: 1;">
                     <label for="telefono">Teléfono:</label>
+                    <input type="tel" id="telefono" name="telefono" placeholder="Ej: 7890-1234" 
+                        pattern="[2,6,7][0-9]{3}-[0-9]{4}" 
+                        title="Debe iniciar con 2, 6 o 7. Formato: 7890-1234" 
+                        maxlength="9" required>       
+
                     <input type="tel" id="telefono" name="telefono" placeholder="Ej: 7890-1234" required>
                 </div>
 
@@ -582,13 +587,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_compra'])) 
 
                 
                 <div class="form-grupo" style="flex: 1;">
-                    <label for="metodo_pago">Método de Pago:</label>
-                    <select id="metodo_pago" name="metodo_pago" required>
-                        <option value="">Seleccionar...</option>
-                        <option value="efectivo">Pago en Efectivo (Contrareembolso)</option>
-                        <option value="transferencia">Transferencia Bancaria</option>
-                        <option value="tarjeta">Tarjeta de Crédito/Débito</option>
-                    </select>
+                        <label for="metodo_pago">Método de Pago:</label>
+                        <input type="hidden" name="metodo_pago" value="efectivo">
+                        <input type="text" value="Pago en Efectivo (Contrareembolso)" disabled 
+                        style="background: #e9ecef; cursor: not-allowed; width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
                 </div>
             </div>
         </div>

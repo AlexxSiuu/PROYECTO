@@ -517,15 +517,20 @@
     </ul>
 
 
+
 <div class="nav-icons">
-  <input type="text" placeholder="Buscar...">
-  
-  <span class="search-icon">
-    <svg data-slot="icon" fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:1em; height:1em; color:white; vertical-align:middle;">
-      <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
-    </svg>
-  </span>
-  
+  <form action="buscar.php" method="GET" style="display: flex; align-items: center; gap: 10px;">
+    <input type="text" name="q" placeholder="Buscar..." required minlength="2">
+    <button type="submit" style="background: none; border: none; cursor: pointer; padding: 0;">
+      <span class="search-icon">
+        <svg data-slot="icon" fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:1em; height:1em; color:white; vertical-align:middle;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
+        </svg>
+      </span>
+    </button>
+  </form>
+
+
   <!-- CARRITO MEJORADO -->
   <div class="cart-container">
     <div class="cart-icon" onclick="toggleCarrito()">

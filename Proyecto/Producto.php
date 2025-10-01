@@ -700,15 +700,16 @@ function agregarAlCarrito() {
         console.log('Respuesta del servidor:', data);
         
         if (data.success) {
-            mostrarNotificacion(`${data.mensaje || 'Producto agregado al carrito'}`, 'success');
+    mostrarNotificacion(`${data.mensaje || 'Producto agregado al carrito'}`, 'success', true);
+    
+    if (window.actualizarContadorCarrito && data.cart_count) {
+        window.actualizarContadorCarrito(data.cart_count);
+    }
+    
+    if (data.producto) {
+        mostrarProductoAgregado(data.producto);
+    }
 
-            if (window.actualizarContadorCarrito && data.cart_count) {
-                window.actualizarContadorCarrito(data.cart_count);
-            }
-            
-            if (data.producto) {
-                mostrarProductoAgregado(data.producto);
-            }
             
         } else if (data.login_required) {
             // AQUÍ SE ACTIVA LA REDIRECCIÓN AL LOGIN
@@ -727,7 +728,7 @@ function agregarAlCarrito() {
     }); 
 }
 
-function mostrarNotificacion(mensaje, tipo = 'success') {
+function mostrarNotificacion(mensaje, tipo = 'success', clickable = false) {
     if (!mensaje || mensaje === 'undefined') {
         mensaje = tipo === 'success' ? 'Operación exitosa' : 'Ha ocurrido un error';
     }
@@ -741,89 +742,39 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
             <button class="notificacion-close" onclick="this.parentElement.parentElement.remove()">×</button>
         </div>
     `;
+
+    // 👉 Si es clickeable (cuando se agrega producto al carrito)
+    if (clickable) {
+        notificacion.style.cursor = "pointer";
+        notificacion.addEventListener("click", function(e) {
+            // Evitamos que al hacer click en la X también te mande al carrito
+            if (!e.target.classList.contains("notificacion-close")) {
+                window.location.href = "carrito.php";
+            }
+        });
+    }
     
     if (!document.getElementById('notificacion-styles')) {
         const styles = document.createElement('style');
         styles.id = 'notificacion-styles';
         styles.textContent = `
-            .notificacion {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 10000;
-                min-width: 300px;
-                max-width: 450px;
-                background: white;
-                border-radius: 8px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-                animation: slideInRight 0.3s ease-out;
-                font-family: Arial, sans-serif;
-            }
-            
-            .notificacion-success {
-                border-left: 4px solid #28a745;
-            }
-            
-            .notificacion-error {
-                border-left: 4px solid #dc3545;
-            }
-            
-            .notificacion-content {
-                display: flex;
-                align-items: center;
-                padding: 15px 20px;
-                gap: 10px;
-            }
-            
-            .notificacion-icon {
-                font-size: 18px;
-            }
-            
-            .notificacion-texto {
-                flex: 1;
-                font-size: 14px;
-                font-weight: 500;
-                color: #333;
-            }
-            
-            .notificacion-close {
-                background: none;
-                border: none;
-                font-size: 20px;
-                cursor: pointer;
-                color: #999;
-                padding: 0;
-                width: 24px;
-                height: 24px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 4px;
-            }
-            
-            .notificacion-close:hover {
-                background-color: #f0f0f0;
-                color: #333;
-            }
-            
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-            
-            @media (max-width: 768px) {
-                .notificacion {
-                    left: 20px;
-                    right: 20px;
-                    min-width: auto;
-                }
-            }
+            .notificacion { position: fixed; top: 20px; right: 20px; z-index: 10000;
+                min-width: 300px; max-width: 450px; background: white; border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: slideInRight 0.3s ease-out;
+                font-family: Arial, sans-serif; transition: background 0.2s; }
+            .notificacion:hover { background: #f8f9fa; }
+            .notificacion-success { border-left: 4px solid #28a745; }
+            .notificacion-error { border-left: 4px solid #dc3545; }
+            .notificacion-content { display: flex; align-items: center; padding: 15px 20px; gap: 10px; }
+            .notificacion-icon { font-size: 18px; }
+            .notificacion-texto { flex: 1; font-size: 14px; font-weight: 500; color: #333; }
+            .notificacion-close { background: none; border: none; font-size: 20px; cursor: pointer;
+                color: #999; padding: 0; width: 24px; height: 24px; display: flex;
+                align-items: center; justify-content: center; border-radius: 4px; }
+            .notificacion-close:hover { background-color: #f0f0f0; color: #333; }
+            @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; }
+                                      to { transform: translateX(0); opacity: 1; } }
+            @media (max-width: 768px) { .notificacion { left: 20px; right: 20px; min-width: auto; } }
         `;
         document.head.appendChild(styles);
     }
@@ -837,6 +788,7 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
         }
     }, 5000);
 }
+
 
 function mostrarProductoAgregado(producto) {
     if (!producto) return;

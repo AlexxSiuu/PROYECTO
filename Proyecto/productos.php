@@ -550,7 +550,7 @@ $titulo = count($titulo_partes) > 0 ? implode(" - ", $titulo_partes) : "Todos lo
         <div class="productos-grid">
             <?php foreach ($productos as $producto): ?>
                 <!-- Hacemos que toda la card sea clickeable -->
-                <a href="Producto.php?id=<?= $producto->id_producto ?>" class="producto-card">
+                <a href="producto.php?id=<?= $producto->id_producto ?>" class="producto-card">
                     <div class="producto-imagen-container">
                         <img src="<?= htmlspecialchars($producto->imagen_url) ?>" 
                              alt="<?= htmlspecialchars($producto->nombre) ?>"
@@ -1847,14 +1847,14 @@ function actualizarCantidad(idCarrito, accion) {
     })
     .catch(error => {
         console.error('Error:', error);
-        mostrarNotificacion('Error de conexiÃ³n', 'error');
+        mostrarNotificacion('Error de conexión', 'error');
     });
 }
 
 function eliminarDelCarrito(idCarrito) {
     mostrarConfirmacion(
-        'Â¿Seguro que deseas eliminar este producto de tu carrito?',
-        'Confirmar eliminaciÃ³n',
+        '¿Seguro que deseas eliminar este producto de tu carrito?',
+        'Confirmar eliminación',
         () => {
             const formData = new FormData();
             formData.append('accion', 'eliminar');
@@ -1876,7 +1876,7 @@ function eliminarDelCarrito(idCarrito) {
             })
             .catch(error => {
                 console.error('Error:', error);
-                mostrarNotificacion('Error de conexiÃ³n', 'error');
+                mostrarNotificacion('Error de conexión', 'error');
             });
         }
     );
@@ -1895,10 +1895,10 @@ function actualizarContadorCarrito(count) {
 function mostrarLoginRequerido() {
     document.getElementById('cart-content').innerHTML = `
         <div class="cart-empty">
-            <p>Inicia sesiÃ³n para ver tu carrito</p>
+            <p>Inicia sesión para ver tu carrito</p>
             <small>
                 <a href="#" onclick="document.getElementById('login-icon').click(); toggleCarrito();" style="color: #007bff; text-decoration: underline;">
-                    Hacer clic aquÃ­ para iniciar sesiÃ³n
+                    Hacer clic aqui­ para iniciar sesión
                 </a>
             </small>
         </div>`;

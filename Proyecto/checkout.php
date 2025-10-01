@@ -575,12 +575,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_compra'])) 
             <div style="display: flex; gap: 20px;">
                 <div class="form-grupo" style="flex: 1;">
                     <label for="telefono">Teléfono:</label>
-                    <input type="tel" id="telefono" name="telefono" placeholder="Ej: 7890-1234" 
-                        pattern="[2,6,7][0-9]{3}-[0-9]{4}" 
-                        title="Debe iniciar con 2, 6 o 7. Formato: 7890-1234" 
-                        maxlength="9" required>       
+                    <input type="tel" id="telefono" name="telefono" 
+    placeholder="Ej: 7890-1234" 
+    maxlength="9" required>
 
-                </div>
+<script>
+document.getElementById("telefono").addEventListener("input", function(e) {
+    let valor = e.target.value;
+
+    // Eliminar todo lo que no sea número o guion
+    valor = valor.replace(/[^0-9-]/g, "");
+
+    // No permitir que el primer dígito sea distinto de 2, 6 o 7
+    if (valor.length === 1 && !/[267]/.test(valor[0])) {
+        valor = ""; // borra el primer dígito si no es válido
+    }
+
+    // Formato: ####-####
+    if (valor.length > 4 && valor[4] !== "-") {
+        valor = valor.slice(0, 4) + "-" + valor.slice(4, 8);
+    }
+
+    e.target.value = valor;
+});
+</script>  
+
+    </div>
 
 
 

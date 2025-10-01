@@ -104,6 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     .form-container input[type="text"],
     .form-container input[type="email"],
     .form-container input[type="password"],
+    .form-container input[type="tel"],
     .form-container textarea {
       width: 100%;
       padding: 12px;
@@ -170,13 +171,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       
       <textarea name="direccion" placeholder="Dirección completa" rows="3" required><?= isset($_POST['direccion']) ? htmlspecialchars($_POST['direccion']) : '' ?></textarea>
       
-      <input type="text" name="telefono" placeholder="Número de teléfono" required
-             value="<?= isset($_POST['telefono']) ? htmlspecialchars($_POST['telefono']) : '' ?>">
+      <input type="tel" id="telefono" name="telefono" placeholder="Número de teléfono" required
+       maxlength="9"
+       value="<?= isset($_POST['telefono']) ? htmlspecialchars($_POST['telefono']) : '' ?>">
+
+<script>
+document.getElementById("telefono").addEventListener("input", function(e) {
+    let valor = e.target.value;
+
+    // Eliminar caracteres que no sean números o guion
+    valor = valor.replace(/[^0-9-]/g, "");
+
+    // Validar primer dígito (solo 2, 6 o 7)
+    if (valor.length === 1 && !/[267]/.test(valor[0])) {
+        valor = "";
+    }
+
+    // Insertar guion después del cuarto dígito
+    if (valor.length > 4 && valor[4] !== "-") {
+        valor = valor.slice(0, 4) + "-" + valor.slice(4, 8);
+    }
+
+    e.target.value = valor;
+});
+</script>
       
       <input type="submit" value="Registrarme">
     </form>
 
-    <p>¿Ya tienes cuenta? <a href="login.php">Inicia sesión aquí</a></p>
+    <p>¿Ya tienes cuenta? <a href="proyecto.php#login">Inicia sesión aquí</a></p>
   </div>
 </body>
 </html>

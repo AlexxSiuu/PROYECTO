@@ -580,7 +580,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_compra'])) 
                         title="Debe iniciar con 2, 6 o 7. Formato: 7890-1234" 
                         maxlength="9" required>       
 
-                    <input type="tel" id="telefono" name="telefono" placeholder="Ej: 7890-1234" required>
                 </div>
 
 

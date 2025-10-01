@@ -1332,18 +1332,20 @@ function mostrarConfirmacion(mensaje, titulo, onConfirm, onCancel = null) {
 
 
 
-    <form method="POST" action="procesar_login.php">
-      <div style="margin-bottom:15px;">
-        <input type="email" name="correo" placeholder="Correo electrónico" required 
-               style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
-      </div>
-      <div style="margin-bottom:15px;">
-        <input type="password" name="contrasena" placeholder="Contraseña" required
-               style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
-      </div>
-      <input type="submit" value="Iniciar sesión" 
-             style="width:100%; padding:10px; background:#007bff; color:white; border:none; border-radius:4px; cursor:pointer;">
-    </form>
+    <div id="login">
+      <form method="POST" action="procesar_login.php">
+        <div style="margin-bottom:15px;">
+                <input type="email" name="correo" placeholder="Correo electrónico" required 
+                style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
+        </div>
+        <div style="margin-bottom:15px;">
+                <input type="password" name="contrasena" placeholder="Contraseña" required
+                style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
+        </div>
+        <input type="submit" value="Iniciar sesión" 
+              style="width:100%; padding:10px; background:#007bff; color:white; border:none; border-radius:4px; cursor:pointer;">
+      </form>
+    </div>
     <p style="text-align:center; margin-top:15px;">
       ¿No tienes cuenta? <a href="registro.php" style="color:#007bff;">Regístrate</a>
     </p>

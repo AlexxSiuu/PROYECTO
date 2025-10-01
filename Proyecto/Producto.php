@@ -19,16 +19,14 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     
     $conexion->set_charset("utf8mb4");
     
-    // Preparar statement
     $stmt = $conexion->prepare($sentenciaSQL);
     if (!$stmt) {
         error_log("Error preparando consulta: " . $conexion->error);
         return false;
     }
     
-    // Bind parameters si existen
     if (!empty($params)) {
-        $types = str_repeat('i', count($params)); // 'i' para enteros
+        $types = str_repeat('i', count($params));
         $stmt->bind_param($types, ...$params);
     }
     
@@ -49,7 +47,6 @@ function ejecutarSQL($tipoSentencia, $sentenciaSQL, $params = []) {
     }
 }
 
-// Obtener ID del producto desde la URL
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($id <= 0) {
@@ -57,7 +54,6 @@ if ($id <= 0) {
     exit("ID de producto inválido.");
 }
 
-// Obtener datos del producto con prepared statement
 $sqlProducto = "SELECT p.*, 
                        g.nombre AS genero, 
                        u.nombre AS uso, 
@@ -76,7 +72,6 @@ if (!$producto) {
     exit("Producto no encontrado.");
 }
 
-// Obtener tallas disponibles con stock
 $sqlTallas = "SELECT t.id_talla, t.talla, pt.stock
               FROM producto_tallas pt
               JOIN tallas t ON pt.id_talla = t.id_talla
@@ -84,7 +79,6 @@ $sqlTallas = "SELECT t.id_talla, t.talla, pt.stock
               ORDER BY t.id_talla";
 $tallas = ejecutarSQL("select", $sqlTallas, [$id]);
 
-// Productos relacionados (misma categoría o deporte)
 $sqlRelacionados = "SELECT p.id_producto, p.nombre, p.marca, p.precio, p.imagen_url
                     FROM productos p
                     JOIN producto_tallas pt ON p.id_producto = pt.id_producto
@@ -95,7 +89,6 @@ $sqlRelacionados = "SELECT p.id_producto, p.nombre, p.marca, p.precio, p.imagen_
                     ORDER BY RAND()
                     LIMIT 4";
 $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_genero, $producto->id_uso, $producto->id_deporte]);
-
 ?>
 
 <!DOCTYPE html>
@@ -114,7 +107,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
             color: #111;
         }
 
-        
         .header-simple .navbar {
             max-width: 1200px;
             margin: 0 auto;
@@ -141,7 +133,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
             text-decoration: underline;
         }
 
-        /* Breadcrumb */
         .breadcrumb {
             max-width: 1200px;
             margin: 0 auto 30px;
@@ -159,7 +150,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
             text-decoration: underline;
         }
 
-        /* Contenedor principal del producto */
         .detalle-container {
             display: flex;
             max-width: 1200px;
@@ -303,7 +293,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
             font-weight: bold;
         }
 
-        /* Productos relacionados */
         .relacionados {
             max-width: 1200px;
             margin: 80px auto 40px;
@@ -369,7 +358,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
             color: inherit;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .detalle-container {
                 flex-direction: column;
@@ -404,7 +392,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
     <ul class="nav-links">
   <li><a href="proyecto.php">Inicio</a></li>
 
-<!-- HOMBRE -->
 <li class="dropdown">
   <a href="productos.php?genero=1">Hombre</a>
   <div class="mega-menu">
@@ -434,7 +421,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
   </div>
 </li>
 
-<!-- MUJER -->
 <li class="dropdown">
   <a href="productos.php?genero=2">Mujer</a>
   <div class="mega-menu">
@@ -463,7 +449,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
   </div>
 </li>
 
-<!-- NIÑOS -->
 <li class="dropdown">
   <a href="productos.php?genero=3">Niños</a>
   <div class="mega-menu">
@@ -489,7 +474,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
   </div>
 </li>
 
-<!-- DEPORTES -->
 <li class="dropdown">
   <a href="productos.php">Deportes</a>
   <div class="mega-menu">
@@ -538,19 +522,17 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
     </svg>
   </span>
   
-  <!-- CARRITO (copiar todo el código del carrito de proyecto.php) -->
   <div class="cart-container">
-    <!-- ... código completo del carrito ... -->
   </div>
 
-  <!-- USUARIO (copiar todo el código del dropdown de usuario de proyecto.php) -->
   <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
   <div class="user-container">
-    <!-- ... código completo del dropdown de usuario ... -->
   </div>
   <?php else: ?>
   <span id="login-icon" style="cursor:pointer; color:white;">
-    <!-- ... código de login ... -->
+    <svg fill="none" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:1em; height:1em; vertical-align:middle;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0A18 18 0 0 1 12 21.8c-2.7 0-5.2-.6-7.5-1.7Z" />
+    </svg>
   </span>
   <?php endif; ?>
 </div>
@@ -558,7 +540,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
   </nav>
 </header>
 
-<!-- Breadcrumb -->
 <div class="breadcrumb">
     <a href="/proyecto.php">Inicio</a> > 
     <a href="productos.php?genero=<?= $producto->id_genero ?>"><?= htmlspecialchars($producto->genero) ?></a> > 
@@ -566,7 +547,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
     <span><?= htmlspecialchars($producto->nombre) ?></span>
 </div>
 
-<!-- Producto principal -->
 <div class="detalle-container">
     <div class="detalle-imagen">
         <img src="<?= htmlspecialchars($producto->imagen_url) ?>" 
@@ -575,7 +555,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
     </div>
     
     <div class="detalle-info">
-        <!-- Información de categorías -->
         <div class="categorias-info">
             <span class="categoria-tag"><?= htmlspecialchars($producto->genero) ?></span>
             <span class="categoria-tag"><?= htmlspecialchars($producto->uso) ?></span>
@@ -587,8 +566,6 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
         <div class="descripcion"><?= htmlspecialchars($producto->descripcion) ?></div>
         <div class="precio">$<?= number_format($producto->precio, 2) ?></div>
 
-
-<!-- Formulario de compra -->
 <div class="form-producto">
     <?php if ($tallas && count($tallas) > 0): ?>
         <label for="talla">Seleccionar talla:</label>
@@ -617,7 +594,7 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
         </button>
     <?php else: ?>
         <div class="no-tallas">
-            ❌ Este producto no tiene tallas disponibles actualmente
+            Este producto no tiene tallas disponibles actualmente
         </div>
         <button type="button" disabled>
             Producto no disponible
@@ -625,15 +602,10 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
     <?php endif; ?>
 </div>
 
-<!-- Botón para añadir a wishlist -->
-<button type="button" style="background: #28a745; margin-top: 10px;" onclick="agregarAWishlist()">
-    ❤️ Añadir a lista de deseos
-</button>
+
     </div>
 </div>
 
-
-<!-- Productos relacionados -->
 <?php if ($relacionados && count($relacionados) > 0): ?>
 <div class="relacionados">
     <h2>Productos relacionados</h2>
@@ -657,38 +629,10 @@ $relacionados = ejecutarSQL("select", $sqlRelacionados, [$id, $producto->id_gene
 <?php endif; ?>
 
 <script>
-
-
 const tallaSelect = document.getElementById('talla');
 const cantidadInput = document.getElementById('cantidad');
 const btnCarrito = document.querySelector('.btn-carrito');
 
-
-
-// Actualizar cantidad máxima cuando se selecciona talla
-if (tallaSelect) {
-    tallaSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const stock = parseInt(selectedOption.dataset.stock) || 0;
-        
-        // AQUÍ VA EL CÓDIGO QUE MENCIONÉ
-        if (this.value && stock > 0) {
-            cantidadInput.max = stock;
-            cantidadInput.value = Math.min(cantidadInput.value, stock);
-            btnCarrito.disabled = false;
-            btnCarrito.innerHTML = '🛒 Agregar al carrito';
-        } else {
-            cantidadInput.max = 1;
-            cantidadInput.value = 1;
-            btnCarrito.disabled = true;
-            btnCarrito.innerHTML = 'Sin stock disponible';
-        }
-    });
-}
-
-
-
-// Actualizar cantidad máxima cuando se selecciona talla
 if (tallaSelect) {
     tallaSelect.addEventListener('change', function() {
         const selectedOption = this.options[this.selectedIndex];
@@ -698,7 +642,7 @@ if (tallaSelect) {
             cantidadInput.max = stock;
             cantidadInput.value = Math.min(cantidadInput.value, stock);
             btnCarrito.disabled = false;
-            btnCarrito.innerHTML = '🛒 Agregar al carrito';
+            btnCarrito.innerHTML = 'Agregar al carrito';
         } else {
             cantidadInput.max = 1;
             cantidadInput.value = 1;
@@ -708,7 +652,6 @@ if (tallaSelect) {
     });
 }
 
-// Validar cantidad input
 if (cantidadInput) {
     cantidadInput.addEventListener('change', function() {
         const max = parseInt(this.max) || 1;
@@ -722,7 +665,15 @@ if (cantidadInput) {
     });
 }
 
-// Función mejorada para agregar al carrito
+// FUNCIÓN CORREGIDA: Redirige a proyecto.php con hash #login
+function mostrarModalLogin() {
+    mostrarNotificacion('Debes iniciar sesión para agregar productos al carrito', 'error');
+    
+    setTimeout(() => {
+        window.location.href = 'proyecto.php#login';
+    }, 1500);
+}
+
 function agregarAlCarrito() {
     const talla = tallaSelect?.value;
     const cantidad = parseInt(cantidadInput?.value) || 1;
@@ -732,9 +683,8 @@ function agregarAlCarrito() {
         return;
     }
     
-    // Deshabilitar botón temporalmente
     btnCarrito.disabled = true;
-    btnCarrito.innerHTML = '⏳ Agregando...';
+    btnCarrito.innerHTML = 'Agregando...';
     
     const formData = new FormData();
     formData.append('producto_id', <?= $id ?>);
@@ -747,22 +697,21 @@ function agregarAlCarrito() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Respuesta del servidor:', data); // Para debug
+        console.log('Respuesta del servidor:', data);
         
         if (data.success) {
             mostrarNotificacion(`${data.mensaje || 'Producto agregado al carrito'}`, 'success');
 
-            // Actualizar contador del carrito en el header si existe
             if (window.actualizarContadorCarrito && data.cart_count) {
                 window.actualizarContadorCarrito(data.cart_count);
             }
             
-            // Mostrar detalles del producto agregado SOLO si los datos existen
             if (data.producto) {
                 mostrarProductoAgregado(data.producto);
             }
             
         } else if (data.login_required) {
+            // AQUÍ SE ACTIVA LA REDIRECCIÓN AL LOGIN
             mostrarModalLogin();
         } else {
             mostrarNotificacion(data.message || data.mensaje || 'Error al agregar al carrito', 'error');
@@ -773,32 +722,26 @@ function agregarAlCarrito() {
         mostrarNotificacion('Error de conexión', 'error');
     })
     .finally(() => {
-        // Reactivar botón
         btnCarrito.disabled = false;
         btnCarrito.innerHTML = '🛒 Agregar al carrito';
-    });
+    }); 
 }
 
-// Mostrar notificaciones
 function mostrarNotificacion(mensaje, tipo = 'success') {
-    // Verificar que el mensaje no sea undefined
     if (!mensaje || mensaje === 'undefined') {
         mensaje = tipo === 'success' ? 'Operación exitosa' : 'Ha ocurrido un error';
     }
     
-    // Crear elemento de notificación
     const notificacion = document.createElement('div');
     notificacion.className = `notificacion notificacion-${tipo}`;
     notificacion.innerHTML = `
-        <a href="carrito.php" style="text-decoration:none; color:inherit;><div class="notificacion-content">
+        <div class="notificacion-content">
             <span class="notificacion-icon">${tipo === 'success' ? '✅' : '❌'}</span>
             <span class="notificacion-texto">${mensaje}</span>
             <button class="notificacion-close" onclick="this.parentElement.parentElement.remove()">×</button>
         </div>
-        </a>
     `;
     
-    // Agregar estilos si no existen
     if (!document.getElementById('notificacion-styles')) {
         const styles = document.createElement('style');
         styles.id = 'notificacion-styles';
@@ -885,10 +828,8 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
         document.head.appendChild(styles);
     }
     
-    // Agregar al DOM
     document.body.appendChild(notificacion);
     
-    // Auto-eliminar después de 5 segundos
     setTimeout(() => {
         if (notificacion.parentElement) {
             notificacion.style.animation = 'slideInRight 0.3s ease-in reverse';
@@ -897,12 +838,9 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
     }, 5000);
 }
 
-// Mostrar detalles del producto agregado (VERSIÓN CORREGIDA)
 function mostrarProductoAgregado(producto) {
-    // Verificar que el objeto producto y sus propiedades existan
     if (!producto) return;
     
-    // Validar cada propiedad antes de usarla
     const nombre = producto.nombre || 'Producto';
     const talla = producto.talla || producto.talla_nombre || 'N/A';
     const cantidad = producto.cantidad || 1;
@@ -912,11 +850,10 @@ function mostrarProductoAgregado(producto) {
         <div style="margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 12px; color: #666;">
             <strong>${nombre}</strong><br>
             Talla: ${talla} • Cantidad: ${cantidad}<br>
-            Precio: $${precio}
+            Precio: ${precio}
         </div>
     `;
     
-    // Si existe una notificación, agregar los detalles
     setTimeout(() => {
         const ultimaNotificacion = document.querySelector('.notificacion:last-child .notificacion-texto');
         if (ultimaNotificacion) {
@@ -925,47 +862,6 @@ function mostrarProductoAgregado(producto) {
     }, 100);
 }
 
-
-// Mostrar modal de login si es necesario
-function mostrarModalLogin() {
-    mostrarNotificacion('Debes iniciar sesión para agregar productos al carrito', 'error');
-    
-    // Si existe el modal de login, mostrarlo
-    setTimeout(() => {
-        const loginIcon = document.getElementById('login-icon');
-        if (loginIcon) {
-            loginIcon.click();
-        } else {
-            // Redirigir a página de login
-            window.location.href = 'proyecto.php#login';
-        }
-    }, 1500);
-}
-
-// Función para agregar a wishlist (mejorada)
-function agregarAWishlist() {
-    const formData = new FormData();
-    formData.append('producto_id', <?= $id ?>);
-    
-    fetch('agregar_wishlist.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            mostrarNotificacion('Producto agregado a tu lista de deseos', 'success');
-        } else if (data.login_required) {
-            mostrarModalLogin();
-        } else {
-            mostrarNotificacion(data.message || 'Error al agregar a wishlist', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        mostrarNotificacion('Error de conexión', 'error');
-    });
-}
 </script>
 
 </body>
